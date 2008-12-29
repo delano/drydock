@@ -13,15 +13,9 @@ module Frylock
       @b = b
     end
     
-    def call(stdin, global_options, cmd, argv)
-      argv.unshift(cmd)
-      if (@b.arity == -1 || argv.size - 1 == @b.arity)
-        @b.call(*argv)
-      elsif (@b.arity == 2)
-        @b.call(global_options, *argv)  
-      elsif (@b.arity == 3)
-        @b.call(stdin, global_options, *argv)
-      end
+    def call(cmd_str, argv, stdin, global_options, options)
+      block_args = [options, argv, global_options, stdin, cmd_str]
+      @b.call(*block_args[0..(@b.arity-1)])
     end
     def to_s
       @cmd.to_s
@@ -32,8 +26,8 @@ end
 module Frylock
   extend self
   
-  FORWARDED_METHODS = %w(command before alias_command global_option global_options usage option stdin default)
-
+  FORWARDED_METHODS = %w(command before alias_command global_option global_usage usage option stdin default).freeze
+  
   def default(cmd)
     @default_command = canonize(cmd)
   end
@@ -44,9 +38,10 @@ module Frylock
   def before(&b)
     @before_block = b
   end
-  # usage
+  
+  # global_usage
   # ex: usage "Usage: frylla [global options] command [command options]"
-  def usage(msg)
+  def global_usage(msg)
     @global_opts_parser ||= OptionParser.new 
     @global_options ||= OpenStruct.new
   
@@ -60,92 +55,102 @@ module Frylock
   # Split the +argv+ array into global args and command args and 
   # find the command name. 
   # i.e. ./script -H push -f (-H is a global arg, push is the command, -f is a command arg)
-  # returns [global_argv, cmd, command_argv]
+  # returns [global_options, cmd, command_options, argv]
   def process_arguments(argv)
     global_options = command_options = {}
     cmd = nil     
     
     global_parser = @global_opts_parser
+    
     global_options = global_parser.getopts(argv)
-    
-    cmd = get_command(argv.shift) unless argv.empty?
-    
-    
-    unless (argv.empty?)
-      
-      command_parser = @command_opts_parser[cmd.index]
-      puts @command_opts_parser.size
-      command_options = command_parser.getopts(argv)
+    global_options = global_options.keys.inject({}) do |hash, key|
+       hash[key.to_sym] = global_options[key]
+       hash
     end
     
-    pp [global_options, cmd.to_s, command_options]
-    [global_options, cmd.to_s, command_options]
-  end
-  
-  def global_options(cmd=false, &b)
+    cmd_name = (argv.empty?) ? @default_command : argv.shift
+    raise UnknownCommand.new(cmd_name) unless command?(cmd_name)
     
-    @global_opts_parser ||= OptionParser.new 
-    @global_options ||= OpenStruct.new
+    cmd = get_command(cmd_name) 
+    command_parser = @command_opts_parser[cmd.index]
     
-    b.call(@global_opts_parser, @global_options)
-          
-  end
-  
-  def global_option(short, long='', msg='', &b)
-    @global_opts_parser ||= OptionParser.new 
-    @global_options ||= OpenStruct.new
-    
-    short_str = "-#{short.to_s}"
-    long_str = "--#{long.to_s}"
-    
-    @global_opts_parser.on(short_str, long_str, msg) do |v|
-      block_args = [v, @global_opts_parser]
-      result = (b.nil?) ? v : b.call(block_args[0..(b.arity-1)])
-      @global_options.send("#{long}=", result)
+    command_options = command_parser.getopts(argv) if (!argv.empty? && command_parser)
+    command_options = command_options.keys.inject({}) do |hash, key|
+       hash[key.to_sym] = command_options[key]
+       hash
     end
     
+    [global_options, cmd_name, command_options, argv]
   end
   
-  # option (disabled)
+
+  
+  def usage(msg)
+    get_current_option_parser.banner = msg
+  end
+  
+  # get_current_option_parser
   #
-  def option(short, long='', msg='', default=nil, &b)
-    @command_opts_parser ||= [OptionParser.new]
+  # Grab the options parser for the current command or create it if it doesn't exist.
+  def get_current_option_parser
+    @command_opts_parser ||= []
     @command_index ||= 0
-    @command_options = OpenStruct.new
+    (@command_opts_parser[@command_index] ||= OptionParser.new)
+  end
+  
+  def global_option(*args, &b)
+    @global_opts_parser ||= OptionParser.new
+    args.unshift(@global_opts_parser)
+    option_parser(args, &b)
+  end
+  
+  def option(*args, &b)
+    args.unshift(get_current_option_parser)
+    option_parser(args, &b)
+  end
+  
+  # option_parser
+  #
+  # Processes calls to option and global_option. Symbols are converted into 
+  # OptionParser style strings (:h and :help become '-h' and '--help'). If a 
+  # class is included, it will tell OptionParser to expect a value otherwise
+  # it assumes a boolean value.
+  #
+  # +args+ is passed directly to OptionParser.on so it can contain anything
+  # that's valid to that method. Some examples:
+  # [:h, :help, "Displays this message"]
+  # [:m, :max, Integer, "Maximum threshold"]
+  # ['-l x,y,z', '--lang=x,y,z', Array, "Requested languages"]
+  def option_parser(args, &b)
+    opts_parser = args.shift
     
-    current_opts_parser = @command_opts_parser[@command_index]
-    
-    on_args = []
-    if short.is_a? Symbol
-      short_str = "-#{short.to_s}"
-      short_str += '=S' if (!default)
-      on_args << short_str
+    symbol_switches = []
+    args.each_with_index do |arg, index|
+      if arg.is_a? Symbol
+        args[index] = (arg.to_s.length == 1) ? "-#{arg.to_s}" : "--#{arg.to_s}"
+        symbol_switches << args[index]
+      elsif arg.kind_of?(Class) && !arg != TrueClass
+        symbol_switches.each do |arg|
+          arg << "=S"
+        end
+      end
     end
     
-    if long.is_a? Symbol  
-      long_str = "--#{long.to_s}"
-      long_str += '=S' if (!default)
-      on_args << long_str
-    end
-    
-    on_args << msg if msg
-#    pp on_args
-    current_opts_parser.on(*on_args) do |v|
-      block_args = [v, current_opts_parser]
-      result = (b.nil?) ? v : b.call(block_args[0..(b.arity-1)])
-      @command_options.send("#{long}=", result)
+    opts_parser.on(*args) do |v|
+      block_args = [v, opts_parser]
+      result = (b.nil?) ? v : b.call(*block_args[0..(b.arity-1)])
     end
   end
   
   def command(*cmds, &b)
-    @command_index ||= -1
-    puts "COPMMAND1: #{@command_index}"
-    @command_index += 1
-    puts "COPMMAND2: #{@command_index}"
+    @command_index ||= 0
+    @command_opts_parser ||= []
     cmds.each do |cmd| 
       c = Command.new(cmd, @command_index, &b)
       (@commands ||= {})[cmd] = c
     end
+    
+    @command_index += 1
   end
   
   def alias_command(aliaz, cmd)
@@ -155,35 +160,29 @@ module Frylock
   
   def run!(argv, stdin=nil)
     raise NoCommandsDefined.new unless @commands
-    global_argv, cmd, command_argv = process_arguments(argv)
+    @global_options, cmd_name, @command_options, argv = process_arguments(argv)
     
-    exit
-    cmd ||= @default_command
+    cmd_name ||= @default_command
     
-    # This applies the configuration above to the arguments provided. It
-    # removes the known named options from @global_argv leaving only the
-    # unnamed arguments. It will raise InvalidOption for unknown options. 
-    #@global_opts_parser.parse!(global_argv)
-    
-    raise UnknownCommand.new(cmd) unless command?(cmd)
+    raise UnknownCommand.new(cmd_name) unless command?(cmd_name)
     
     stdin = (defined? @stdin_block) ? @stdin_block.call(stdin, []) : stdin
     @before_block.call if defined? @before_block
     
     
-    call_command(cmd, stdin, @global_options, command_argv)
+    call_command(cmd_name, argv, stdin)
     
     
   rescue OptionParser::InvalidOption => ex
-    raise Frylock::InvalidArgument.new(ex)
+    raise Frylock::InvalidArgument.new(ex.args)
   rescue OptionParser::MissingArgument => ex
-    raise Frylock::MissingArgument.new(ex)
+    raise Frylock::MissingArgument.new(ex.args)
   end
   
   
-  def call_command(cmd, stdin, options, command_argv)
-    return unless command?(cmd)
-    get_command(cmd).call(stdin, options, cmd, command_argv)
+  def call_command(cmd_str, argv, stdin)
+    return unless command?(cmd_str)
+    get_command(cmd_str).call(cmd_str, argv, stdin, @global_options, @command_options)
   end
   
   def get_command(cmd)

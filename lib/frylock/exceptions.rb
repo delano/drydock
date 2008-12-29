@@ -2,10 +2,10 @@ module Frylock
   class UnknownCommand < RuntimeError
     attr_reader :name
     def initialize(name)
-      @name = name
+      @name = name || :unknown
     end
     def message
-      msg = "Frylock: I don't know what that command is. #{$/}"
+      msg = "Frylock: I don't know what that #{@name} command is. #{$/}"
       msg << "Master Shake: I'll tell you what it is, friends... it's shut up and let me eat it."
     end
   end
@@ -16,21 +16,20 @@ module Frylock
     end
   end
   class InvalidArgument < RuntimeError
-    attr_accessor :name
-    def initialize(ex)
+    attr_accessor :args
+    def initialize(args)
       # We grab just the name of the argument
-      @name = ex.message.gsub('invalid option: ', '')
-    end
-  end
-  class MissingArgument < RuntimeError
-    attr_accessor :name
-    def initialize(ex)
-      # We grab just the name of the argument
-      @name = ex.message.gsub('missing argument: ', '')
+      @args = args || []
     end
     def message
-      msg = "Frylock: Shake, how many arguments have you broken this year? #{$/}"
-      msg << "Master Shake: A *lot* more than *you* have! (#{@name})"
+      msg = "Frylock: I don't know what #{@args.join(', ')} is. #{$/}"
+      msg << "Master Shake: I'll tell you what it is, friends... it's shut up and let me eat it."
+    end
+  end
+  class MissingArgument < InvalidArgument
+    def message
+      msg = "Frylock: Shake, how many arguments have you not provided a value for this year? #{$/}"
+      msg << "Master Shake: A *lot* more than *you* have! (#{@args.join(', ')})"
     end
   end
   
