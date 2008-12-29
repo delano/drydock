@@ -1,0 +1,162 @@
+#!/usr/bin/env ruby
+
+FRYLOCK_HOME = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+$: << File.join(FRYLOCK_HOME, 'lib')
+
+require 'rubygems'
+require 'frylock'
+
+
+# This is the default command
+default :welcome
+
+
+# You can execute a block before the requests command is executed
+before do
+  # You can define instance variables here and use them in the commands
+end
+
+
+# A basic command definition 
+# Example: ruby bin/example welcome
+command :welcome do
+  puts "Meatwad: Science is a mystery to man, isn't it Frylock?"
+  puts "Frylock: Yeah. It sure is, Meatwad."
+end
+
+
+# Define options for the following command
+option :f, :found, "A boolean value. Did you find the car?"
+
+# +options+ is a hash containing the options defined above
+# Example: ruby bin/example -f findcar
+command :findcar do |options|
+  
+  puts "Frylock: So, did they ever find your car?"
+  
+  # The keys to the hash are the long string from the option definition.
+  # If only the short string is provided, those will be used instead (i.e. :f). 
+  puts (!options[:found]) ? "Carl: No" : 
+    "Carl: Oh, they found part of it, hangin' from a trestle near the turnpike."
+end
+
+
+# Global options are available to all commands
+global_usage "USAGE: #{File.basename($0)} [global options] command [command options]"
+global_option :V, :version, "Display version" 
+global_option :v, :verbose, "Verbosity level (i.e. -vvv is greater than -v)" do
+global_option :s, :seconds, "Display values in seconds"
+  # Use instance variables to maintain values between option blocks. 
+  # This will increment for every -v found (i.e. -vvv)
+  @val ||= 0
+  @val += 1
+end
+
+# The command block has other objects available to it when requested. 
+# +argv+ contains the unnamed arguments
+# +global_options+ contains hash of the options defined with global_options
+# Example: ruby bin/example --seconds time
+command :time do |options, argv, global_options| 
+  require 'time'
+  now = Time.now
+  puts (global_options[:seconds]) ? now.to_i : now.to_s
+end
+
+
+# Override the global usage banner for this command
+usage "Usage: cat uris.txt | #{$0} processuris [options]"
+
+option :c, :check, "Check response codes for each URI"
+option :d, :delim, String, "Output delimiter"
+option :t, :timeout, Float, "Timeout value for HTTP request" do |v|
+  # You can provide an block to process the option value. 
+  # This block must return the final value. 
+  v = 10 if (v > 10)
+  v
+end
+
+# There are two more object availble to command blocks
+# +stdin+ contains either an IO object or a custom object defined
+# using a stdin block (see below)
+# +cmd+ is the string used to evoke this command. This is useful in
+# conjunction with alias_command (see below).
+# Example: echo "http://github.com/" | bin/example process -c -d '|' -t 15 http://solutious.com/
+command :processuris do |options, argv, global_options, stdin, cmd|
+  require 'net/http'
+  require 'uri'
+  require 'timeout'
+  
+  uris = [stdin, argv].flatten        # Combine the argv and stdin arrays
+  delim = options[:delim] || ','
+  timeout = options[:timeout] || 5
+  code = :notchecked                  # The default code when :check is false
+  
+  if uris.empty?
+    puts "Frylock: You didn't provide any URIs. "
+    puts "Master Shake: Ya, see #{$0} checkuri -h"
+    exit 0
+  end
+  
+  uris.each_with_index do |uri, index|
+    code = response_code(uri, timeout) if (options[:check])
+    puts [index+1, uri, code].join(delim)
+  end
+end
+
+# Create an alias for any command. These are useful for common mis-spellings 
+# or using the same logic with different names. If you forget what the order
+# of values is, the method is self-describing: alias, command. 
+alias_command :process, :processuris
+
+
+# Pre-process STDIN for all commands. This example returns an array of lines. 
+# The command processuris uses this array. 
+stdin do |stdin, output|
+  # We only want piped data. If this is not included  
+  # execution will wait for input from the user.
+  unless stdin.tty?   
+    
+    while !stdin.eof? do
+      line = stdin.readline
+      line.chomp!
+      (output ||= []) << line
+    end
+    
+  end
+  output
+end
+
+
+
+# response_code
+#
+# return the HTTP response code for the given URI
+# +uri+ A valid HTTP URI
+# +duration+ The timeout threshold (in seconds) for the request. 
+def response_code(uri_str, duration=5)
+  response = :unavailable
+  begin 
+    uri = (uri_str.kind_of? URI::HTTP) ? uri_str : URI.parse(uri_str) 
+    timeout(duration) do
+      response = Net::HTTP.get_response(uri).code
+    end 
+  rescue Exception => ex
+  end
+  response
+end
+
+at_exit do 
+  begin
+    Frylock.run!(ARGV, STDIN) 
+  rescue Frylock::UnknownCommand, Frylock::NoCommandsDefined => ex
+    STDERR.puts ex.message
+  rescue Frylock::InvalidArgument, Frylock::MissingArgument => ex
+    STDERR.puts ex.message
+    #STDERR.puts ex.backtrace
+  rescue => ex
+    STDERR.puts "Master Shake: Okay, but when we go in, watch your step. "
+    STDERR.puts "Frylock: Why?"
+    STDERR.puts "Meatwad: [explosion] #{ex.message}"
+    #STDERR.puts ex.backtrace
+  end
+end
