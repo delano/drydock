@@ -10,8 +10,8 @@ default :commands
 
 
 before do
-# You can execute a block before the requests command is executed. You 
-# can use it to define instance variables here and use them in the commands
+# You can execute a block before the requests command is executed. Instance
+# variables defined here will be available to all commands.
 end
 
 
