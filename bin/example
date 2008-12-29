@@ -6,7 +6,7 @@ $: << File.join(FRYLOCK_HOME, 'lib')
 require 'rubygems'
 require 'frylock'
 
-default :commands
+default :welcome
 
 
 before do
@@ -15,7 +15,7 @@ before do
 end
 
 
-command :commands do
+command :welcome do
 # Example: ruby bin/example
 
   puts "Meatwad: Science is a mystery to man, isn't it Frylock?"
