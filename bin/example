@@ -16,7 +16,7 @@ end
 
 
 command :commands do
-# Example: ruby bin/example welcome
+# Example: ruby bin/example
 
   puts "Meatwad: Science is a mystery to man, isn't it Frylock?"
   print "Frylock: At least we have some commands: "
