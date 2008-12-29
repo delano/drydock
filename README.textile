@@ -38,6 +38,10 @@ command :hello do |name|
   puts "Hello #{name}!"
 end</pre></code>
 
+
+For further examples see: bin/example
+
+
 *Contribute:*
 
 I'm very open to patches!  Please fork and send a pull request.

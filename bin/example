@@ -6,31 +6,30 @@ $: << File.join(FRYLOCK_HOME, 'lib')
 require 'rubygems'
 require 'frylock'
 
-
-# This is the default command
-default :welcome
+default :commands
 
 
-# You can execute a block before the requests command is executed
 before do
-  # You can define instance variables here and use them in the commands
+# You can execute a block before the requests command is executed. You 
+# can use it to define instance variables here and use them in the commands
 end
 
 
-# A basic command definition 
+command :commands do
 # Example: ruby bin/example welcome
-command :welcome do
+
   puts "Meatwad: Science is a mystery to man, isn't it Frylock?"
-  puts "Frylock: Yeah. It sure is, Meatwad."
+  print "Frylock: At least we have some commands: "
+  
+  # The commands method returns a hash of Frylock::Command objects
+  puts commands.keys.inject([]) { |list, command| list << command.to_s }.sort.join(', ')
 end
 
 
-# Define options for the following command
 option :f, :found, "A boolean value. Did you find the car?"
-
+command :findcar do |options|
 # +options+ is a hash containing the options defined above
 # Example: ruby bin/example -f findcar
-command :findcar do |options|
   
   puts "Frylock: So, did they ever find your car?"
   
@@ -41,30 +40,28 @@ command :findcar do |options|
 end
 
 
-# Global options are available to all commands
+
 global_usage "USAGE: #{File.basename($0)} [global options] command [command options]"
-global_option :V, :version, "Display version" 
-global_option :v, :verbose, "Verbosity level (i.e. -vvv is greater than -v)" do
 global_option :s, :seconds, "Display values in seconds"
-  # Use instance variables to maintain values between option blocks. 
-  # This will increment for every -v found (i.e. -vvv)
+global_option :v, :verbose, "Verbosity level (i.e. -vvv is greater than -v)" do |v|
+# Use instance variables to maintain values between option blocks. 
+# This will increment for every -v found (i.e. -vvv)
   @val ||= 0
   @val += 1
 end
 
-# The command block has other objects available to it when requested. 
+
+usage "ruby bin/example [--seconds] [-vv] time"
+command :date do |options, argv, global_options| 
 # +argv+ contains the unnamed arguments
 # +global_options+ contains hash of the options defined with global_options
-# Example: ruby bin/example --seconds time
-command :time do |options, argv, global_options| 
+  
   require 'time'
   now = Time.now
+  puts "More verbosely, the date is now: " if (global_options[:verbose] || 0) >= 2
   puts (global_options[:seconds]) ? now.to_i : now.to_s
 end
 
-
-# Override the global usage banner for this command
-usage "Usage: cat uris.txt | #{$0} processuris [options]"
 
 option :c, :check, "Check response codes for each URI"
 option :d, :delim, String, "Output delimiter"
@@ -75,13 +72,11 @@ option :t, :timeout, Float, "Timeout value for HTTP request" do |v|
   v
 end
 
-# There are two more object availble to command blocks
-# +stdin+ contains either an IO object or a custom object defined
-# using a stdin block (see below)
-# +cmd+ is the string used to evoke this command. This is useful in
-# conjunction with alias_command (see below).
-# Example: echo "http://github.com/" | bin/example process -c -d '|' -t 15 http://solutious.com/
+usage 'echo "http://github.com/" | ruby bin/example process -c -d " " -t 15 http://solutious.com/'
 command :processuris do |options, argv, global_options, stdin, cmd|
+# +stdin+ is either an IO object or a custom object defined with a stdin block (see below)
+# +cmd+ is the string used to evoke this command. Useful with alias_command (see below).
+
   require 'net/http'
   require 'uri'
   require 'timeout'
@@ -93,7 +88,7 @@ command :processuris do |options, argv, global_options, stdin, cmd|
   
   if uris.empty?
     puts "Frylock: You didn't provide any URIs. "
-    puts "Master Shake: Ya, see #{$0} checkuri -h"
+    puts "Master Shake: Ya, see #{$0} #{cmd} -h"
     exit 0
   end
   
@@ -102,16 +97,15 @@ command :processuris do |options, argv, global_options, stdin, cmd|
     puts [index+1, uri, code].join(delim)
   end
 end
-
-# Create an alias for any command. These are useful for common mis-spellings 
-# or using the same logic with different names. If you forget what the order
-# of values is, the method is self-describing: alias, command. 
 alias_command :process, :processuris
 
 
-# Pre-process STDIN for all commands. This example returns an array of lines. 
-# The command processuris uses this array. 
+
+
 stdin do |stdin, output|
+# Pre-process STDIN for all commands. This example returns an array of lines. 
+# The command processuris uses this array.
+  
   # We only want piped data. If this is not included  
   # execution will wait for input from the user.
   unless stdin.tty?   
@@ -145,18 +139,32 @@ def response_code(uri_str, duration=5)
   response
 end
 
-at_exit do 
-  begin
+
+at_exit do
+# This is an example of how to call Frylock in your script. 
+  begin    
     Frylock.run!(ARGV, STDIN) 
-  rescue Frylock::UnknownCommand, Frylock::NoCommandsDefined => ex
-    STDERR.puts ex.message
-  rescue Frylock::InvalidArgument, Frylock::MissingArgument => ex
-    STDERR.puts ex.message
-    #STDERR.puts ex.backtrace
+    
+  rescue Frylock::UnknownCommand => ex
+    STDERR.puts "Frylock: I don't know what the #{ex.name} command is. #{$/}"
+    STDERR.puts "Master Shake: I'll tell you what it is, friends... it's shut up and let me eat it."
+    
+  rescue Frylock::NoCommandsDefined => ex
+    STDERR.puts "Frylock: Carl, I don't want it. And I'd appreciate it if you'd define at least one command. #{$/}"
+    STDERR.puts "Carl: Fryman, don't be that way! This sorta thing happens every day! People just don't... you know, talk about it this loud."
+  
+  rescue Frylock::InvalidArgument => ex
+    STDERR.puts "Frylock: Shake, how many arguments have you not provided a value for this year? #{$/}"
+    STDERR.puts "Master Shake: A *lot* more than *you* have! (#{@args.join(', ')})"
+  
+  rescue Frylock::MissingArgument => ex
+    STDERR.puts "Frylock: I don't know what #{ex.args.join(', ')} is. #{$/}"
+    STDERR.puts "Master Shake: I'll tell you what it is, friends... it's shut up and let me eat it."
+  
   rescue => ex
     STDERR.puts "Master Shake: Okay, but when we go in, watch your step. "
     STDERR.puts "Frylock: Why?"
     STDERR.puts "Meatwad: [explosion] #{ex.message}"
-    #STDERR.puts ex.backtrace
+    STDERR.puts ex.backtrace
   end
 end

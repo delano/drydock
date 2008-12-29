@@ -14,7 +14,7 @@ module Frylock
     end
     
     def call(cmd_str, argv, stdin, global_options, options)
-      block_args = [options, argv, global_options, stdin, cmd_str]
+      block_args = [options, argv, global_options, stdin, cmd_str, self]
       @b.call(*block_args[0..(@b.arity-1)])
     end
     def to_s
@@ -26,7 +26,7 @@ end
 module Frylock
   extend self
   
-  FORWARDED_METHODS = %w(command before alias_command global_option global_usage usage option stdin default).freeze
+  FORWARDED_METHODS = %w(command before alias_command global_option global_usage usage option stdin default commands).freeze
   
   def default(cmd)
     @default_command = canonize(cmd)
@@ -121,7 +121,8 @@ module Frylock
   # [:h, :help, "Displays this message"]
   # [:m, :max, Integer, "Maximum threshold"]
   # ['-l x,y,z', '--lang=x,y,z', Array, "Requested languages"]
-  def option_parser(args, &b)
+  def option_parser(args=[], &b)
+    return if args.empty?
     opts_parser = args.shift
     
     symbol_switches = []
@@ -129,16 +130,20 @@ module Frylock
       if arg.is_a? Symbol
         args[index] = (arg.to_s.length == 1) ? "-#{arg.to_s}" : "--#{arg.to_s}"
         symbol_switches << args[index]
-      elsif arg.kind_of?(Class) && !arg != TrueClass
+      elsif arg.kind_of?(Class)
         symbol_switches.each do |arg|
           arg << "=S"
         end
       end
     end
     
-    opts_parser.on(*args) do |v|
-      block_args = [v, opts_parser]
-      result = (b.nil?) ? v : b.call(*block_args[0..(b.arity-1)])
+    if args.size == 1
+      opts_parser.on(args.shift)
+    else
+      opts_parser.on(*args) do |v|
+        block_args = [v, opts_parser]
+        result = (b.nil?) ? v : b.call(*block_args[0..(b.arity-1)])
+      end
     end
   end
   
@@ -180,7 +185,7 @@ module Frylock
   end
   
   
-  def call_command(cmd_str, argv, stdin)
+  def call_command(cmd_str, argv=[], stdin=nil)
     return unless command?(cmd_str)
     get_command(cmd_str).call(cmd_str, argv, stdin, @global_options, @command_options)
   end
@@ -189,7 +194,10 @@ module Frylock
     return unless command?(cmd)
     @commands[canonize(cmd)]
   end 
-
+  
+  def commands
+    @commands
+  end
   
   def run
     @run || true
