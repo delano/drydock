@@ -2,71 +2,64 @@ h1. Frylock - Easy Command line apps
 
 Inspired by "github-gem":http://github.com/defunkt/github-gem
 
-*Install:*
+Forked from "bmizerany-frylock":http://github.com/bmizerany/frylock/tree
 
-gem install bmizerany-sinatra
+h3. Overview
 
-*Example:*
+Ruby + CLI + DSL = Command line apps made easy! 
 
-Let's say we want to run our app like this:
+This fork adds several features:
 
-<pre><code>ruby script.rb hello</pre></code>
+* Complex argument handling
+* STDIN processing
+* Command aliases
+* before and after blocks
 
-Then we write this:
 
-<pre><code>require 'rubygems'
-require 'bmizerany-frylock'
+h3. Install
 
-command :hello do
-  puts "Hello!"
-end</pre></code>
+git clone git://github.com/delano/frylock.git
 
-If we want and optional name:
 
-<pre><code>ruby script.rb hello Blake</pre></code>
+h3. Examples
 
-Add a command with proc that has an arity of 1 and it will be matched instead of the first command
+See bin/example for more. 
 
-<pre><code>require 'rubygems'
-require 'bmizerany-frylock'
+<pre><code>
+require 'rubygems'
+require 'frylock'
 
-command :hello do
-  puts "Hello!"
+default :welcome
+
+before do
+# You can execute a block before the requests command is executed. Instance
+# variables defined here will be available to all commands.
 end
 
-command :hello do |name|
-  puts "Hello #{name}!"
-end</pre></code>
+command :welcome do
+# Example: ruby bin/example
 
+  puts "Meatwad: Science is a mystery to man, isn't it Frylock?"
+  print "Frylock: At least we have some commands: "
+  
+  # The commands method returns a hash of Frylock::Command objects
+  puts commands.keys.inject([]) { |list, command| list << command.to_s }.sort.join(', ')
+end
 
-For further examples see: bin/example
+option :f, :found, "A boolean value. Did you find the car?"
+command :findcar do |options|
+# +options+ is a hash containing the options defined above
+# Example: ruby bin/example -f findcar
+  
+  puts "Frylock: So, did they ever find your car?"
+  
+  # The keys to the hash are the long string from the option definition.
+  # If only the short string is provided, those will be used instead (i.e. :f). 
+  puts (!options[:found]) ? "Carl: No" : 
+    "Carl: Oh, they found part of it, hangin' from a trestle near the turnpike."
+end
+</code></pre>
 
+h3. License
 
-*Contribute:*
-
-I'm very open to patches!  Please fork and send a pull request.
-
-*LICENSE*
-
-Copyright (c) 2008 Blake Mizerany
-
-Permission is hereby granted, free of charge, to any person
-obtaining a copy of this software and associated documentation
-files (the "Software"), to deal in the Software without
-restriction, including without limitation the rights to use,
-copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following
-conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE.
+See LICENSE.txt
