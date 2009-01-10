@@ -2,9 +2,9 @@ require 'optparse'
 require 'ostruct'
 require 'pp'
 
-require 'frylock/exceptions'
+require 'drydock/exceptions'
 
-module Frylock
+module Drydock
   class Command
     attr_reader :cmd, :index
     def initialize(cmd, index, &b)
@@ -23,7 +23,7 @@ module Frylock
   end
 end
 
-module Frylock
+module Drydock
   extend self
   
   FORWARDED_METHODS = %w(command before alias_command global_option global_usage usage option stdin default commands).freeze
@@ -179,9 +179,9 @@ module Frylock
     
     
   rescue OptionParser::InvalidOption => ex
-    raise Frylock::InvalidArgument.new(ex.args)
+    raise Drydock::InvalidArgument.new(ex.args)
   rescue OptionParser::MissingArgument => ex
-    raise Frylock::MissingArgument.new(ex.args)
+    raise Drydock::MissingArgument.new(ex.args)
   end
   
   
@@ -219,10 +219,10 @@ module Frylock
   
 end
 
-Frylock::FORWARDED_METHODS.each do |m|
-  eval(<<-end_eval, binding, "(Frylock)", __LINE__)
+Drydock::FORWARDED_METHODS.each do |m|
+  eval(<<-end_eval, binding, "(Drydock)", __LINE__)
     def #{m}(*args, &b)
-      Frylock.#{m}(*args, &b)
+      Drydock.#{m}(*args, &b)
     end
   end_eval
 end

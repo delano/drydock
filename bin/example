@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 
-FRYLOCK_HOME = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-$: << File.join(FRYLOCK_HOME, 'lib')
+DRYDOCK_HOME = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+$: << File.join(DRYDOCK_HOME, 'lib')
 
 require 'rubygems'
-require 'frylock'
+require 'drydock'
 
 default :welcome
 
@@ -21,7 +21,7 @@ command :welcome do
   puts "Meatwad: Science is a mystery to man, isn't it Frylock?"
   print "Frylock: At least we have some commands: "
   
-  # The commands method returns a hash of Frylock::Command objects
+  # The commands method returns a hash of Drydock::Command objects
   puts commands.keys.inject([]) { |list, command| list << command.to_s }.sort.join(', ')
 end
 
@@ -143,21 +143,21 @@ end
 at_exit do
 # This is an example of how to call Frylock in your script. 
   begin    
-    Frylock.run!(ARGV, STDIN) 
+    Drydock.run!(ARGV, STDIN) 
     
-  rescue Frylock::UnknownCommand => ex
+  rescue Drydock::UnknownCommand => ex
     STDERR.puts "Frylock: I don't know what the #{ex.name} command is. #{$/}"
     STDERR.puts "Master Shake: I'll tell you what it is, friends... it's shut up and let me eat it."
     
-  rescue Frylock::NoCommandsDefined => ex
+  rescue Drydock::NoCommandsDefined => ex
     STDERR.puts "Frylock: Carl, I don't want it. And I'd appreciate it if you'd define at least one command. #{$/}"
     STDERR.puts "Carl: Fryman, don't be that way! This sorta thing happens every day! People just don't... you know, talk about it this loud."
   
-  rescue Frylock::InvalidArgument => ex
+  rescue Drydock::InvalidArgument => ex
     STDERR.puts "Frylock: Shake, how many arguments have you not provided a value for this year? #{$/}"
     STDERR.puts "Master Shake: A *lot* more than *you* have! (#{@args.join(', ')})"
   
-  rescue Frylock::MissingArgument => ex
+  rescue Drydock::MissingArgument => ex
     STDERR.puts "Frylock: I don't know what #{ex.args.join(', ')} is. #{$/}"
     STDERR.puts "Master Shake: I'll tell you what it is, friends... it's shut up and let me eat it."
   

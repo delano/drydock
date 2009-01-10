@@ -1,24 +1,16 @@
-h1. Frylock - Easy Command line apps
+h1. Drydock - Easy Command line apps
 
 Inspired by "github-gem":http://github.com/defunkt/github-gem
 
-Forked from "bmizerany-frylock":http://github.com/bmizerany/frylock/tree
+Inspired by "bmizerany-frylock":http://github.com/bmizerany/frylock/tree
 
 h3. Overview
 
-Ruby + CLI + DSL = Command line apps made easy! 
-
-This fork adds several features:
-
-* Complex argument handling
-* STDIN processing
-* Command aliases
-* before and after blocks
-
+Drydock is a DSL for command line apps.
 
 h3. Install
 
-git clone git://github.com/delano/frylock.git
+git clone git://github.com/delano/drydock.git
 
 
 h3. Examples
@@ -27,7 +19,7 @@ See bin/example for more.
 
 <pre><code>
 require 'rubygems'
-require 'frylock'
+require 'drydock'
 
 default :welcome
 

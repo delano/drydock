@@ -1,4 +1,4 @@
-module Frylock
+module Drylock
   
   class UnknownCommand < RuntimeError
     attr_reader :name
