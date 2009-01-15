@@ -1,19 +1,19 @@
-h1. Drydock - Easy Command line apps
+= Drydock - Easy Command line apps
 
 Inspired by "github-gem":http://github.com/defunkt/github-gem
 
 Inspired by "bmizerany-frylock":http://github.com/bmizerany/frylock/tree
 
-h3. Overview
+== Overview
 
 Drydock is a DSL for command line apps.
 
-h3. Install
+== Install
 
 git clone git://github.com/delano/drydock.git
 
 
-h3. Examples
+== Examples
 
 See bin/example for more. 
 
@@ -52,6 +52,6 @@ command :findcar do |options|
 end
 </code></pre>
 
-h3. License
+== License
 
 See LICENSE.txt
