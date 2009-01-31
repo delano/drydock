@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
-DRYDOCK_HOME = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-$: << File.join(DRYDOCK_HOME, 'lib')
+
+$: << File.join(File.expand_path(File.join(File.dirname(__FILE__), '..')), 'lib')
 
 require 'drydock'
 
@@ -138,32 +138,3 @@ def response_code(uri_str, duration=5)
   response
 end
 
-
-at_exit do
-# This is an example of how to call Frylock in your script. 
-  begin    
-    Drydock.run!(ARGV, STDIN) 
-    
-  rescue Drydock::UnknownCommand => ex
-    STDERR.puts "Frylock: I don't know what the #{ex.name} command is. #{$/}"
-    STDERR.puts "Master Shake: I'll tell you what it is, friends... it's shut up and let me eat it."
-    
-  rescue Drydock::NoCommandsDefined => ex
-    STDERR.puts "Frylock: Carl, I don't want it. And I'd appreciate it if you'd define at least one command. #{$/}"
-    STDERR.puts "Carl: Fryman, don't be that way! This sorta thing happens every day! People just don't... you know, talk about it this loud."
-  
-  rescue Drydock::InvalidArgument => ex
-    STDERR.puts "Frylock: Shake, how many arguments have you not provided a value for this year? #{$/}"
-    STDERR.puts "Master Shake: A *lot* more than *you* have! (#{@args.join(', ')})"
-  
-  rescue Drydock::MissingArgument => ex
-    STDERR.puts "Frylock: I don't know what #{ex.args.join(', ')} is. #{$/}"
-    STDERR.puts "Master Shake: I'll tell you what it is, friends... it's shut up and let me eat it."
-  
-  rescue => ex
-    STDERR.puts "Master Shake: Okay, but when we go in, watch your step. "
-    STDERR.puts "Frylock: Why?"
-    STDERR.puts "Meatwad: [explosion] #{ex.message}"
-    STDERR.puts ex.backtrace
-  end
-end

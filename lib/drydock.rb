@@ -42,11 +42,13 @@ module Drydock
   end
 end
 
+# Drydock is a DSL for command-line apps. 
+# See bin/example for usage examples. 
 module Drydock
   extend self
   
   FORWARDED_METHODS = %w(command before alias_command global_option global_usage usage option stdin default commands).freeze
-  
+ 
   def default(cmd)
     @default_command = canonize(cmd)
   end
@@ -58,7 +60,7 @@ module Drydock
     @before_block = b
   end
   
-  # global_usage
+  
   # ex: usage "Usage: frylla [global options] command [command options]"
   def global_usage(msg)
     @global_opts_parser ||= OptionParser.new 
@@ -69,8 +71,6 @@ module Drydock
   
 
   
-  # process_arguments
-  #
   # Split the +argv+ array into global args and command args and 
   # find the command name. 
   # i.e. ./script -H push -f (-H is a global arg, push is the command, -f is a command arg)
@@ -108,8 +108,7 @@ module Drydock
     get_current_option_parser.banner = msg
   end
   
-  # get_current_option_parser
-  #
+
   # Grab the options parser for the current command or create it if it doesn't exist.
   def get_current_option_parser
     @command_opts_parser ||= []
@@ -128,8 +127,6 @@ module Drydock
     option_parser(args, &b)
   end
   
-  # option_parser
-  #
   # Processes calls to option and global_option. Symbols are converted into 
   # OptionParser style strings (:h and :help become '-h' and '--help'). If a 
   # class is included, it will tell OptionParser to expect a value otherwise
@@ -182,7 +179,17 @@ module Drydock
     @commands[aliaz] = @commands[cmd]
   end
   
+  def run?
+    @@has_run ||= false
+  end
+  
+  # Execute the given command.
+  # By default, Drydock automatically executes itself and provides handlers for known errors.
+  # You can override this functionality by calling +Drydock.run!+ yourself. Drydock
+  # will only call +run!+ once. 
   def run!(argv, stdin=nil)
+    return if run?
+    @@has_run = true
     raise NoCommandsDefined.new unless @commands
     @global_options, cmd_name, @command_options, argv = process_arguments(argv)
     
@@ -193,9 +200,7 @@ module Drydock
     stdin = (defined? @stdin_block) ? @stdin_block.call(stdin, []) : stdin
     @before_block.call if defined? @before_block
     
-    
     call_command(cmd_name, argv, stdin)
-    
     
   rescue OptionParser::InvalidOption => ex
     raise Drydock::InvalidArgument.new(ex.args)
@@ -216,14 +221,6 @@ module Drydock
   
   def commands
     @commands
-  end
-  
-  def run
-    @run || true
-  end
-  
-  def run=(v)
-    @run = v
   end
   
   def command?(cmd)
@@ -248,5 +245,32 @@ Drydock::FORWARDED_METHODS.each do |m|
 end
 
 
+at_exit {
+  begin
+    Drydock.run!(ARGV, STDIN)
+  
+  rescue Drydock::UnknownCommand => ex
+    STDERR.puts "Frylock: I don't know what the #{ex.name} command is. #{$/}"
+    STDERR.puts "Master Shake: I'll tell you what it is, friends... it's shut up and let me eat it."
+  
+  rescue Drydock::NoCommandsDefined => ex
+    STDERR.puts "Frylock: Carl, I don't want it. And I'd appreciate it if you'd define at least one command. #{$/}"
+    STDERR.puts "Carl: Fryman, don't be that way! This sorta thing happens every day! People just don't... you know, talk about it this loud."
+
+  rescue Drydock::InvalidArgument => ex
+    STDERR.puts "Frylock: Shake, how many arguments have you not provided a value for this year? #{$/}"
+    STDERR.puts "Master Shake: A *lot* more than *you* have! (#{ex.args.join(', ')})"
+
+  rescue Drydock::MissingArgument => ex
+    STDERR.puts "Frylock: I don't know what #{ex.args.join(', ')} is. #{$/}"
+    STDERR.puts "Master Shake: I'll tell you what it is, friends... it's shut up and let me eat it."
+
+  rescue => ex
+    STDERR.puts "Master Shake: Okay, but when we go in, watch your step. "
+    STDERR.puts "Frylock: Why?"
+    STDERR.puts "Meatwad: [explosion] #{ex.message}"
+    STDERR.puts ex.backtrace
+  end
+}
 
   
