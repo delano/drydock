@@ -2,7 +2,6 @@ require 'optparse'
 require 'ostruct'
 require 'pp'
 
-require 'drydock/exceptions'
 
 module Drydock
   class Command
