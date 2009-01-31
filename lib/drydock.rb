@@ -23,6 +23,26 @@ module Drydock
 end
 
 module Drydock
+  class UnknownCommand < RuntimeError
+    attr_reader :name
+    def initialize(name)
+      @name = name || :unknown
+    end
+  end
+  class NoCommandsDefined < RuntimeError
+  end
+  class InvalidArgument < RuntimeError
+    attr_accessor :args
+    def initialize(args)
+      # We grab just the name of the argument
+      @args = args || []
+    end
+  end
+  class MissingArgument < InvalidArgument
+  end
+end
+
+module Drydock
   extend self
   
   FORWARDED_METHODS = %w(command before alias_command global_option global_usage usage option stdin default commands).freeze
@@ -214,31 +234,6 @@ module Drydock
     return unless cmd
     return cmd if cmd.kind_of?(Symbol)
     cmd.tr('-', '_').to_sym
-  end
-  
-end
-
-module Drylock
-  
-  class UnknownCommand < RuntimeError
-    attr_reader :name
-    def initialize(name)
-      @name = name || :unknown
-    end
-  end
-  
-  class NoCommandsDefined < RuntimeError
-  end
-  
-  class InvalidArgument < RuntimeError
-    attr_accessor :args
-    def initialize(args)
-      # We grab just the name of the argument
-      @args = args || []
-    end
-  end
-  
-  class MissingArgument < InvalidArgument
   end
   
 end
