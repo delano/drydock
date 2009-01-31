@@ -6,17 +6,18 @@ Inspired by "bmizerany-frylock":http://github.com/bmizerany/frylock/tree
 
 == Overview
 
-Drydock is a DSL for command line apps.
+Drydock is a DSL for command line apps. It is contained in a single .rb which can be copied directly into your project. 
 
 == Install
 
-git clone git://github.com/delano/drydock.git
+One of:
 
+* git clone git://github.com/delano/drydock.git
+* copy `lib/drydock.rb` into your lib directory. 
 
 == Examples
 
 See bin/example for more. 
-
 
 	require 'rubygems'
 	require 'drydock'

@@ -12,7 +12,6 @@ Gem::Specification.new do |s|
     LICENSE.txt
     README.rdoc
     bin/example
-    lib/drydock/exceptions.rb
     lib/drydock.rb
   )
   s.has_rdoc = true
