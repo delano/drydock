@@ -3,6 +3,8 @@ require 'ostruct'
 require 'pp'
 
 
+#
+#
 module Drydock
   # The base class for all command objects. There is an instance of this class
   # for every command defined. Global and command-specific options are added
@@ -65,8 +67,26 @@ end
 module Drydock
   extend self
   
-  FORWARDED_METHODS = %w(command before alias_command global_option global_usage usage option stdin default commands).freeze
- 
+  FORWARDED_METHODS = %w(command before alias_command commands
+                         global_option global_usage usage debug
+                         option stdin default ignore).freeze
+  
+  @@debug = false
+  def debug(toggle=false)
+    if toggle.is_a? Symbol
+      @@debug = true if toggle == :on
+      @@debug = false if toggle == :off
+    else  
+      puts "HIHI1: #{@@debug}"
+      @@debug = (!@@debug)
+        puts "HIHI2: #{@@debug}"
+    end
+  end
+  def debug?
+    @@debug
+  end
+  
+  
   def default(cmd)
     @default_command = canonize(cmd)
   end
@@ -78,14 +98,12 @@ module Drydock
     @before_block = b
   end
   
-  
   def global_usage(msg)
     @global_opts_parser ||= OptionParser.new 
     @global_options ||= OpenStruct.new
-    @global_opts_parser.banner = msg
+    @global_opts_parser.banner = "USAGE: #{msg}"
   end
 
-  
   # Split the +argv+ array into global args and command args and 
   # find the command name. 
   # i.e. ./script -H push -f (-H is a global arg, push is the command, -f is a command arg)
@@ -95,19 +113,25 @@ module Drydock
     cmd = nil     
     
     global_parser = @global_opts_parser
-    
     global_options = global_parser.getopts(argv)
-    
-      
+          
     cmd_name = (argv.empty?) ? @default_command : argv.shift
     raise UnknownCommand.new(cmd_name) unless command?(cmd_name)
     
     cmd = get_command(cmd_name) 
-    
       
     command_parser = @command_opts_parser[cmd.index]
-    command_options = command_parser.getopts(argv) if (!argv.empty? && command_parser)
+    command_options = {}
     
+    # We only need to parse the options out of the arguments when
+    # there are args available, there is a valid parser, and 
+    # we weren't requested to ignore the options. 
+    if !argv.empty? && command_parser && command_parser != :ignore
+      command_options = command_parser.getopts(argv)
+    end
+    
+    # Add accessors to the Drydock::Command object 
+    # for the global and command specific options
     [global_option_names, (command_option_names[cmd.index] || [])].flatten.each do |n|
       unless cmd.respond_to?(n)
         cmd.class.send(:define_method, n) do
@@ -124,12 +148,11 @@ module Drydock
     [global_options, cmd_name, command_options, argv]
   end
   
-
-  
   def usage(msg)
-    get_current_option_parser.banner = msg
+    get_current_option_parser.banner = "USAGE: #{msg}"
   end
   
+
   def global_option_names
     @global_option_names ||= []
   end
@@ -139,6 +162,10 @@ module Drydock
     @command_opts_parser ||= []
     @command_index ||= 0
     (@command_opts_parser[@command_index] ||= OptionParser.new)
+  end
+  
+  def ignore(what=:all)
+    @command_opts_parser[@command_index] = :ignore if what == :options || what == :all
   end
   
   # Grab the current list of command-specific option names. This is a list of the
@@ -191,8 +218,6 @@ module Drydock
         end
       end
     end
-    
-    #puts "LONG: #{arg_name}"
     
     if args.size == 1
       opts_parser.on(args.shift)
@@ -322,7 +347,7 @@ at_exit {
     STDERR.puts "Master Shake: Okay, but when we go in, watch your step. "
     STDERR.puts "Frylock: Why?"
     STDERR.puts "Meatwad: [explosion] #{ex.message}"
-    STDERR.puts ex.backtrace
+    STDERR.puts ex.backtrace if Drydock.debug?
   end
 }
 
