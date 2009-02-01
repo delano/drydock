@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
-
-$: << File.join(File.expand_path(File.join(File.dirname(__FILE__), '..')), 'lib')
+$:.unshift File.expand_path(File.join(File.dirname(__FILE__), '..')), 'lib'
 
 require 'drydock'
 
@@ -26,15 +25,15 @@ end
 
 
 option :f, :found, "A boolean value. Did you find the car?"
-command :findcar do |options|
-# +options+ is a hash containing the options defined above
+command :findcar do |obj|
+# +obj+ is the Drylock::Command object instance. It contains accessors for all options.
 # Example: ruby bin/example -f findcar
   
   puts "Frylock: So, did they ever find your car?"
   
   # The keys to the hash are the long string from the option definition.
   # If only the short string is provided, those will be used instead (i.e. :f). 
-  puts (!options[:found]) ? "Carl: No" : 
+  puts (!obj.found) ? "Carl: No" : 
     "Carl: Oh, they found part of it, hangin' from a trestle near the turnpike."
 end
 
@@ -50,15 +49,14 @@ global_option :v, :verbose, "Verbosity level (i.e. -vvv is greater than -v)" do 
 end
 
 
-usage "ruby bin/example [--seconds] [-vv] time"
-command :date do |options, argv, global_options| 
-# +argv+ contains the unnamed arguments
-# +global_options+ contains hash of the options defined with global_options
+usage "#{$0} [--seconds] [-vv] date"
+command :date do |obj, argv| 
+# +argv+ is an array containing the unnamed arguments
   
   require 'time'
   now = Time.now
-  puts "More verbosely, the date is now: " if (global_options[:verbose] || 0) >= 2
-  puts (global_options[:seconds]) ? now.to_i : now.to_s
+  puts "More verbosely, the date is now: " if (obj.verbose || 0) >= 2
+  puts (obj.seconds) ? now.to_i : now.to_s
 end
 
 
@@ -72,17 +70,17 @@ option :t, :timeout, Float, "Timeout value for HTTP request" do |v|
 end
 
 usage 'echo "http://github.com/" | ruby bin/example process -c -d " " -t 15 http://solutious.com/'
-command :processuris do |options, argv, global_options, stdin, cmd|
-# +stdin+ is either an IO object or a custom object defined with a stdin block (see below)
+command :processuris do |obj, argv, cmd, stdin|
 # +cmd+ is the string used to evoke this command. Useful with alias_command (see below).
+# +stdin+ is either an IO object or a custom object defined with a stdin block (see below)
 
   require 'net/http'
   require 'uri'
   require 'timeout'
   
   uris = [stdin, argv].flatten        # Combine the argv and stdin arrays
-  delim = options[:delim] || ','
-  timeout = options[:timeout] || 5
+  delim = obj.delim || ','
+  timeout = obj.timeout || 5
   code = :notchecked                  # The default code when :check is false
   
   if uris.empty?
@@ -92,7 +90,7 @@ command :processuris do |options, argv, global_options, stdin, cmd|
   end
   
   uris.each_with_index do |uri, index|
-    code = response_code(uri, timeout) if (options[:check])
+    code = response_code(uri, timeout) if (obj.check)
     puts [index+1, uri, code].join(delim)
   end
 end
