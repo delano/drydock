@@ -48,17 +48,28 @@ module Drydock
     def initialize(name)
       @name = name || :unknown
     end
+    def message
+      "Unknown command: #{@name}"
+    end
   end
   class NoCommandsDefined < RuntimeError
+    def message
+      "No commands defined"
+    end
   end
   class InvalidArgument < RuntimeError
     attr_accessor :args
     def initialize(args)
-      # We grab just the name of the argument
       @args = args || []
+    end
+    def message
+      "Unknown option: #{@args.join(", ")}"
     end
   end
   class MissingArgument < InvalidArgument
+    def message
+      "Option requires a value: #{@args.join(", ")}"
+    end
   end
 end
 
@@ -228,7 +239,7 @@ module Drydock
       end
     end
     
-    return arg_name
+    arg_name
   end
   
   def command(*cmds, &b)
@@ -326,27 +337,8 @@ end
 at_exit {
   begin
     Drydock.run!(ARGV, STDIN)
-  
-  rescue Drydock::UnknownCommand => ex
-    STDERR.puts "Frylock: I don't know what the #{ex.name} command is. #{$/}"
-    STDERR.puts "Master Shake: I'll tell you what it is, friends... it's shut up and let me eat it."
-  
-  rescue Drydock::NoCommandsDefined => ex
-    STDERR.puts "Frylock: Carl, I don't want it. And I'd appreciate it if you'd define at least one command. #{$/}"
-    STDERR.puts "Carl: Fryman, don't be that way! This sorta thing happens every day! People just don't... you know, talk about it this loud."
-
-  rescue Drydock::InvalidArgument => ex
-    STDERR.puts "Frylock: Shake, how many arguments have you not provided a value for this year? #{$/}"
-    STDERR.puts "Master Shake: A *lot* more than *you* have! (#{ex.args.join(', ')})"
-
-  rescue Drydock::MissingArgument => ex
-    STDERR.puts "Frylock: I don't know what #{ex.args.join(', ')} is. #{$/}"
-    STDERR.puts "Master Shake: I'll tell you what it is, friends... it's shut up and let me eat it."
-
   rescue => ex
-    STDERR.puts "Master Shake: Okay, but when we go in, watch your step. "
-    STDERR.puts "Frylock: Why?"
-    STDERR.puts "Meatwad: [explosion] #{ex.message}"
+    STDERR.puts "ERROR: #{ex.message}"
     STDERR.puts ex.backtrace if Drydock.debug?
   end
 }
