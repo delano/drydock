@@ -8,11 +8,13 @@ Drydock is a DSL for command line apps. It is contained in a single .rb which ca
 
 == Install
 
-One of:
+
+* gem install drydock
+* copy `lib/drydock.rb` into your lib directory. 
+
+Or for GitHub fans:
 
 * git clone git://github.com/delano/drydock.git
-* copy `lib/drydock.rb` into your lib directory. 
-* gem install drydock
 * gem install delano-drydock
 
 == Examples
