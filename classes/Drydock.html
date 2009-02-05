@@ -1,0 +1,535 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+  <head>
+    <title>Module: Drydock [Drydock, A seaworthy DSL for command-line apps.]</title>
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <link href='.././rdoc-style.css' media='screen' rel='stylesheet' type='text/css'>
+    <script type='text/javascript'>
+      //<![CDATA[
+        function popupCode(url) {
+          window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+        }
+        
+        function toggleCode(id) {
+          var code = document.getElementById(id)
+        
+          code.style.display = code.style.display != 'block' ? 'block' : 'none'
+          return true
+        }
+        
+        // Make codeblocks hidden by default
+        document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+      //]]>
+    </script>
+  </head>
+  <body class='page'>
+    <div class='class' id='wrapper'>
+      <div class='header'>
+        <h1 class='name'>
+          <span class='type'>Module</span>
+          Drydock
+        </h1>
+        <ol class='paths'>
+          <li>
+            <a href="../files/lib/drydock_rb.html">lib/drydock.rb</a>
+          </li>
+        </ol>
+      </div>
+      <div id='content'>
+        <div id='text'>
+          <div id='description'>
+            <hr size="1"></hr><p>
+            <a href="Drydock.html">Drydock</a> is a DSL for command-line apps. See <a
+            href="../files/bin/example.html">bin/example</a> for usage examples.
+            </p>
+          </div>
+          <div id='method-list'>
+            <h2>Methods</h2>
+            <h3>public instance</h3>
+            <ol>
+              <li><a href="#M000007">after</a></li>
+              <li><a href="#M000015">alias_command</a></li>
+              <li><a href="#M000006">before</a></li>
+              <li><a href="#M000014">command</a></li>
+              <li><a href="#M000016">command_alias</a></li>
+              <li><a href="#M000017">commands</a></li>
+              <li><a href="#M000002">debug</a></li>
+              <li><a href="#M000003">debug?</a></li>
+              <li><a href="#M000004">default</a></li>
+              <li><a href="#M000010">get_current_option_parser</a></li>
+              <li><a href="#M000012">global_option</a></li>
+              <li><a href="#M000008">global_usage</a></li>
+              <li><a href="#M000020">has_run?</a></li>
+              <li><a href="#M000011">ignore</a></li>
+              <li><a href="#M000013">option</a></li>
+              <li><a href="#M000021">run!</a></li>
+              <li><a href="#M000019">run=</a></li>
+              <li><a href="#M000018">run?</a></li>
+              <li><a href="#M000005">stdin</a></li>
+              <li><a href="#M000009">usage</a></li>
+            </ol>
+          </div>
+          <div id='section'>
+            <div id='class-list'>
+              <h2>Classes and Modules</h2>
+              Class <a href="Drydock/Command.html" class="link">Drydock::Command</a><br />
+              Class <a href="Drydock/InvalidArgument.html" class="link">Drydock::InvalidArgument</a><br />
+              Class <a href="Drydock/MissingArgument.html" class="link">Drydock::MissingArgument</a><br />
+              Class <a href="Drydock/NoCommandsDefined.html" class="link">Drydock::NoCommandsDefined</a><br />
+              Class <a href="Drydock/UnknownCommand.html" class="link">Drydock::UnknownCommand</a><br />
+            </div>
+            <div id='constants-list'>
+              <h2>Constants</h2>
+              <div class='name-list'>
+                <table summary='Constants'>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>VERSION</td>
+                    <td>=</td>
+                    <td class='context-item-value'>0.3</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div id='methods'>
+              <h2>Public instance methods</h2>
+              <div class='public-instance method' id='method-M000007'>
+                <a name='M000007'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>after</span>
+                  <span class='arguments'>(&amp;b)</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Define a block to be called after the command. This is useful for stopping,
+                  closing, etc... the stuff in the before block.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000007-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000007-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 165</span>&#x000A;165:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">after</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">b</span>)&#x000A;166:     <span class="ruby-ivar">@@after_block</span> = <span class="ruby-identifier">b</span>&#x000A;167:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000015'>
+                <a name='M000015'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>alias_command</span>
+                  <span class='arguments'>(aliaz, cmd)</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Used to create an alias to a defined command. Here&#8217;s an example:
+                  </p>
+                  <pre>command :task do; ...; end&#x000A;alias_command :pointer, :task</pre>
+                  <p>
+                  Either name can be used on the command-line:
+                  </p>
+                  <pre>$ script task [options]&#x000A;$ script pointer [options]</pre>
+                  <p>
+                  Inside of the command definition, you have access to the command name that
+                  was used via obj.alias.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000015-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000015-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 274</span>&#x000A;274:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">alias_command</span>(<span class="ruby-identifier">aliaz</span>, <span class="ruby-identifier">cmd</span>)&#x000A;275:     <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">commands</span>.<span class="ruby-identifier">has_key?</span> <span class="ruby-identifier">cmd</span>&#x000A;276:     <span class="ruby-ivar">@@commands</span>[<span class="ruby-identifier">aliaz</span>] = <span class="ruby-identifier">commands</span>[<span class="ruby-identifier">cmd</span>]&#x000A;277:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000006'>
+                <a name='M000006'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>before</span>
+                  <span class='arguments'>(&amp;b)</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Define a block to be called before the command. This is useful for opening
+                  database connections, etc...
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000006-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000006-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 159</span>&#x000A;159:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">before</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">b</span>)&#x000A;160:     <span class="ruby-ivar">@@before_block</span> = <span class="ruby-identifier">b</span>&#x000A;161:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000014'>
+                <a name='M000014'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>command</span>
+                  <span class='arguments'>(*cmds, &amp;b)</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Define a command.
+                  </p>
+                  <pre>command :task do&#x000A;  ...&#x000A;end</pre>
+                  <p>
+                  A custom command class can be specified using Hash syntax. The class must
+                  inherit from <a href="Drydock/Command.html">Drydock::Command</a> (class
+                  CustomeClass < <a href="Drydock/Command.html">Drydock::Command</a>)
+                  </p>
+                  <pre>command :task =&gt; CustomCommand do&#x000A;  ...&#x000A;end</pre>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000014-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000014-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 244</span>&#x000A;244:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">command</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">cmds</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">b</span>)&#x000A;245:     <span class="ruby-ivar">@@command_index</span> <span class="ruby-operator">||=</span> <span class="ruby-value">0</span>&#x000A;246:     <span class="ruby-ivar">@@command_opts_parser</span> <span class="ruby-operator">||=</span> []&#x000A;247:     <span class="ruby-ivar">@@command_option_names</span> <span class="ruby-operator">||=</span> []&#x000A;248:     <span class="ruby-identifier">cmds</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">cmd</span><span class="ruby-operator">|</span> &#x000A;249:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">cmd</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-constant">Hash</span>&#x000A;250:         <span class="ruby-identifier">c</span> = <span class="ruby-identifier">cmd</span>.<span class="ruby-identifier">values</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">cmd</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">first</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">b</span>)&#x000A;251:       <span class="ruby-keyword kw">else</span>&#x000A;252:         <span class="ruby-identifier">c</span> = <span class="ruby-constant">Drydock</span><span class="ruby-operator">::</span><span class="ruby-constant">Command</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">cmd</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">b</span>)&#x000A;253:       <span class="ruby-keyword kw">end</span>&#x000A;254:       <span class="ruby-identifier">commands</span>[<span class="ruby-identifier">c</span>.<span class="ruby-identifier">cmd</span>] = <span class="ruby-identifier">c</span>&#x000A;255:       <span class="ruby-identifier">command_index_map</span>[<span class="ruby-identifier">c</span>.<span class="ruby-identifier">cmd</span>] = <span class="ruby-ivar">@@command_index</span>&#x000A;256:       <span class="ruby-ivar">@@command_index</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>&#x000A;257:     <span class="ruby-keyword kw">end</span>&#x000A;258:     &#x000A;259:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000016'>
+                <a name='M000016'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>command_alias</span>
+                  <span class='arguments'>(aliaz, cmd)</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Alias for <a href="Drydock.html#M000015">alias_command</a>
+                  </p>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000017'>
+                <a name='M000017'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>commands</span>
+                  <span class='arguments'>()</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  An array of the currently defined <a
+                  href="Drydock/Command.html">Drydock::Command</a> objects
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000017-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000017-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 281</span>&#x000A;281:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">commands</span>&#x000A;282:     <span class="ruby-ivar">@@commands</span> <span class="ruby-operator">||=</span> {}&#x000A;283:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000002'>
+                <a name='M000002'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>debug</span>
+                  <span class='arguments'>(toggle=false)</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Enable or disable debug output.
+                  </p>
+                  <pre>debug :on&#x000A;debug :off</pre>
+                  <p>
+                  Calling without :on or :off will toggle the value.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000002-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000002-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 126</span>&#x000A;126:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">debug</span>(<span class="ruby-identifier">toggle</span>=<span class="ruby-keyword kw">false</span>)&#x000A;127:     <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">toggle</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-constant">Symbol</span>&#x000A;128:       <span class="ruby-ivar">@@debug</span> = <span class="ruby-keyword kw">true</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">toggle</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:on</span>&#x000A;129:       <span class="ruby-ivar">@@debug</span> = <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">toggle</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:off</span>&#x000A;130:     <span class="ruby-keyword kw">else</span>&#x000A;131:       <span class="ruby-ivar">@@debug</span> = (<span class="ruby-operator">!</span><span class="ruby-ivar">@@debug</span>)&#x000A;132:     <span class="ruby-keyword kw">end</span>&#x000A;133:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000003'>
+                <a name='M000003'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>debug?</span>
+                  <span class='arguments'>()</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Returns true if debug output is enabled.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000003-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000003-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 135</span>&#x000A;135:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">debug?</span>&#x000A;136:     <span class="ruby-ivar">@@debug</span>&#x000A;137:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000004'>
+                <a name='M000004'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>default</span>
+                  <span class='arguments'>(cmd)</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Define a default command.
+                  </p>
+                  <pre>default :task</pre>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000004-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000004-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 143</span>&#x000A;143:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">default</span>(<span class="ruby-identifier">cmd</span>)&#x000A;144:     <span class="ruby-ivar">@@default_command</span> = <span class="ruby-identifier">canonize</span>(<span class="ruby-identifier">cmd</span>)&#x000A;145:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000010'>
+                <a name='M000010'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>get_current_option_parser</span>
+                  <span class='arguments'>()</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Grab the options parser for the current command or create it if it
+                  doesn&#8217;t exist.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000010-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000010-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 183</span>&#x000A;183:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">get_current_option_parser</span>&#x000A;184:     <span class="ruby-ivar">@@command_opts_parser</span> <span class="ruby-operator">||=</span> []&#x000A;185:     <span class="ruby-ivar">@@command_index</span> <span class="ruby-operator">||=</span> <span class="ruby-value">0</span>&#x000A;186:     (<span class="ruby-ivar">@@command_opts_parser</span>[<span class="ruby-ivar">@@command_index</span>] <span class="ruby-operator">||=</span> <span class="ruby-constant">OptionParser</span>.<span class="ruby-identifier">new</span>)&#x000A;187:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000012'>
+                <a name='M000012'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>global_option</span>
+                  <span class='arguments'>(*args, &amp;b)</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Define a global option. See <tt>option</tt> for more info.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000012-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000012-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 202</span>&#x000A;202:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">global_option</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">b</span>)&#x000A;203:     <span class="ruby-identifier">args</span>.<span class="ruby-identifier">unshift</span>(<span class="ruby-identifier">global_opts_parser</span>)&#x000A;204:     <span class="ruby-identifier">global_option_names</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">option_parser</span>(<span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">b</span>)&#x000A;205:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000008'>
+                <a name='M000008'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>global_usage</span>
+                  <span class='arguments'>(msg)</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Define the default global usage banner. This is displayed with
+                  &#8220;script -h&#8221;.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000008-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000008-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 171</span>&#x000A;171:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">global_usage</span>(<span class="ruby-identifier">msg</span>)&#x000A;172:     <span class="ruby-ivar">@@global_options</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>&#x000A;173:     <span class="ruby-identifier">global_opts_parser</span>.<span class="ruby-identifier">banner</span> = <span class="ruby-node">&quot;USAGE: #{msg}&quot;</span>&#x000A;174:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000020'>
+                <a name='M000020'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>has_run?</span>
+                  <span class='arguments'>()</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Return true if a command has been executed.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000020-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000020-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 298</span>&#x000A;298:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">has_run?</span>&#x000A;299:     <span class="ruby-ivar">@@has_run</span>&#x000A;300:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000011'>
+                <a name='M000011'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>ignore</span>
+                  <span class='arguments'>(what=:nothing)</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Tell the <a href="Drydock.html">Drydock</a> parser to ignore something. <a
+                  href="Drydock.html">Drydock</a> will currently only listen to you if you
+                  tell it to &#8220;ignore :options&#8221;, otherwise it will ignore you!
+                  </p>
+                  <p>
+                  <tt>what</tt> the thing to ignore. When it equals :options <a
+                  href="Drydock.html">Drydock</a> will not parse the command-specific
+                  arguments. It will pass the <a href="Drydock/Command.html">Command</a>
+                  object the list of arguments. This is useful when you want to parse the
+                  arguments in some a way that&#8217;s too crazy, dangerous for <a
+                  href="Drydock.html">Drydock</a> to handle automatically.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000011-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000011-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 197</span>&#x000A;197:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ignore</span>(<span class="ruby-identifier">what</span>=<span class="ruby-identifier">:nothing</span>)&#x000A;198:     <span class="ruby-ivar">@@command_opts_parser</span>[<span class="ruby-ivar">@@command_index</span>] = <span class="ruby-identifier">:ignore</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">what</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:options</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">what</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:all</span>&#x000A;199:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000013'>
+                <a name='M000013'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>option</span>
+                  <span class='arguments'>(*args, &amp;b)</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Define a command-specific option.
+                  </p>
+                  <p>
+                  <tt>args</tt> is passed directly to OptionParser.on so it can contain
+                  anything that&#8217;s valid to that method. Some examples: [:h, :help,
+                  &#8220;Displays this message&#8221;] [:m, :max, Integer, &#8220;Maximum
+                  threshold&#8221;] [&#8217;-l x,y,z&#8217;, &#8217;&#8212;lang=x,y,z&#8217;,
+                  Array, &#8220;Requested languages&#8221;] If a class is included, it will
+                  tell OptionParser to expect a value otherwise it assumes a boolean value.
+                  </p>
+                  <p>
+                  All calls to <tt>option</tt> must come before the command they&#8217;re
+                  associated to. Example:
+                  </p>
+                  <pre>option :l, :longname, String, &quot;Description&quot; do; ...; end&#x000A;command :task do |obj|; ...; end</pre>
+                  <p>
+                  When calling your script with a specific command-line option, the value is
+                  available via obj.longname inside the command block.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000013-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000013-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 226</span>&#x000A;226:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">option</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">b</span>)&#x000A;227:     <span class="ruby-identifier">args</span>.<span class="ruby-identifier">unshift</span>(<span class="ruby-identifier">get_current_option_parser</span>)&#x000A;228:     <span class="ruby-identifier">current_command_option_names</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">option_parser</span>(<span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">b</span>)&#x000A;229:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000021'>
+                <a name='M000021'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>run!</span>
+                  <span class='arguments'>(argv=[], stdin=STDIN)</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Execute the given command. By default, <a href="Drydock.html">Drydock</a>
+                  automatically executes itself and provides handlers for known errors. You
+                  can override this functionality by calling <tt><a
+                  href="Drydock.html#M000021">Drydock.run!</a></tt> yourself. <a
+                  href="Drydock.html">Drydock</a> will only call <tt>run!</tt> once.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000021-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000021-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 306</span>&#x000A;306:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">run!</span>(<span class="ruby-identifier">argv</span>=[], <span class="ruby-identifier">stdin</span>=<span class="ruby-constant">STDIN</span>)&#x000A;307:     <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">has_run?</span>&#x000A;308:     <span class="ruby-ivar">@@has_run</span> = <span class="ruby-keyword kw">true</span>&#x000A;309:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">NoCommandsDefined</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">commands</span>&#x000A;310:     <span class="ruby-ivar">@@global_options</span>, <span class="ruby-identifier">cmd_name</span>, <span class="ruby-ivar">@@command_options</span>, <span class="ruby-identifier">argv</span> = <span class="ruby-identifier">process_arguments</span>(<span class="ruby-identifier">argv</span>)&#x000A;311:     &#x000A;312:     <span class="ruby-identifier">cmd_name</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">default_command</span>&#x000A;313:     &#x000A;314:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">UnknownCommand</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">cmd_name</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">command?</span>(<span class="ruby-identifier">cmd_name</span>)&#x000A;315:     &#x000A;316:     <span class="ruby-identifier">stdin</span> = (<span class="ruby-keyword kw">defined?</span> <span class="ruby-ivar">@@stdin_block</span>) <span class="ruby-operator">?</span> <span class="ruby-ivar">@@stdin_block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">stdin</span>, []) <span class="ruby-operator">:</span> <span class="ruby-identifier">stdin</span>&#x000A;317:     <span class="ruby-ivar">@@before_block</span>.<span class="ruby-identifier">call</span> <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span> <span class="ruby-ivar">@@before_block</span>&#x000A;318:     &#x000A;319:     <span class="ruby-identifier">call_command</span>(<span class="ruby-identifier">cmd_name</span>, <span class="ruby-identifier">argv</span>, <span class="ruby-identifier">stdin</span>)&#x000A;320:     &#x000A;321:     <span class="ruby-ivar">@@after_block</span>.<span class="ruby-identifier">call</span> <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span> <span class="ruby-ivar">@@after_block</span>&#x000A;322:     &#x000A;323:   <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">OptionParser</span><span class="ruby-operator">::</span><span class="ruby-constant">InvalidOption</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>&#x000A;324:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">Drydock</span><span class="ruby-operator">::</span><span class="ruby-constant">InvalidArgument</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">ex</span>.<span class="ruby-identifier">args</span>)&#x000A;325:   <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">OptionParser</span><span class="ruby-operator">::</span><span class="ruby-constant">MissingArgument</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>&#x000A;326:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">Drydock</span><span class="ruby-operator">::</span><span class="ruby-constant">MissingArgument</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">ex</span>.<span class="ruby-identifier">args</span>)&#x000A;327:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000019'>
+                <a name='M000019'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>run=</span>
+                  <span class='arguments'>(v)</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Disable automatic execution (enabled by default)
+                  </p>
+                  <pre>Drydock.run = false</pre>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000019-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000019-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 293</span>&#x000A;293:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">run=</span>(<span class="ruby-identifier">v</span>)&#x000A;294:     <span class="ruby-ivar">@@run</span> = (<span class="ruby-identifier">v</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">true</span>) <span class="ruby-operator">?</span> <span class="ruby-keyword kw">true</span> <span class="ruby-operator">:</span> <span class="ruby-keyword kw">false</span> &#x000A;295:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000018'>
+                <a name='M000018'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>run?</span>
+                  <span class='arguments'>()</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Returns true if automatic execution is enabled.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000018-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000018-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 286</span>&#x000A;286:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">run?</span>&#x000A;287:     <span class="ruby-ivar">@@run</span>&#x000A;288:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000005'>
+                <a name='M000005'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>stdin</span>
+                  <span class='arguments'>(&amp;b)</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Define a block for processing STDIN before the command is called. The
+                  command block receives the return value of this block in a named argument:
+                  </p>
+                  <pre>command :task do |obj, argv, stdin|; ...; end</pre>
+                  <p>
+                  If a stdin block isn&#8217;t defined, <tt>stdin</tt> above will be the
+                  STDIN IO handle.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000005-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000005-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 153</span>&#x000A;153:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">stdin</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">b</span>)&#x000A;154:     <span class="ruby-ivar">@@stdin_block</span> = <span class="ruby-identifier">b</span>&#x000A;155:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000009'>
+                <a name='M000009'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>usage</span>
+                  <span class='arguments'>(msg)</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Define a command-specific usage banner. This is displayed with
+                  &#8220;script command -h&#8220;
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000009-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000009-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 178</span>&#x000A;178:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">usage</span>(<span class="ruby-identifier">msg</span>)&#x000A;179:     <span class="ruby-identifier">get_current_option_parser</span>.<span class="ruby-identifier">banner</span> = <span class="ruby-node">&quot;USAGE: #{msg}&quot;</span>&#x000A;180:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id='footer-push'></div>
+    </div>
+    <div id='footer'>
+      <a href="http://github.com/mislav/hanna/tree/master"><strong>Hanna</strong> RDoc template</a>
+      <script type='text/javascript'>
+        //<![CDATA[
+          var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+          document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/scr
+          
+          try {
+            var pageTracker = _gat._getTracker("UA-4642735-10");
+            pageTracker._trackPageview();
+          } catch(err) {}
+        //]]>
+      </script>
+    </div>
+  </body>
+</html>

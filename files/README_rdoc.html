@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+  <head>
+    <title>File: README.rdoc [Drydock, A seaworthy DSL for command-line apps.]</title>
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <link href='.././rdoc-style.css' media='screen' rel='stylesheet' type='text/css'>
+    <script type='text/javascript'>
+      //<![CDATA[
+        function popupCode(url) {
+          window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+        }
+        
+        function toggleCode(id) {
+          var code = document.getElementById(id)
+        
+          code.style.display = code.style.display != 'block' ? 'block' : 'none'
+          return true
+        }
+        
+        // Make codeblocks hidden by default
+        document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+      //]]>
+    </script>
+  </head>
+  <body class='page'>
+    <div class='file' id='wrapper'>
+      <div class='header'>
+        <div class='name'>README.rdoc</div>
+        <div class='paths'>
+          README.rdoc
+        </div>
+        <div class='last-update'>
+          Last Update:
+          <span class='datetime'>Thu Feb 05 12:40:46 -0500 2009</span>
+        </div>
+      </div>
+      <div id='content'>
+        <div id='text'>
+          <div id='description'>
+            <h1><a href="../classes/Drydock.html">Drydock</a></h1>
+            <p>
+            Inspired by github-gem and bmizerany-frylock.
+            </p>
+            <h2>Overview</h2>
+            <p>
+            <a href="../classes/Drydock.html">Drydock</a> is a DSL for command line
+            apps. It is contained in a single .rb which can be copied directly into
+            your project.
+            </p>
+            <h2>Install</h2>
+            <p>
+            One of:
+            </p>
+            <ul>
+            <li>git clone git://github.com/delano/drydock.git
+            
+            </li>
+            <li>copy `<a href="lib/drydock_rb.html">lib/drydock.rb</a>` into your lib
+            directory.
+            
+            </li>
+            <li>gem install drydock
+            
+            </li>
+            <li>gem install delano-drydock
+            
+            </li>
+            </ul>
+            <h2>Examples</h2>
+            <p>
+            See <a href="bin/example.html">bin/example</a> for more.
+            </p>
+            <pre>require 'rubygems'&#x000A;require 'drydock'&#x000A;&#x000A;default :welcome&#x000A;&#x000A;before do&#x000A;# You can execute a block before the requests command is executed. Instance&#x000A;# variables defined here will be available to all commands.&#x000A;end&#x000A;&#x000A;command :welcome do&#x000A;# Example: ruby bin/example&#x000A;&#x000A;  puts &quot;Meatwad: Science is a mystery to man, isn't it Frylock?&quot;&#x000A;  print &quot;Frylock: At least we have some commands: &quot;&#x000A;&#x000A;  # The commands method returns a hash of Frylock::Command objects&#x000A;  puts commands.keys.inject([]) { |list, command| list &lt;&lt; command.to_s }.sort.join(', ')&#x000A;end&#x000A;&#x000A;option :f, :found, &quot;A boolean value. Did you find the car?&quot;&#x000A;command :findcar do |options|&#x000A;# +options+ is a hash containing the options defined above&#x000A;# Example: ruby bin/example -f findcar&#x000A;&#x000A;  puts &quot;Frylock: So, did they ever find your car?&quot;&#x000A;&#x000A;  # The keys to the hash are the long string from the option definition.&#x000A;  # If only the short string is provided, those will be used instead (i.e. :f).&#x000A;  puts (!options[:found]) ? &quot;Carl: No&quot; :&#x000A;    &quot;Carl: Oh, they found part of it, hangin' from a trestle near the turnpike.&quot;&#x000A;end</pre>
+            <h2>License</h2>
+            <p>
+            See <a href="LICENSE_txt.html">LICENSE.txt</a>
+            </p>
+          </div>
+          <div id='section'>
+          </div>
+        </div>
+      </div>
+      <div id='footer-push'></div>
+    </div>
+    <div id='footer'>
+      <a href="http://github.com/mislav/hanna/tree/master"><strong>Hanna</strong> RDoc template</a>
+      <script type='text/javascript'>
+        //<![CDATA[
+          var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+          document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/scr
+          
+          try {
+            var pageTracker = _gat._getTracker("UA-4642735-10");
+            pageTracker._trackPageview();
+          } catch(err) {}
+        //]]>
+      </script>
+    </div>
+  </body>
+</html>
