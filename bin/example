@@ -6,6 +6,7 @@ require 'drydock'
 
 default :welcome
 
+debug :on
 
 before do
 # You can execute a block before the requests command is executed. Instance
@@ -49,12 +50,12 @@ global_option :v, :verbose, "Verbosity level (i.e. -vvv is greater than -v)" do 
 end
 
 
-usage "#{$0} [--seconds] [-vv] date"
+usage "#{$0} [-s] [-vv] date"
 command :date do |obj, argv| 
 # +argv+ is an array containing the unnamed arguments
-  
   require 'time'
   now = Time.now
+  puts "(Not verbose enough. Try adding a -v.)" if (obj.verbose || 0) == 1
   puts "More verbosely, the date is now: " if (obj.verbose || 0) >= 2
   puts (obj.seconds) ? now.to_i : now.to_s
 end
