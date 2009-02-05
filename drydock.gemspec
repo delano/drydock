@@ -1,4 +1,4 @@
-Gem::Specification.new do |s|
+@spec = Gem::Specification.new do |s|
   s.name = %q{drydock}
   s.version = "0.3.0"
   s.specification_version = 1 if s.respond_to? :specification_version=
@@ -21,4 +21,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.1.1}
   s.summary = %q{Command line apps made easy}
+  
+  s.rubyforge_project = "drydock"
 end

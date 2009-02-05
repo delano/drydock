@@ -1,0 +1,15 @@
+DRYDOCK, CHANGES
+
+#### 0.3 (2009-02-05) ###############################
+
+* Added support for custom Drydock::Commands objects
+* Global and command-specific options are now available as 
+  attributes of the Drydock::Commands class instance.
+* Automatic execution
+* Now in a single file (lib/drydock.rb)
+
+
+#### 0.2 (2008-12-27) ###############################
+
+* Initial release
+* Forked from bmizerany/frylock

@@ -11,7 +11,7 @@ module Drydock
   # i.e. "example -v date -f yaml"
   #
   #     global_option :v, :verbose, "I want mooooore!"
-  #     option :f, :format, "Long date format"
+  #     option :f, :format, String, "Long date format"
   #     command :date do |obj|
   #         puts obj.verbose  #=> true
   #         puts obj.format  #=> "yaml"
@@ -111,7 +111,9 @@ module Drydock
   delegate :debug, :option, :stdin, :default, :ignore, :command_alias
   
   @@debug = false
- 
+  @@has_run = false
+  @@run = true
+  
  public
   # Enable or disable debug output.
   #
@@ -269,8 +271,8 @@ module Drydock
   # Inside of the command definition, you have access to the
   # command name that was used via obj.alias. 
   def alias_command(aliaz, cmd)
-    return unless @@commands.has_key? cmd
-    @@commands[aliaz] = @@commands[cmd]
+    return unless commands.has_key? cmd
+    @@commands[aliaz] = commands[cmd]
   end
   alias :command_alias :alias_command
   
@@ -281,7 +283,7 @@ module Drydock
   
   # Returns true if automatic execution is enabled. 
   def run?
-    @@run ||= true
+    @@run
   end
   
   # Disable automatic execution (enabled by default)
@@ -293,7 +295,7 @@ module Drydock
   
   # Return true if a command has been executed.
   def has_run?
-    @@has_run ||= false
+    @@has_run
   end
   
   # Execute the given command.
@@ -303,10 +305,10 @@ module Drydock
   def run!(argv=[], stdin=STDIN)
     return if has_run?
     @@has_run = true
-    raise NoCommandsDefined.new unless @@commands
+    raise NoCommandsDefined.new unless commands
     @@global_options, cmd_name, @@command_options, argv = process_arguments(argv)
     
-    cmd_name ||= @@default_command
+    cmd_name ||= default_command
     
     raise UnknownCommand.new(cmd_name) unless command?(cmd_name)
     
@@ -453,6 +455,11 @@ module Drydock
   def global_opts_parser
     @@global_opts_parser ||= OptionParser.new
   end
+  
+  def default_command
+    @@default_command ||= nil
+  end
+  
 end
 
 include Drydock
