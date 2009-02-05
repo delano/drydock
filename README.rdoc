@@ -1,16 +1,17 @@
-= Drydock 
+= Drydock - v0.3
 
 Inspired by github-gem and bmizerany-frylock.
 
 == Overview
 
-Drydock is a DSL for command line apps. It is contained in a single .rb which can be copied directly into your project. 
+Drydock is a seaworthy DSL for command line apps. It is contained in a single .rb which can be copied directly into your project. 
 
 == Install
 
+One of:
 
 * gem install drydock
-* copy `lib/drydock.rb` into your lib directory. 
+* copy lib/drydock.rb into your lib directory. 
 
 Or for GitHub fans:
 
@@ -53,6 +54,16 @@ See bin/example for more.
 	  puts (!options[:found]) ? "Carl: No" : 
 	    "Carl: Oh, they found part of it, hangin' from a trestle near the turnpike."
 	end
+
+== More Information
+
+http://www.youtube.com/watch?v=m_wFEB4Oxlo
+
+== Credits
+
+* Delano Mandelbaum (delano@solutious.com)
+* Bernie Kopell (bernie@solutious.com)
+
 
 == License
 

@@ -24,9 +24,8 @@ version = Drydock::VERSION.to_s
 
 Drydock.run = false
 
-
 Rake::GemPackageTask.new(@spec) do |p|
-	p.need_tar = true if RUBY_PLATFORM !~ /mswin/
+  p.need_tar = true if RUBY_PLATFORM !~ /mswin/
 end
 
 task :release => [ :rdoc, :package ]
@@ -46,11 +45,11 @@ desc 'Publish website to rubyforge'
 task 'publish:doc' => 'doc/index.html' do
   sh 'scp -rp doc/* rubyforge.org:/var/www/gforge-projects/drydock/'
 end
-
+puts "rubyforge add_release drydock drydock #{@spec.version} pkg/drydock-#{@spec.version}.gem "
 task 'publish:gem' => [:package] do |t|
   sh <<-end
-    rubyforge add_release drydock drydock #{@spec.version} pkg/drydock-#{@spec.version}.gem &&
-    rubyforge add_file    drydock drydock #{@spec.version} pkg/drydock-#{@spec.version}.tar.gz
+    rubyforge add_release -o Any -a CHANGES.txt -f -n README.rdoc drydock drydock #{@spec.version} pkg/drydock-#{@spec.version}.gem &&
+    rubyforge add_file -o Any -a CHANGES.txt -f -n README.rdoc drydock drydock #{@spec.version} pkg/drydock-#{@spec.version}.tgz 
   end
 end
 
