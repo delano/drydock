@@ -23,12 +23,11 @@ module Drydock
   #     command :eat => EatFood do |obj|; ...; end
   #
   class Command
-    attr_reader :cmd, :action, :alias
+    attr_reader :cmd, :alias
     # +cmd+ is the short name of this command.
     # +b+ is the block associated to this command.
     def initialize(cmd, &b)
       @cmd = (cmd.kind_of?(Symbol)) ? cmd : cmd.to_sym
-      @action = action
       @b = b
     end
     
@@ -93,12 +92,27 @@ end
 module Drydock
   extend self
   
-  FORWARDED_METHODS = %w(command before after alias_command commands
-                         global_option global_usage usage debug
-                         option stdin default ignore command_alias).freeze
+  VERSION = 0.3
+  
+ private
+  # Stolen from Sinatra!
+  def delegate(*args)
+    args.each do |m|
+      eval(<<-end_eval, binding, "(__Drydock__)", __LINE__)
+        def #{m}(*args, &b)
+          Drydock.#{m}(*args, &b)
+        end
+      end_eval
+    end
+  end
+  
+  delegate :before, :after, :alias_command, :commands
+  delegate :global_option, :global_usage, :usage, :command
+  delegate :debug, :option, :stdin, :default, :ignore, :command_alias
   
   @@debug = false
-  
+ 
+ public
   # Enable or disable debug output.
   #
   #    debug :on
@@ -124,7 +138,7 @@ module Drydock
   #     default :task
   #
   def default(cmd)
-    @default_command = canonize(cmd)
+    @@default_command = canonize(cmd)
   end
   
   # Define a block for processing STDIN before the command is called. 
@@ -134,25 +148,25 @@ module Drydock
   #
   # If a stdin block isn't defined, +stdin+ above will be the STDIN IO handle. 
   def stdin(&b)
-    @stdin_block = b
+    @@stdin_block = b
   end
   
   # Define a block to be called before the command. 
   # This is useful for opening database connections, etc...
   def before(&b)
-    @before_block = b
+    @@before_block = b
   end
   
   # Define a block to be called after the command. 
   # This is useful for stopping, closing, etc... the stuff in the before block. 
   def after(&b)
-    @after_block = b
+    @@after_block = b
   end
   
   # Define the default global usage banner. This is displayed
   # with "script -h". 
   def global_usage(msg)
-    @global_options ||= OpenStruct.new
+    @@global_options ||= OpenStruct.new
     global_opts_parser.banner = "USAGE: #{msg}"
   end
   
@@ -164,9 +178,9 @@ module Drydock
   
   # Grab the options parser for the current command or create it if it doesn't exist.
   def get_current_option_parser
-    @command_opts_parser ||= []
-    @command_index ||= 0
-    (@command_opts_parser[@command_index] ||= OptionParser.new)
+    @@command_opts_parser ||= []
+    @@command_index ||= 0
+    (@@command_opts_parser[@@command_index] ||= OptionParser.new)
   end
   
   # Tell the Drydock parser to ignore something. 
@@ -178,7 +192,7 @@ module Drydock
   # arguments. This is useful when you want to parse the arguments in some a way
   # that's too crazy, dangerous for Drydock to handle automatically.  
   def ignore(what=:nothing)
-    @command_opts_parser[@command_index] = :ignore if what == :options || what == :all
+    @@command_opts_parser[@@command_index] = :ignore if what == :options || what == :all
   end
   
   # Define a global option. See +option+ for more info. 
@@ -225,9 +239,9 @@ module Drydock
   #     end
   #
   def command(*cmds, &b)
-    @command_index ||= 0
-    @command_opts_parser ||= []
-    @command_option_names ||= []
+    @@command_index ||= 0
+    @@command_opts_parser ||= []
+    @@command_option_names ||= []
     cmds.each do |cmd| 
       if cmd.is_a? Hash
         c = cmd.values.first.new(cmd.keys.first, &b)
@@ -235,9 +249,10 @@ module Drydock
         c = Drydock::Command.new(cmd, &b)
       end
       commands[c.cmd] = c
-      command_index_map[c.cmd] = @command_index
-      @command_index += 1
+      command_index_map[c.cmd] = @@command_index
+      @@command_index += 1
     end
+    
   end
   
   # Used to create an alias to a defined command. 
@@ -254,14 +269,14 @@ module Drydock
   # Inside of the command definition, you have access to the
   # command name that was used via obj.alias. 
   def alias_command(aliaz, cmd)
-    return unless @commands.has_key? cmd
-    @commands[aliaz] = @commands[cmd]
+    return unless @@commands.has_key? cmd
+    @@commands[aliaz] = @@commands[cmd]
   end
   alias :command_alias :alias_command
   
   # An array of the currently defined Drydock::Command objects
   def commands
-    @commands ||= {}
+    @@commands ||= {}
   end
   
   # Returns true if automatic execution is enabled. 
@@ -288,19 +303,19 @@ module Drydock
   def run!(argv=[], stdin=STDIN)
     return if has_run?
     @@has_run = true
-    raise NoCommandsDefined.new unless @commands
-    @global_options, cmd_name, @command_options, argv = process_arguments(argv)
+    raise NoCommandsDefined.new unless @@commands
+    @@global_options, cmd_name, @@command_options, argv = process_arguments(argv)
     
-    cmd_name ||= @default_command
+    cmd_name ||= @@default_command
     
     raise UnknownCommand.new(cmd_name) unless command?(cmd_name)
     
-    stdin = (defined? @stdin_block) ? @stdin_block.call(stdin, []) : stdin
-    @before_block.call if defined? @before_block
+    stdin = (defined? @@stdin_block) ? @@stdin_block.call(stdin, []) : stdin
+    @@before_block.call if defined? @@before_block
     
     call_command(cmd_name, argv, stdin)
     
-    @after_block.call if defined? @after_block
+    @@after_block.call if defined? @@after_block
     
   rescue OptionParser::InvalidOption => ex
     raise Drydock::InvalidArgument.new(ex.args)
@@ -313,19 +328,19 @@ module Drydock
   # Executes the block associated to +cmd+
   def call_command(cmd, argv=[], stdin=nil)
     return unless command?(cmd)
-    get_command(cmd).call(cmd, argv, stdin, @global_options || {}, @command_options || {})
+    get_command(cmd).call(cmd, argv, stdin, @@global_options || {}, @@command_options || {})
   end
   
   # Returns the Drydock::Command object with the name +cmd+
   def get_command(cmd)
     return unless command?(cmd)
-    @commands[canonize(cmd)]
+    @@commands[canonize(cmd)]
   end 
   
   # Returns true if a command with the name +cmd+ has been defined. 
   def command?(cmd)
     name = canonize(cmd)
-    (@commands || {}).has_key? name
+    (@@commands || {}).has_key? name
   end
   
   # Canonizes a string to the symbol format for command names
@@ -378,12 +393,12 @@ module Drydock
     
     global_options = global_opts_parser.getopts(argv)
           
-    cmd_name = (argv.empty?) ? @default_command : argv.shift
+    cmd_name = (argv.empty?) ? @@default_command : argv.shift
     raise UnknownCommand.new(cmd_name) unless command?(cmd_name)
     
     cmd = get_command(cmd_name) 
     
-    command_parser = @command_opts_parser[get_command_index(cmd_name)]
+    command_parser = @@command_opts_parser[get_command_index(cmd_name)]
     command_options = {}
     
     # We only need to parse the options out of the arguments when
@@ -412,19 +427,19 @@ module Drydock
   end
   
   def global_option_names
-    @global_option_names ||= []
+    @@global_option_names ||= []
   end
   
   # Grab the current list of command-specific option names. This is a list of the
   # long names. 
   def current_command_option_names
-    @command_option_names ||= []
-    @command_index ||= 0
-    (@command_option_names[@command_index] ||= [])
+    @@command_option_names ||= []
+    @@command_index ||= 0
+    (@@command_option_names[@@command_index] ||= [])
   end
   
   def command_index_map
-    @command_index_map ||= {}
+    @@command_index_map ||= {}
   end
   
   def get_command_index(cmd)
@@ -432,25 +447,19 @@ module Drydock
   end
   
   def command_option_names
-    @command_option_names ||= []
+    @@command_option_names ||= []
   end
   
   def global_opts_parser
-    @global_opts_parser ||= OptionParser.new
+    @@global_opts_parser ||= OptionParser.new
   end
 end
+
+include Drydock
 
 trap ("SIGINT") do
   puts "#{$/}Exiting..."
   exit 1
-end
-
-Drydock::FORWARDED_METHODS.each do |m|
-  eval(<<-end_eval, binding, "(Drydock)", __LINE__)
-    def #{m}(*args, &b)
-      Drydock.#{m}(*args, &b)
-    end
-  end_eval
 end
 
 
