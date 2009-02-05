@@ -44,7 +44,7 @@
   s.has_rdoc = true
   s.homepage = %q{http://github.com/delano/drydock}
   s.extra_rdoc_files = %w[README.rdoc LICENSE.txt CHANGES.txt]
-  s.rdoc_options = ["--line-numbers", "--inline-source", "--title", "Drydock: a DSL for command-line apps", "--main", "README.rdoc"]
+  s.rdoc_options = ["--line-numbers", "--inline-source", "--title", "Drydock: a seaworthy DSL for command-line apps", "--main", "README.rdoc"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.1.1}
   s.summary = %q{A seaworthy DSL for writing command line apps}
