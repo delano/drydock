@@ -1,7 +1,5 @@
 require 'optparse'
 require 'ostruct'
-require 'pp'
-
 
 #
 #
@@ -43,8 +41,8 @@ module Drydock
     # +stdin+ contains the output of stdin do; ...; end otherwise it's a STDIN IO handle.
     # +global_options+ a hash of the global options specified on the command-line
     # +options+ a hash of the command-specific options specific on the command-line.
-    def call(cmd_str, argv, stdin, global_options={}, options={})
-      @alias = cmd_str
+    def call(cmd_str=nil, argv=[], stdin=[], global_options={}, options={})
+      @alias = cmd_str.nil? ? @cmd : cmd_str
       global_options.merge(options).each_pair do |n,v|
         self.send("#{n}=", v)
       end
@@ -97,7 +95,7 @@ module Drydock
   
   FORWARDED_METHODS = %w(command before after alias_command commands
                          global_option global_usage usage debug
-                         option stdin default ignore).freeze
+                         option stdin default ignore command_alias).freeze
   
   @@debug = false
   
@@ -154,9 +152,8 @@ module Drydock
   # Define the default global usage banner. This is displayed
   # with "script -h". 
   def global_usage(msg)
-    @global_opts_parser ||= OptionParser.new 
     @global_options ||= OpenStruct.new
-    @global_opts_parser.banner = "USAGE: #{msg}"
+    global_opts_parser.banner = "USAGE: #{msg}"
   end
   
   # Define a command-specific usage banner. This is displayed
@@ -186,8 +183,7 @@ module Drydock
   
   # Define a global option. See +option+ for more info. 
   def global_option(*args, &b)
-    @global_opts_parser ||= OptionParser.new
-    args.unshift(@global_opts_parser)
+    args.unshift(global_opts_parser)
     global_option_names << option_parser(args, &b)
   end
   
@@ -261,6 +257,7 @@ module Drydock
     return unless @commands.has_key? cmd
     @commands[aliaz] = @commands[cmd]
   end
+  alias :command_alias :alias_command
   
   # An array of the currently defined Drydock::Command objects
   def commands
@@ -288,8 +285,8 @@ module Drydock
   # By default, Drydock automatically executes itself and provides handlers for known errors.
   # You can override this functionality by calling +Drydock.run!+ yourself. Drydock
   # will only call +run!+ once. 
-  def run!(argv, stdin=nil)
-    return if @@has_run
+  def run!(argv=[], stdin=STDIN)
+    return if has_run?
     @@has_run = true
     raise NoCommandsDefined.new unless @commands
     @global_options, cmd_name, @command_options, argv = process_arguments(argv)
@@ -375,12 +372,11 @@ module Drydock
   # find the command name. 
   # i.e. ./script -H push -f (-H is a global arg, push is the command, -f is a command arg)
   # returns [global_options, cmd, command_options, argv]
-  def process_arguments(argv)
+  def process_arguments(argv=[])
     global_options = command_options = {}
     cmd = nil     
     
-    global_parser = @global_opts_parser
-    global_options = global_parser.getopts(argv)
+    global_options = global_opts_parser.getopts(argv)
           
     cmd_name = (argv.empty?) ? @default_command : argv.shift
     raise UnknownCommand.new(cmd_name) unless command?(cmd_name)
@@ -439,6 +435,9 @@ module Drydock
     @command_option_names ||= []
   end
   
+  def global_opts_parser
+    @global_opts_parser ||= OptionParser.new
+  end
 end
 
 trap ("SIGINT") do

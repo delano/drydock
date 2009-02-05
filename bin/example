@@ -6,13 +6,14 @@ require 'drydock'
 
 default :welcome
 
-debug :on
-
 before do
 # You can execute a block before the requests command is executed. Instance
 # variables defined here will be available to all commands.
 end
 
+after do
+# And this will be called after the command. 
+end
 
 command :welcome do
 # Example: ruby bin/example
@@ -60,6 +61,18 @@ command :date do |obj, argv|
   puts (obj.seconds) ? now.to_i : now.to_s
 end
 
+usage "#{$0} rogue"
+ignore :options
+command :rogue do |obj, argv|
+# You can use ignore :options to tell Drydock to not process the 
+# command-specific options. 
+  if argv.empty?
+    puts "Had you supplied some arguments, I would have ignored them."
+  else
+    puts "Hi! You supplied some arguments but I ignored them."
+    puts "They're all still here in this array: %s" % argv.join(', ')
+  end
+end
 
 option :c, :check, "Check response codes for each URI"
 option :d, :delim, String, "Output delimiter"
@@ -71,7 +84,7 @@ option :t, :timeout, Float, "Timeout value for HTTP request" do |v|
 end
 
 usage 'echo "http://github.com/" | ruby bin/example process -c -d " " -t 15 http://solutious.com/'
-command :processuris do |obj, argv, cmd, stdin|
+command :processuri do |obj, argv, stdin|
 # +cmd+ is the string used to evoke this command. Useful with alias_command (see below).
 # +stdin+ is either an IO object or a custom object defined with a stdin block (see below)
 
@@ -86,7 +99,7 @@ command :processuris do |obj, argv, cmd, stdin|
   
   if uris.empty?
     puts "Frylock: You didn't provide any URIs. "
-    puts "Master Shake: Ya, see #{$0} #{cmd} -h"
+    puts "Master Shake: Ya, see #{$0} #{obj.alias} -h"
     exit 0
   end
   
@@ -95,7 +108,7 @@ command :processuris do |obj, argv, cmd, stdin|
     puts [index+1, uri, code].join(delim)
   end
 end
-alias_command :process, :processuris
+alias_command :checkuri, :processuri
 
 
 
