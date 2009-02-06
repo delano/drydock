@@ -1,5 +1,15 @@
 #!/usr/bin/env ruby
 
+# Seafaring Drydock Examples
+# 
+# This is a functioning script so you can copy it, run it, 
+# and just generally be a longshoreman about things. This is
+# a Drydock after all. 
+#
+# If you're reading this via the Rdocs you won't the code. Try:
+#
+# http://github.com/delano/drydock/blob/master/bin/example
+
 $:.unshift File.expand_path(File.join(File.dirname(__FILE__), '..')), 'lib'
 
 require 'drydock'
@@ -17,9 +27,8 @@ end
 
 command :welcome do
 # Example: ruby bin/example
-
-  puts "Meatwad: Science is a mystery to man, isn't it Frylock?"
-  print "Frylock: At least we have some commands: "
+  
+  puts "Welcome to Drydock. You have the following commands:"
   
   # The commands method returns a hash of Drydock::Command objects
   puts commands.keys.inject([]) { |list, command| list << command.to_s }.sort.join(', ')
@@ -142,7 +151,7 @@ end
 # return the HTTP response code for the given URI
 # +uri+ A valid HTTP URI
 # +duration+ The timeout threshold (in seconds) for the request. 
-def response_code(uri_str, duration=5)
+def response_code(uri_str, duration=5) #:nodoc:
   response = :unavailable
   begin 
     uri = (uri_str.kind_of? URI::HTTP) ? uri_str : URI.parse(uri_str) 
