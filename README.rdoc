@@ -62,7 +62,9 @@ See bin/example for more.
   
 == More Information
 
-http://www.youtube.com/watch?v=m_wFEB4Oxlo
+* http://github.com/delano/drydock
+* http://drydock.rubyforge.org/ (rdocs)
+* http://www.youtube.com/watch?v=m_wFEB4Oxlo
 
 == Credits
 
