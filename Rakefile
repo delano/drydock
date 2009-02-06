@@ -45,20 +45,20 @@ end
 
 desc 'Publish website to rubyforge'
 task 'publish:doc' => 'doc/index.html' do
-  sh 'scp -rp doc/* rubyforge.org:/var/www/gforge-projects/drydock/'
+  sh "scp -rp doc/* rubyforge.org:/var/www/gforge-projects/#{name}/"
 end
 
 task 'publish:gem' => [:package] do |t|
   sh <<-end
-    rubyforge add_release -o Any -a CHANGES.txt -f -n README.rdoc drydock drydock #{@spec.version} pkg/drydock-#{@spec.version}.gem &&
-    rubyforge add_file -o Any -a CHANGES.txt -f -n README.rdoc drydock drydock #{@spec.version} pkg/drydock-#{@spec.version}.tgz 
+    rubyforge add_release -o Any -a CHANGES.txt -f -n README.rdoc #{name} #{name} #{@spec.version} pkg/#{name}-#{@spec.version}.gem &&
+    rubyforge add_file -o Any -a CHANGES.txt -f -n README.rdoc #{name} #{name} #{@spec.version} pkg/#{name}-#{@spec.version}.tgz 
   end
 end
 
 
 Rake::RDocTask.new do |t|
 	t.rdoc_dir = 'doc'
-	t.title    = "Drydock, A seaworthy DSL for command-line apps."
+	t.title    = @spec.summary
 	t.options << '--line-numbers' << '--inline-source' << '-A cattr_accessor=object'
 	t.options << '--charset' << 'utf-8'
 	t.rdoc_files.include('LICENSE.txt')
