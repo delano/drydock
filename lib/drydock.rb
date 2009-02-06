@@ -113,6 +113,7 @@ module Drydock
   @@debug = false
   @@has_run = false
   @@run = true
+  @@default_command = nil
   
  public
   # Enable or disable debug output.
@@ -305,7 +306,7 @@ module Drydock
   def run!(argv=[], stdin=STDIN)
     return if has_run?
     @@has_run = true
-    raise NoCommandsDefined.new unless commands
+    raise NoCommandsDefined.new if commands.empty?
     @@global_options, cmd_name, @@command_options, argv = process_arguments(argv)
     
     cmd_name ||= default_command

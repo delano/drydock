@@ -16,13 +16,10 @@ end
 
 # PACKAGE =============================================================
 
+name = "drydock"
+load "#{name}.gemspec"
 
-require File.dirname(__FILE__) + "/lib/drydock"
-load "drydock.gemspec"
-
-version = Drydock::VERSION.to_s
-
-Drydock.run = false
+version = @spec.version
 
 Rake::GemPackageTask.new(@spec) do |p|
   p.need_tar = true if RUBY_PLATFORM !~ /mswin/

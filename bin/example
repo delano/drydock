@@ -74,6 +74,14 @@ command :rogue do |obj, argv|
   end
 end
 
+class JohnWestSmokedOysters < Drydock::Command; end;
+# You can write your own command classes by inheriting from Drydock::Command
+# and referencing it in the command definition.
+
+command :oysters => JohnWestSmokedOysters do |obj|
+  p obj  # => #<JohnWestSmokedOysters:0x42179c ... >
+end
+
 option :c, :check, "Check response codes for each URI"
 option :d, :delim, String, "Output delimiter"
 option :t, :timeout, Float, "Timeout value for HTTP request" do |v|

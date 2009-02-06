@@ -22,7 +22,6 @@ Or for GitHub fans:
 
 See bin/example for more. 
 
-	require 'rubygems'
 	require 'drydock'
 
 	default :welcome
@@ -34,27 +33,31 @@ See bin/example for more.
 
 	command :welcome do
 	# Example: ruby bin/example
-
-	  puts "Meatwad: Science is a mystery to man, isn't it Frylock?"
-	  print "Frylock: At least we have some commands: "
-  
-	  # The commands method returns a hash of Frylock::Command objects
+		
+		puts "Welcome to Drydock. You have the following commands:"
+		
+	  # The commands method returns a hash of Drydock::Command objects
 	  puts commands.keys.inject([]) { |list, command| list << command.to_s }.sort.join(', ')
 	end
-
-	option :f, :found, "A boolean value. Did you find the car?"
-	command :findcar do |options|
-	# +options+ is a hash containing the options defined above
-	# Example: ruby bin/example -f findcar
+	
+	usage "Example: #{$0} findcar -f"
+	option :f, :faster, "A boolean value. Go even faster!"
+	command :hurry do |obj|
+	# +obj+ is an instance of Drydock::Command. The options you define are available
+	# via accessors in this object. 
   
-	  puts "Frylock: So, did they ever find your car?"
-  
-	  # The keys to the hash are the long string from the option definition.
-	  # If only the short string is provided, those will be used instead (i.e. :f). 
-	  puts (!options[:found]) ? "Carl: No" : 
-	    "Carl: Oh, they found part of it, hangin' from a trestle near the turnpike."
+	  puts "Are you hurrying?"
+	  puts !obj.faster ? "Sort of" : "Yes! I'm literally going as fast as possible"
 	end
+  
+	class JohnWestSmokedOysters < Drydock::Command; end;
+	# You can write your own command classes by inheriting from Drydock::Command
+	# and referencing it in the command definition.
 
+	command :oysters => JohnWestSmokedOysters do |obj|
+	  p obj  # => #<JohnWestSmokedOysters:0x42179c ... >
+	end
+	
 == More Information
 
 http://www.youtube.com/watch?v=m_wFEB4Oxlo
