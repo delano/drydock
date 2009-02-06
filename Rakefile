@@ -11,7 +11,12 @@ task :default => :test
  
 desc 'Run specs with unit test style output'
 task :test do |t|
-  sh "ruby tests/*_test.rb"
+  sh "ruby test/*_test.rb"
+end
+
+desc 'Run bin/example and tryouts'
+task :tryouts do |t|
+  sh "ruby bin/example"
 end
 
 # PACKAGE =============================================================
@@ -42,7 +47,7 @@ desc 'Publish website to rubyforge'
 task 'publish:doc' => 'doc/index.html' do
   sh 'scp -rp doc/* rubyforge.org:/var/www/gforge-projects/drydock/'
 end
-puts "rubyforge add_release drydock drydock #{@spec.version} pkg/drydock-#{@spec.version}.gem "
+
 task 'publish:gem' => [:package] do |t|
   sh <<-end
     rubyforge add_release -o Any -a CHANGES.txt -f -n README.rdoc drydock drydock #{@spec.version} pkg/drydock-#{@spec.version}.gem &&
