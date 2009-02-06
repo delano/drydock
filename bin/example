@@ -25,21 +25,16 @@ command :welcome do
   puts commands.keys.inject([]) { |list, command| list << command.to_s }.sort.join(', ')
 end
 
+usage "Example: #{$0} laugh [-f]"
+option :f, :faster, "A boolean value. Go even faster!"
+command :laugh do |obj|
+# +obj+ is an instance of Drydock::Command. The options you define are available
+# via accessors in this object. 
+  answer = !obj.faster ? "Sort of" : "Yes! I'm literally laughing as fast as possible."
 
-option :f, :found, "A boolean value. Did you find the car?"
-command :findcar do |obj|
-# +obj+ is the Drylock::Command object instance. It contains accessors for all options.
-# Example: ruby bin/example -f findcar
-  
-  puts "Frylock: So, did they ever find your car?"
-  
-  # The keys to the hash are the long string from the option definition.
-  # If only the short string is provided, those will be used instead (i.e. :f). 
-  puts (!obj.found) ? "Carl: No" : 
-    "Carl: Oh, they found part of it, hangin' from a trestle near the turnpike."
+  puts "Captain Stubing: Are you laughing?"
+  puts "Dr. Bricker: " << answer
 end
-
-
 
 global_usage "USAGE: #{File.basename($0)} [global options] command [command options]"
 global_option :s, :seconds, "Display values in seconds"

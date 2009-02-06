@@ -22,42 +22,43 @@ Or for GitHub fans:
 
 See bin/example for more. 
 
-	require 'drydock'
+  require 'drydock'
 
-	default :welcome
+  default :welcome
 
-	before do
-	# You can execute a block before the requests command is executed. Instance
-	# variables defined here will be available to all commands.
-	end
+  before do
+  # You can execute a block before the requests command is executed. Instance
+  # variables defined here will be available to all commands.
+  end
 
-	command :welcome do
-	# Example: ruby bin/example
-		
-		puts "Welcome to Drydock. You have the following commands:"
-		
-	  # The commands method returns a hash of Drydock::Command objects
-	  puts commands.keys.inject([]) { |list, command| list << command.to_s }.sort.join(', ')
-	end
-	
-	usage "Example: #{$0} findcar -f"
-	option :f, :faster, "A boolean value. Go even faster!"
-	command :hurry do |obj|
-	# +obj+ is an instance of Drydock::Command. The options you define are available
-	# via accessors in this object. 
+  command :welcome do
+  # Example: ruby bin/example
+    
+    puts "Welcome to Drydock. You have the following commands:"
+    
+    # The commands method returns a hash of Drydock::Command objects
+    puts commands.keys.inject([]) { |list, command| list << command.to_s }.sort.join(', ')
+  end
   
-	  puts "Are you hurrying?"
-	  puts !obj.faster ? "Sort of" : "Yes! I'm literally going as fast as possible"
-	end
-  
-	class JohnWestSmokedOysters < Drydock::Command; end;
-	# You can write your own command classes by inheriting from Drydock::Command
-	# and referencing it in the command definition.
+  usage "Example: #{$0} laugh [-f]"
+  option :f, :faster, "A boolean value. Go even faster!"
+  command :laugh do |obj|
+  # +obj+ is an instance of Drydock::Command. The options you define are available
+  # via accessors in this object. 
+    answer = !obj.faster ? "Sort of" : "Yes! I'm literally laughing as fast as possible."
 
-	command :oysters => JohnWestSmokedOysters do |obj|
-	  p obj  # => #<JohnWestSmokedOysters:0x42179c ... >
-	end
-	
+    puts "Captain Stubing: Are you laughing?"
+    puts "Dr. Bricker: " << answer
+  end
+  
+  class JohnWestSmokedOysters < Drydock::Command; end;
+  # You can write your own command classes by inheriting from Drydock::Command
+  # and referencing it in the command definition.
+
+  command :oysters => JohnWestSmokedOysters do |obj|
+    p obj  # => #<JohnWestSmokedOysters:0x42179c ... >
+  end
+  
 == More Information
 
 http://www.youtube.com/watch?v=m_wFEB4Oxlo
