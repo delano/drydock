@@ -31,7 +31,7 @@
         </div>
         <div class='last-update'>
           Last Update:
-          <span class='datetime'>Thu Feb 05 12:55:58 -0500 2009</span>
+          <span class='datetime'>Fri Feb 06 10:33:31 -0500 2009</span>
         </div>
       </div>
       <div id='content'>
@@ -75,7 +75,7 @@
             <p>
             See <a href="bin/example.html">bin/example</a> for more.
             </p>
-            <pre>require 'rubygems'&#x000A;require 'drydock'&#x000A;&#x000A;default :welcome&#x000A;&#x000A;before do&#x000A;# You can execute a block before the requests command is executed. Instance&#x000A;# variables defined here will be available to all commands.&#x000A;end&#x000A;&#x000A;command :welcome do&#x000A;# Example: ruby bin/example&#x000A;&#x000A;  puts &quot;Meatwad: Science is a mystery to man, isn't it Frylock?&quot;&#x000A;  print &quot;Frylock: At least we have some commands: &quot;&#x000A;&#x000A;  # The commands method returns a hash of Frylock::Command objects&#x000A;  puts commands.keys.inject([]) { |list, command| list &lt;&lt; command.to_s }.sort.join(', ')&#x000A;end&#x000A;&#x000A;option :f, :found, &quot;A boolean value. Did you find the car?&quot;&#x000A;command :findcar do |options|&#x000A;# +options+ is a hash containing the options defined above&#x000A;# Example: ruby bin/example -f findcar&#x000A;&#x000A;  puts &quot;Frylock: So, did they ever find your car?&quot;&#x000A;&#x000A;  # The keys to the hash are the long string from the option definition.&#x000A;  # If only the short string is provided, those will be used instead (i.e. :f).&#x000A;  puts (!options[:found]) ? &quot;Carl: No&quot; :&#x000A;    &quot;Carl: Oh, they found part of it, hangin' from a trestle near the turnpike.&quot;&#x000A;end</pre>
+            <pre>require 'drydock'&#x000A;&#x000A;default :welcome&#x000A;&#x000A;before do&#x000A;# You can execute a block before the requests command is executed. Instance&#x000A;# variables defined here will be available to all commands.&#x000A;end&#x000A;&#x000A;command :welcome do&#x000A;# Example: ruby bin/example&#x000A;&#x000A;  puts &quot;Welcome to Drydock. You have the following commands:&quot;&#x000A;&#x000A;  # The commands method returns a hash of Drydock::Command objects&#x000A;  puts commands.keys.inject([]) { |list, command| list &lt;&lt; command.to_s }.sort.join(', ')&#x000A;end&#x000A;&#x000A;usage &quot;Example: #{$0} laugh [-f]&quot;&#x000A;option :f, :faster, &quot;A boolean value. Go even faster!&quot;&#x000A;command :laugh do |obj|&#x000A;# +obj+ is an instance of Drydock::Command. The options you define are available&#x000A;# via accessors in this object.&#x000A;  answer = !obj.faster ? &quot;Sort of&quot; : &quot;Yes! I'm literally laughing as fast as possible.&quot;&#x000A;&#x000A;  puts &quot;Captain Stubing: Are you laughing?&quot;&#x000A;  puts &quot;Dr. Bricker: &quot; &lt;&lt; answer&#x000A;end&#x000A;&#x000A;class JohnWestSmokedOysters &lt; Drydock::Command; end;&#x000A;# You can write your own command classes by inheriting from Drydock::Command&#x000A;# and referencing it in the command definition.&#x000A;&#x000A;command :oysters =&gt; JohnWestSmokedOysters do |obj|&#x000A;  p obj  # =&gt; #&lt;JohnWestSmokedOysters:0x42179c ... &gt;&#x000A;end</pre>
             <h2>More Information</h2>
             <p>
             <a
