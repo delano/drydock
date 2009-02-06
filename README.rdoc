@@ -45,6 +45,7 @@ See bin/example for more.
   command :laugh do |obj|
   # +obj+ is an instance of Drydock::Command. The options you define are available
   # via accessors in this object. 
+
     answer = !obj.faster ? "Sort of" : "Yes! I'm literally laughing as fast as possible."
 
     puts "Captain Stubing: Are you laughing?"
