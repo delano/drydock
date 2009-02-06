@@ -31,17 +31,27 @@
         </div>
         <div class='last-update'>
           Last Update:
-          <span class='datetime'>Fri Feb 06 10:36:18 -0500 2009</span>
+          <span class='datetime'>Fri Feb 06 11:51:55 -0500 2009</span>
         </div>
       </div>
       <div id='content'>
         <div id='text'>
-          <div id='method-list'>
-            <h2>Methods</h2>
-            <h3>public instance</h3>
-            <ol>
-              <li><a href="#M000001">response_code</a></li>
-            </ol>
+          <div id='description'>
+            <p>
+            Seafaring <a href="../../classes/Drydock.html">Drydock</a> Examples
+            </p>
+            <p>
+            This is a functioning script so you can copy it, run it, and just generally
+            be a longshoreman about things. This is a <a
+            href="../../classes/Drydock.html">Drydock</a> after all.
+            </p>
+            <p>
+            If you&#8217;re reading this via the Rdocs you won&#8217;t the code. Try:
+            </p>
+            <p>
+            <a
+            href="http://github.com/delano/drydock/blob/master/bin/example">github.com/delano/drydock/blob/master/bin/example</a>
+            </p>
           </div>
           <div id='context'>
             <div id='requires'>
@@ -56,31 +66,6 @@
             </div>
           </div>
           <div id='section'>
-            <div id='methods'>
-              <h2>Public instance methods</h2>
-              <div class='public-instance method' id='method-M000001'>
-                <a name='M000001'>      </a>
-                <div class='synopsis'>
-                  <span class='name'>response_code</span>
-                  <span class='arguments'>(uri_str, duration=5)</span>
-                </div>
-                <div class='description'>
-                  <p>
-                  <a href="example.html#M000001">response_code</a>
-                  </p>
-                  <p>
-                  return the HTTP response code for the given URI <tt>uri</tt> A valid HTTP
-                  URI <tt>duration</tt> The timeout threshold (in seconds) for the request.
-                  </p>
-                </div>
-                <div class='source'>
-                  <a class='source-toggle' href='#' onclick="toggleCode('M000001-source'); return false">
-                    [show source]
-                  </a>
-                  <pre id='M000001-source'>     <span class="ruby-comment cmt"># File bin/example, line 145</span>&#x000A;145: <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">response_code</span>(<span class="ruby-identifier">uri_str</span>, <span class="ruby-identifier">duration</span>=<span class="ruby-value">5</span>)&#x000A;146:   <span class="ruby-identifier">response</span> = <span class="ruby-identifier">:unavailable</span>&#x000A;147:   <span class="ruby-keyword kw">begin</span> &#x000A;148:     <span class="ruby-identifier">uri</span> = (<span class="ruby-identifier">uri_str</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">URI</span><span class="ruby-operator">::</span><span class="ruby-constant">HTTP</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">uri_str</span> <span class="ruby-operator">:</span> <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">uri_str</span>) &#x000A;149:     <span class="ruby-identifier">timeout</span>(<span class="ruby-identifier">duration</span>) <span class="ruby-keyword kw">do</span>&#x000A;150:       <span class="ruby-identifier">response</span> = <span class="ruby-constant">Net</span><span class="ruby-operator">::</span><span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">get_response</span>(<span class="ruby-identifier">uri</span>).<span class="ruby-identifier">code</span>&#x000A;151:     <span class="ruby-keyword kw">end</span> &#x000A;152:   <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ex</span>&#x000A;153:   <span class="ruby-keyword kw">end</span>&#x000A;154:   <span class="ruby-identifier">response</span>&#x000A;155: <span class="ruby-keyword kw">end</span></pre>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
