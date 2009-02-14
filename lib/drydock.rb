@@ -24,6 +24,12 @@ module Drydock
   #
   class Command
     attr_reader :cmd, :alias
+    
+    # The default constructor sets the short name of the command
+    # and stores a reference to the block (if supplied).
+    # You don't need to override this method to add functionality 
+    # to your custom Command classes. Define an +init+ method instead.
+    # It will be called just before the block is executed. 
     # +cmd+ is the short name of this command.
     # +b+ is the block associated to this command.
     def initialize(cmd, &b)
@@ -33,6 +39,8 @@ module Drydock
     
     # Execute the block.
     # 
+    # Calls self.init before calling the block. Implement this method when 
+    #
     # +cmd_str+ is the short name used to evoke this command. It will equal @cmd
     # unless an alias was used used to evoke this command.
     # +argv+ an array of unnamed arguments. If ignore :options was declared this
@@ -45,6 +53,9 @@ module Drydock
       global_options.merge(options).each_pair do |n,v|
         self.send("#{n}=", v)
       end
+      
+      self.init if respond_to? :init
+      
       block_args = [self, argv, stdin] # TODO: review order
       @b.call(*block_args[0..(@b.arity-1)]) # send only as many args as defined
     end

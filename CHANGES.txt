@@ -1,5 +1,11 @@
 DRYDOCK, CHANGES
 
+#### 0.3.3 (2009-02-14) ###############################
+
+* NEW: init method hook for subclasses of Drydock::Command
+* UPDATED: Rdocs
+
+
 #### 0.3 (2009-02-05) ###############################
 
 * Added support for custom Drydock::Commands objects
@@ -9,6 +15,7 @@ DRYDOCK, CHANGES
 * Now in a single file (lib/drydock.rb)
 * Started adding tests
 * Improved documentation
+
 
 #### 0.2 (2008-12-27) ###############################
 
