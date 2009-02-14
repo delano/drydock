@@ -1,5 +1,10 @@
 DRYDOCK, CHANGES
 
+TODO:
+* Fix '-' '_' ambiguity for option names
+* Calls valid? method (if present) before calling command block.
+
+
 #### 0.3.3 (2009-02-14) ###############################
 
 * NEW: init method hook for subclasses of Drydock::Command
