@@ -107,19 +107,19 @@ module Drydock
   
  private
   # Stolen from Sinatra!
-  def delegate(*args)
-    args.each do |m|
-      eval(<<-end_eval, binding, "(__Drydock__)", __LINE__)
-        def #{m}(*args, &b)
-          Drydock.#{m}(*args, &b)
-        end
-      end_eval
-    end
-  end
-  
-  delegate :before, :after, :alias_command, :commands
-  delegate :global_option, :global_usage, :usage, :command
-  delegate :debug, :option, :stdin, :default, :ignore, :command_alias
+  #def delegate(*args)
+  #  args.each do |m|
+  #    eval(<<-end_eval, binding, "(__Drydock__)", __LINE__)
+  #      def #{m}(*args, &b)
+  #        Drydock.#{m}(*args, &b)
+  #      end
+  #    end_eval
+  #  end
+  #end
+  #
+  #delegate :before, :after, :alias_command, :desc
+  #delegate :global_option, :global_usage, :usage, :commands, :command
+  #delegate :debug, :option, :stdin, :default, :ignore, :command_alias
   
   @@debug = false
   @@has_run = false
@@ -153,6 +153,12 @@ module Drydock
   #
   def default(cmd)
     @@default_command = canonize(cmd)
+  end
+  
+  # Provide a description for a method
+  def desc(txt)
+    @@command_descriptions ||= []
+    @@command_descriptions << txt
   end
   
   # Define a block for processing STDIN before the command is called. 
@@ -286,11 +292,25 @@ module Drydock
     return unless commands.has_key? cmd
     @@commands[aliaz] = commands[cmd]
   end
-  alias :command_alias :alias_command
+  
+  # Identical to +alias_command+ with reversed arguments. 
+  # For whatever reason I forget the order so Drydock supports both. 
+  # Tip: the argument order matches the method name. 
+  def command_alias(cmd, aliaz)
+    return unless commands.has_key? cmd
+    @@commands[aliaz] = commands[cmd]
+  end
   
   # An array of the currently defined Drydock::Command objects
   def commands
     @@commands ||= {}
+    @@commands
+  end
+  
+  # An array of the currently defined commands names
+  def command_names
+    @@commands ||= {}
+    @@commands.keys.collect { |cmd| decanonize(cmd); }
   end
   
   # Returns true if automatic execution is enabled. 
@@ -357,11 +377,19 @@ module Drydock
     (@@commands || {}).has_key? name
   end
   
-  # Canonizes a string to the symbol format for command names
+  # Canonizes a string (+cmd+) to the symbol for command names
+  # '-' is replaced with '_'
   def canonize(cmd)
     return unless cmd
     return cmd if cmd.kind_of?(Symbol)
-    cmd.tr('-', '_').to_sym
+    cmd.to_s.tr('-', '_').to_sym
+  end
+  
+  # Returns a string version of +cmd+, decanonized.
+  # Lowercase, '_' is replaced with '-'
+  def decanonize(cmd)
+    return unless cmd
+    cmd.to_s.tr('_', '-')
   end
   
   # Processes calls to option and global_option. Symbols are converted into 
@@ -474,7 +502,7 @@ module Drydock
   
 end
 
-include Drydock
+
 
 trap ("SIGINT") do
   puts "#{$/}Exiting..."
