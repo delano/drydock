@@ -1,19 +1,17 @@
 DRYDOCK, CHANGES
 
-TODO:
-* FIX: '-' '_' ambiguity for option names
-* NEW: Calls valid? method (if present) before calling command block.
-* NEW: Default usage "#{$0} [global options] images"
-* NEW: Support calling Class.command when no block is supplied
+
+
+#### 0.4 (2009-02-28) ###############################
+
+* NEW: Default usage "#{$0} command-name"
 * NEW: "desc" method for per command descriptions
-* NEW: "print_commands" command built-in. Displays commands with descriptions
-* NEW: "global_header" and "header" methods. Print a default banner for every command.
-* NEW: "capture" method. Auto capture STDOUT to obj.stdout etc...
-* BUG: "interning empty string" error when bare "option" is used
+* CHANGE: options are now stored as obj.option.name instead of obj.name
+* CHANGE: global options are now stored as obj.globals.name
 * CHANGE: removed auto importing methods
     OLD: require 'drydock'
     NEW: require 'drydock'
-         extend Drydock  
+         extend Drydock
 
 
 #### 0.3.3 (2009-02-14) ###############################

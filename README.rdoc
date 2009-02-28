@@ -1,4 +1,4 @@
-= Drydock - v0.3
+= Drydock - v0.4
 
 Inspired by github-gem and bmizerany-frylock.
 
@@ -46,7 +46,7 @@ See bin/example for more.
   # +obj+ is an instance of Drydock::Command. The options you define are available
   # via accessors in this object. 
 
-    answer = !obj.faster ? "Sort of" : "Yes! I'm literally laughing as fast as possible."
+    answer = !obj.options.faster ? "Sort of" : "Yes! I'm literally laughing as fast as possible."
 
     puts "Captain Stubing: Are you laughing?"
     puts "Dr. Bricker: " << answer

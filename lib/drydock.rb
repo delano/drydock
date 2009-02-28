@@ -1,8 +1,7 @@
 require 'optparse'
 require 'ostruct'
 
-#
-#
+
 module Drydock
   # The base class for all command objects. There is an instance of this class
   # for every command defined. Global and command-specific options are added
@@ -24,6 +23,10 @@ module Drydock
   #
   class Command
     attr_reader :cmd, :alias
+    attr_accessor :verbose, :desc
+    
+    attr_reader :options
+    attr_reader :globals
     
     # The default constructor sets the short name of the command
     # and stores a reference to the block (if supplied).
@@ -35,6 +38,14 @@ module Drydock
     def initialize(cmd, &b)
       @cmd = (cmd.kind_of?(Symbol)) ? cmd : cmd.to_sym
       @b = b
+      @verbose = 0
+      @options = OpenStruct.new
+      @globals = OpenStruct.new
+    end
+    
+    # Returns the command name (not the alias)
+    def name
+      @cmd
     end
     
     # Execute the block.
@@ -50,8 +61,13 @@ module Drydock
     # +options+ a hash of the command-specific options specific on the command-line.
     def call(cmd_str=nil, argv=[], stdin=[], global_options={}, options={})
       @alias = cmd_str.nil? ? @cmd : cmd_str
-      global_options.merge(options).each_pair do |n,v|
-        self.send("#{n}=", v)
+
+      global_options.each_pair do |n,v|
+        self.globals.send("#{n}=", v)
+      end
+      
+      options.each_pair do |n,v|
+        self.options.send("#{n}=", v)
       end
       
       self.init if respond_to? :init
@@ -103,9 +119,10 @@ end
 module Drydock
   extend self
   
-  VERSION = 0.3
+  VERSION = 0.4
   
  private
+  # Disabled. We're going basic, using a module and include/extend. 
   # Stolen from Sinatra!
   #def delegate(*args)
   #  args.each do |m|
@@ -129,8 +146,8 @@ module Drydock
  public
   # Enable or disable debug output.
   #
-  #    debug :on
-  #    debug :off
+  #     debug :on
+  #     debug :off
   #
   # Calling without :on or :off will toggle the value. 
   #
@@ -153,12 +170,6 @@ module Drydock
   #
   def default(cmd)
     @@default_command = canonize(cmd)
-  end
-  
-  # Provide a description for a method
-  def desc(txt)
-    @@command_descriptions ||= []
-    @@command_descriptions << txt
   end
   
   # Define a block for processing STDIN before the command is called. 
@@ -197,10 +208,20 @@ module Drydock
   end
   
   # Grab the options parser for the current command or create it if it doesn't exist.
+  # Returns an instance of OptionParser.
   def get_current_option_parser
     @@command_opts_parser ||= []
     @@command_index ||= 0
     (@@command_opts_parser[@@command_index] ||= OptionParser.new)
+  end
+  
+  # Grabs the options parser for the given command. 
+  # +arg+ can be an index or command name.
+  # Returns an instance of OptionParser.
+  def get_option_parser(arg)
+    @@command_opts_parser ||= []
+    index = arg.is_a?(String) ? get_command_index(arg) : arg
+    (@@command_opts_parser[index] ||= OptionParser.new)
   end
   
   # Tell the Drydock parser to ignore something. 
@@ -208,8 +229,8 @@ module Drydock
   # otherwise it will ignore you!
   # 
   # +what+ the thing to ignore. When it equals :options Drydock will not parse
-  # the command-specific arguments. It will pass the Command object the list of
-  # arguments. This is useful when you want to parse the arguments in some a way
+  # the command-specific arguments. It will pass the arguments directly to the
+  # Command object. This is useful when you want to parse the arguments in some a way
   # that's too crazy, dangerous for Drydock to handle automatically.  
   def ignore(what=:nothing)
     @@command_opts_parser[@@command_index] = :ignore if what == :options || what == :all
@@ -220,22 +241,35 @@ module Drydock
     args.unshift(global_opts_parser)
     global_option_names << option_parser(args, &b)
   end
+  alias :global :global_option
   
   # Define a command-specific option. 
   # 
   # +args+ is passed directly to OptionParser.on so it can contain anything
-  # that's valid to that method. Some examples:
-  # [:h, :help, "Displays this message"]
-  # [:m, :max, Integer, "Maximum threshold"]
-  # ['-l x,y,z', '--lang=x,y,z', Array, "Requested languages"]
-  # If a class is included, it will tell OptionParser to expect a value 
-  # otherwise it assumes a boolean value.
+  # that's valid to that method. If a class is included, it will tell 
+  # OptionParser to expect a value otherwise it assumes a boolean value. 
+  # Some examples:
+  #
+  #     option :h, :help, "Displays this message"
+  #     option '-l x,y,z', '--lang=x,y,z', Array, "Requested languages"
+  #
+  #     You can also supply a block to fiddle with the values. The final 
+  #     value becomes the option's value:
+  #
+  #     option :m, :max, Integer, "Maximum threshold" do |v|
+  #       v = 100 if v > 100
+  #       v
+  #     end
   #
   # All calls to +option+ must come before the command they're associated
   # to. Example:
   # 
-  #     option :l, :longname, String, "Description" do; ...; end
-  #     command :task do |obj|; ...; end
+  #     option :t, :tasty,          "A boolean switch"
+  #     option     :reason, String, "Requires a parameter"
+  #     command :task do |obj|; 
+  #       obj.options.tasty       # => true
+  #       obj.options.reason      # => I made the sandwich!
+  #     end
   #
   # When calling your script with a specific command-line option, the value
   # is available via obj.longname inside the command block. 
@@ -244,6 +278,9 @@ module Drydock
     args.unshift(get_current_option_parser)
     current_command_option_names << option_parser(args, &b)
   end
+  
+
+  
   
   # Define a command. 
   # 
@@ -268,9 +305,16 @@ module Drydock
       else
         c = Drydock::Command.new(cmd, &b)
       end
+      
+      c.desc = @@command_descriptions[@@command_index]
+      
+      # Default Usage Banner. 
+      # Without this, there's no help displayed for the command. 
+      usage "#{$0} #{c.cmd}" if get_option_parser(@@command_index).banner !~ /^USAGE/
+      
       commands[c.cmd] = c
       command_index_map[c.cmd] = @@command_index
-      @@command_index += 1
+      @@command_index += 1 # This will point to the next command
     end
     
   end
@@ -290,7 +334,7 @@ module Drydock
   # command name that was used via obj.alias. 
   def alias_command(aliaz, cmd)
     return unless commands.has_key? cmd
-    @@commands[aliaz] = commands[cmd]
+    commands[canonize(aliaz)] = commands[cmd]
   end
   
   # Identical to +alias_command+ with reversed arguments. 
@@ -298,10 +342,11 @@ module Drydock
   # Tip: the argument order matches the method name. 
   def command_alias(cmd, aliaz)
     return unless commands.has_key? cmd
-    @@commands[aliaz] = commands[cmd]
+    puts "#{canonize(aliaz)} to #{commands[cmd]}"
+    commands[canonize(aliaz)] = commands[cmd]
   end
   
-  # An array of the currently defined Drydock::Command objects
+  # A hash of the currently defined Drydock::Command objects
   def commands
     @@commands ||= {}
     @@commands
@@ -311,6 +356,12 @@ module Drydock
   def command_names
     @@commands ||= {}
     @@commands.keys.collect { |cmd| decanonize(cmd); }
+  end
+  
+  # Provide a description for a command
+  def desc(txt)
+    @@command_descriptions ||= []
+    @@command_descriptions << txt
   end
   
   # Returns true if automatic execution is enabled. 
@@ -440,7 +491,7 @@ module Drydock
     
     cmd = get_command(cmd_name) 
     
-    command_parser = @@command_opts_parser[get_command_index(cmd_name)]
+    command_parser = @@command_opts_parser[get_command_index(cmd.cmd)]
     command_options = {}
     
     # We only need to parse the options out of the arguments when
