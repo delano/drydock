@@ -31,40 +31,49 @@ See bin/example for more.
   # variables defined here will be available to all commands.
   end
 
-  command :welcome do
-  # Example: ruby bin/example
-    
-    puts "Welcome to Drydock. You have the following commands:"
-    
-    # The commands method returns a hash of Drydock::Command objects
-    puts commands.keys.inject([]) { |list, command| list << command.to_s }.sort.join(', ')
-  end
+  desc "A friendly welcome to the Drydock"
+	command :welcome do
+	  puts "Welcome to Drydock."
+	  puts "For available commands:"
+	  puts "#{$0} show-commands"
+	end
+	
   
-  usage "Example: #{$0} laugh [-f]"
-  option :f, :faster, "A boolean value. Go even faster!"
-  command :laugh do |obj|
-  # +obj+ is an instance of Drydock::Command. The options you define are available
-  # via accessors in this object. 
+	usage "USAGE: #{$0} laugh [-f]"
+	desc "The captain commands his crew to laugh"
+	option :f, :faster, "A boolean value. Go even faster!"
+	command :laugh do |obj|
+	# +obj+ is an instance of Drydock::Command. The options you define are available
+	# via obj.option.name 
 
-    answer = !obj.options.faster ? "Sort of" : "Yes! I'm literally laughing as fast as possible."
+	  answer = !obj.option.faster ? "Sort of" : "Yes! I'm literally laughing as fast as possible."
 
-    puts "Captain Stubing: Are you laughing?"
-    puts "Dr. Bricker: " << answer
-  end
+	  puts "Captain Stubing: Are you laughing?"
+	  puts "Dr. Bricker: " << answer
+	end
+	
   
-  class JohnWestSmokedOysters < Drydock::Command; end;
-  # You can write your own command classes by inheriting from Drydock::Command
-  # and referencing it in the command definition.
+	class JohnWestSmokedOysters < Drydock::Command 
+	  # You can write your own command classes by inheriting from Drydock::Command
+	  # and referencing it in the command definition.
+	  def ahoy!; p "matey"; end
+	end
 
-  command :oysters => JohnWestSmokedOysters do |obj|
-    p obj  # => #<JohnWestSmokedOysters:0x42179c ... >
-  end
+	desc "Do something with John West's Smoked Oysters"
+	command :oysters => JohnWestSmokedOysters do |obj|
+	  p obj  # => #<JohnWestSmokedOysters:0x42179c ... >
+	end
+
+	desc "My way of saying hello!"
+	command :ahoy! => JohnWestSmokedOysters
+	# If you don't provide a block, Drydock will call JohnWestSmokedOysters#ahoy!
+
   
 == More Information
 
-* http://github.com/delano/drydock
-* http://drydock.rubyforge.org/ (rdocs)
-* http://www.youtube.com/watch?v=m_wFEB4Oxlo
+* GitHub[http://github.com/delano/drydock]
+* RDocs[http://drydock.rubyforge.org/]
+* Inspiration[http://www.youtube.com/watch?v=m_wFEB4Oxlo]
 
 == Credits
 

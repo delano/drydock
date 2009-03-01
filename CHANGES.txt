@@ -1,10 +1,16 @@
 DRYDOCK, CHANGES
 
-
-
 #### 0.4 (2009-02-28) ###############################
 
-* NEW: Default usage "#{$0} command-name"
+* FIX: Bug, "interning empty string" error when bare "option" is used
+* NEW: Calls valid? method (if present) before calling command block.
+* NEW: "capture" method. Auto capture STDOUT to obj.stdout etc...
+* NEW: Automatically calls init and print_header methods before the command
+       and print_footer after the command (if available)
+* NEW: Tries to call obj.command if available when no block is supplied
+* NEW: "show_commands" command built-in. Displays commands with descriptions
+* NEW: A default usage help msg for every command: "#{$0} command-name"
+* NEW: "usage" work multiple times for the same command. 
 * NEW: "desc" method for per command descriptions
 * CHANGE: options are now stored as obj.option.name instead of obj.name
 * CHANGE: global options are now stored as obj.globals.name
