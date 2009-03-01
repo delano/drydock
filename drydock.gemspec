@@ -1,11 +1,11 @@
 @spec = Gem::Specification.new do |s|
   s.name = %q{drydock}
   s.version = "0.5.0"
+  s.date = %q{2009-03-01}
   s.specification_version = 1 if s.respond_to? :specification_version=
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
 
   s.authors = ["Delano Mandelbaum"]
-  s.date = %q{2008-08-17}
   s.description = %q{A seaworthy DSL for writing command line apps}
   s.email = %q{delano@solutious.com}
   s.files = %w(
@@ -24,6 +24,5 @@
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.1.1}
   s.summary = %q{Drydock: A seaworthy DSL for writing command line apps}
-  
   s.rubyforge_project = "drydock"
 end

@@ -1,8 +1,16 @@
 DRYDOCK, CHANGES
 
+#### TODO ###############################
+
+* Support putting descriptions into resource file (or __END__)
+* Define aliases with "command [:name, :alias]"
+* Add Drydock::Console, Drydock::Window, Drydock::Cursor
+
+
 #### 0.5 (2009-03-01) ###############################
 
 * CHANGE: Cleaned up show-commands screen
+* FIXED: Help didn't work when using command alias
 * NEW: Named argv values.
 * CHANGE: argv are now part of the Command class (not passed to command blocks)
 * CHANGE: "project" now automatically requires the lowercase name of the project
@@ -17,7 +25,7 @@ DRYDOCK, CHANGES
 
 #### 0.4 (2009-02-28) ###############################
 
-* FIX: Bug, "interning empty string" error when bare "option" is used
+* FIXED: "interning empty string" error when bare "option" is used
 * NEW: Calls valid? method (if present) before calling command block.
 * NEW: "capture" method. Auto capture STDOUT to obj.stdout etc...
 * NEW: Automatically calls init and print_header methods before the command
