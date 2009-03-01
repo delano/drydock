@@ -7,7 +7,7 @@ module Drydock
   # for every command defined. Global and command-specific options are added
   # as attributes to this class dynamically. 
   # 
-  # i.e. "example -v select --location kumamoto"
+  #     i.e. "example -v select --location kumamoto"
   #
   #     global :v, :verbose, "I want mooooore!"
   #     option :l, :location, String, "Source location"
