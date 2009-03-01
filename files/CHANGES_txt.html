@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+  <head>
+    <title>File: CHANGES.txt [Drydock: A seaworthy DSL for writing command line apps]</title>
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <link href='.././rdoc-style.css' media='screen' rel='stylesheet' type='text/css'>
+    <script type='text/javascript'>
+      //<![CDATA[
+        function popupCode(url) {
+          window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+        }
+        
+        function toggleCode(id) {
+          var code = document.getElementById(id)
+        
+          code.style.display = code.style.display != 'block' ? 'block' : 'none'
+          return true
+        }
+        
+        // Make codeblocks hidden by default
+        document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+      //]]>
+    </script>
+  </head>
+  <body class='page'>
+    <div class='file' id='wrapper'>
+      <div class='header'>
+        <h1 class='name'>CHANGES.txt</h1>
+        <div class='paths'>
+          CHANGES.txt
+        </div>
+        <div class='last-update'>
+          Last Update:
+          <span class='datetime'>Sun Mar 01 11:12:47 -0500 2009</span>
+        </div>
+      </div>
+      <div id='content'>
+        <div id='text'>
+          <div id='description'>
+            <p>
+            DRYDOCK, CHANGES
+            </p>
+            <p>
+            #### 0.5 (2009-03-01) ###############################
+            </p>
+            <ul>
+            <li>CHANGE: Cleaned up show-commands screen
+            
+            </li>
+            <li>NEW: Named argv values.
+            
+            </li>
+            <li>CHANGE: argv are now part of the Command class (not passed to command
+            blocks)
+            
+            </li>
+            <li>CHANGE: &#8220;project&#8221; now automatically requires the lowercase name
+            of the project
+            
+            <pre>and gracefully continues if the require failed.</pre>
+            </li>
+            <li>CHANGE: <a href="../classes/Drydock.html">Drydock</a> will look for
+            different validation method, based on the method
+            
+            <pre>being executed. If a validation method is found it's executed and&#x000A;must return a true valid (it can also raise its own exceptions).</pre>
+            </li>
+            <li>NEW: command actions. These are boolean switches with a twist. <a
+            href="../classes/Drydock.html">Drydock</a> looks
+            
+            <pre>for command_action or action_command methods. Saves checking the switches&#x000A;and sending to other methods manually.</pre>
+            </li>
+            </ul>
+            <p>
+            #### 0.4 (2009-02-28) ###############################
+            </p>
+            <ul>
+            <li>FIX: Bug, &#8220;interning empty string&#8221; error when bare
+            &#8220;option&#8221; is used
+            
+            </li>
+            <li>NEW: Calls valid? method (if present) before calling command block.
+            
+            </li>
+            <li>NEW: &#8220;capture&#8221; method. Auto capture STDOUT to obj.stdout etc...
+            
+            </li>
+            <li>NEW: Automatically calls init and print_header methods before the command
+            
+            <pre>and print_footer after the command (if available)</pre>
+            </li>
+            <li>NEW: Tries to call obj.command if available when no block is supplied
+            
+            </li>
+            <li>NEW: &#8220;show_commands&#8220; command built-in. Displays commands with
+            descriptions
+            
+            </li>
+            <li>NEW: A default usage help msg for every command: &#8220;#{$0}
+            command-name&#8220;
+            
+            </li>
+            <li>NEW: &#8220;usage&#8221; work multiple times for the same command.
+            
+            </li>
+            <li>NEW: &#8220;desc&#8221; method for per command descriptions
+            
+            </li>
+            <li>CHANGE: options are now stored as obj.option.name instead of obj.name
+            
+            </li>
+            <li>CHANGE: global options are now stored as obj.globals.name
+            
+            </li>
+            <li>CHANGE: removed auto importing methods
+            
+            <pre>OLD: require 'drydock'&#x000A;NEW: require 'drydock'&#x000A;     extend Drydock</pre>
+            </li>
+            </ul>
+            <p>
+            #### 0.3.3 (2009-02-14) ###############################
+            </p>
+            <ul>
+            <li>NEW: init method hook for subclasses of <a
+            href="../classes/Drydock/Command.html">Drydock::Command</a>
+            
+            </li>
+            <li>UPDATED: Rdocs
+            
+            </li>
+            <li>CHANGE: added method command_aliaz to mirror aliaz_command
+            
+            </li>
+            </ul>
+            <p>
+            #### 0.3 (2009-02-05) ###############################
+            </p>
+            <ul>
+            <li>Added support for custom Drydock::Commands objects
+            
+            </li>
+            <li>Global and command-specific options are now available as attributes of the
+            Drydock::Commands class instance.
+            
+            </li>
+            <li>Automatic execution
+            
+            </li>
+            <li>Now in a single file (<a href="lib/drydock_rb.html">lib/drydock.rb</a>)
+            
+            </li>
+            <li>Started adding tests
+            
+            </li>
+            <li>Improved documentation
+            
+            </li>
+            </ul>
+            <p>
+            #### 0.2 (2008-12-27) ###############################
+            </p>
+            <ul>
+            <li>Initial release
+            
+            </li>
+            <li>Forked from bmizerany/frylock
+            
+            </li>
+            </ul>
+          </div>
+          <div id='section'>
+          </div>
+        </div>
+      </div>
+      <div id='footer-push'></div>
+    </div>
+    <div id='footer'>
+      <a href="http://github.com/mislav/hanna/tree/master"><strong>Hanna</strong> RDoc template</a>
+      <script type='text/javascript'>
+        //<![CDATA[
+          var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+          document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/scr
+          
+          try {
+            var pageTracker = _gat._getTracker("UA-4642735-10");
+            pageTracker._trackPageview();
+          } catch(err) {}
+        //]]>
+      </script>
+    </div>
+  </body>
+</html>
