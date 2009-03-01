@@ -1,5 +1,18 @@
 DRYDOCK, CHANGES
 
+#### 0.5 (2009-03-01) ###############################
+
+* CHANGE: argv are now part of the Command class (not passed to command blocks)
+* CHANGE: "project" now automatically requires the lowercase name of the project
+          and gracefully continues if the require failed. 
+* CHANGE: Drydock will look for different validation method, based on the method 
+          being executed. If a validation method is found it's executed and
+          must return a true valid (it can also raise its own exceptions).
+* NEW: command actions. These are boolean switches with a twist. Drydock looks
+       for command_action or action_command methods. Saves checking the switches
+       and sending to other methods manually.
+
+
 #### 0.4 (2009-02-28) ###############################
 
 * FIX: Bug, "interning empty string" error when bare "option" is used

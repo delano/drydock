@@ -1,8 +1,32 @@
+#---
+# TODO: Incomplete support for named argv
+#+++
+
 require 'optparse'
 require 'ostruct'
 require 'stringio'
 
 module Drydock
+  class FancyArray < Array #:nodoc:
+    attr_reader :fields
+    def add_field(n)
+      @fields ||= []
+      eval <<-RUBY, binding, '(Drydock::FancyArray)', 1
+      def #{n}
+        self[#{@fields.size}]
+      end
+      RUBY
+      @fields << n
+      n
+    end
+    def fields=(*args)
+      args.flatten.each do |field|
+        add_field(field)
+      end
+    end
+  end
+  
+    
   # The base class for all command objects. There is an instance of this class
   # for every command defined. Global and command-specific options are added
   # as attributes to this class dynamically. 
@@ -36,8 +60,6 @@ module Drydock
     attr_reader :cmd
       # The name used to evoke this command (it's either the canonical name or the alias used).
     attr_reader :alias
-      # A friendly description of the command. 
-    attr_accessor :desc
       # The block that will be executed when this command is evoked. If the block is nil
       # it will check if there is a method named +cmd+. If so, that will be executed.
     attr_reader :b
@@ -45,6 +67,15 @@ module Drydock
     attr_reader :option
       # An OpenStruct object containing the global options specified at run-time.
     attr_reader :global
+      # A friendly description of the command. 
+    attr_accessor :desc
+      # An array of action names specified in the command definition
+    attr_accessor :actions
+      # An instance of Drydock::FancyArray. Acts like an array of unnamed arguments
+      # but also allows field names if supplied. 
+    attr_accessor :argv  
+      # Either an IO handle to STDIN or the output of the Drydock#stdin handler. 
+    attr_reader :stdin
     
     # The default constructor sets the short name of the command
     # and stores a reference to the block (if supplied).
@@ -56,6 +87,9 @@ module Drydock
     def initialize(cmd, &b)
       @cmd = (cmd.kind_of?(Symbol)) ? cmd : cmd.to_sym
       @b = b
+      @actions = []
+      @argv = Drydock::FancyArray.new # an array with field names
+      @stdin = STDIN
       @option = OpenStruct.new
       @global = OpenStruct.new
       
@@ -90,15 +124,34 @@ module Drydock
         self.option.send("#{n}=", v)    # ... and also the command options
       end
       
-      self.init         if self.respond_to? :init     # Must be called first!
-      self.print_header if respond_to? :print_header
-      self.valid?       if respond_to? :'valid?'
       
-      block_args = [self, argv, stdin]
+      @argv = argv
+      @stdin = stdin
+            
+      self.init         if self.respond_to? :init     # Must be called first!
+      self.print_header if self.respond_to? :print_header
       
       if @b 
-        @b.call(*block_args[0..(@b.arity-1)]) # send only as many args as defined
+        run_validation
+        @b.call(self) 
+        
+      elsif !(chosen = find_action(options)).empty?
+        raise "Only one action at a time please! I can't #{chosen.join(' AND ')}." if chosen.size > 1
+        criteria = [[@cmd, chosen.first], [chosen.first, @cmd]]
+        meth = name = nil
+        # Try command_action, then action_command
+        criteria.each do |tuple|
+          name = tuple.join('_')
+          meth = name if self.respond_to?(name)  
+        end
+        
+        raise "#{self.class} needs a #{name} method!" unless meth
+        
+        run_validation(meth)
+        self.send(meth)
+        
       elsif self.respond_to? @cmd.to_sym
+        run_validation(@cmd)
         self.send(@cmd)
       else
         raise "The command #{@alias} has no block and #{self.class} has no #{@cmd} method!"
@@ -107,6 +160,40 @@ module Drydock
       self.print_footer if respond_to? :print_footer
       
     end
+    
+    # <li>+meth+ The method name used to determine the name of the validation method.
+    # If not supplied, the validation method is "valid?" otherwise it's "meth_valid?"</li>
+    # If the command class doesn't have the given validation method, we'll just continue
+    # on our way.
+    #
+    # Recognized validation methods are:
+    #
+    #     def valid?                  # if we're executing a command block
+    #     def command_valid?          # if we're executing an object method
+    #     def command_action_valid?   # if the main meth is command_action
+    #     def action_command_valid?   # if the main meth is action_command
+    #
+    # This method raises a generic exception when the validation method returns false. 
+    # However, <strong>it's more appropriate for the validation methods to raise 
+    # detailed exceptions</strong>. 
+    #
+    def run_validation(meth=nil)
+      vmeth = meth ? [meth, 'valid?'].join('_') : 'valid?'
+      is_valid = self.respond_to?(vmeth) ? self.send(vmeth) : true
+      raise "Your request is not valid. See #{$0} #{@cmd} -h" unless is_valid
+    end
+    private :run_validation
+    
+    # Compares the list of known actions to the list of boolean switches supplied
+    # on the command line (if any). 
+    # <li>+options+ is a hash of the named command line arguments (created by 
+    # OptionParser#getopts)</li>
+    # Returns an array of action names (empty if no action was supplied)
+    def find_action(options)
+      boolkeys = options.keys.select { |n| options[n] == true } || []
+      (@actions || []) & boolkeys # an array of requested actions (or empty)
+    end
+    private :find_action
     
     # Print the list of available commands to STDOUT. This is used as the 
     # "default" command unless another default commands is supplied. You 
@@ -177,23 +264,6 @@ module Drydock
   
   VERSION = 0.4
   
- private
-  # Disabled. We're going basic, using a module and include/extend. 
-  # Stolen from Sinatra!
-  #def delegate(*args)
-  #  args.each do |m|
-  #    eval(<<-end_eval, binding, "(__Drydock__)", __LINE__)
-  #      def #{m}(*args, &b)
-  #        Drydock.#{m}(*args, &b)
-  #      end
-  #    end_eval
-  #  end
-  #end
-  #
-  #delegate :before, :after, :alias_command, :desc
-  #delegate :global_option, :global_usage, :usage, :commands, :command
-  #delegate :debug, :option, :stdin, :default, :ignore, :command_alias
-  
   @@project = nil
   
   @@debug = false
@@ -205,6 +275,7 @@ module Drydock
 
   @@command_opts_parser = []
   @@command_option_names = []
+  @@command_actions = []
   
   @@default_command = nil
   
@@ -212,6 +283,7 @@ module Drydock
   @@command_descriptions = []
   @@command_index = 0
   @@command_index_map = {}
+  @@command_argv_names = []  # an array of Drydock
   
   @@capture = nil     # contains one of :stdout, :stderr
   @@captured = nil
@@ -238,11 +310,29 @@ module Drydock
     @@debug
   end
   
+  # Provide names for CLI arguments, in the order they appear. 
+  #
+  #     $ yourscript sample malpeque zinqy
+  #     argv :name, :flavour
+  #     command :sample do |obj|
+  #       obj.argv.name        # => malpeque
+  #       obj.argv.flavour     # => zinqy
+  #     end
+  #
+  def argv(*args)
+    @@command_argv_names[@@command_index] ||= Drydock::FancyArray.new
+    @@command_argv_names[@@command_index].fields = args.flatten
+  end
+  
   # The project of the script. This is currently only used when printing
   # list of commands (see: Drydock::Command#show_commands). It may be 
   # used elsewhere in the future. 
   def project(txt=nil)
     return @@project unless txt
+    begin
+      require txt.downcase
+    rescue LoadError
+    end
     @@project = txt
   end
   
@@ -273,9 +363,11 @@ module Drydock
   end
   
   # Define a block for processing STDIN before the command is called. 
-  # The command block receives the return value of this block in a named argument:
+  # The command block receives the return value of this block as obj.stdin:
   #
-  #     command :task do |obj, argv, stdin|; ...; end
+  #     command :task do |obj|; 
+  #       obj.stdin   # => ...
+  #     end
   #
   # If a stdin block isn't defined, +stdin+ above will be the STDIN IO handle. 
   def stdin(&b)
@@ -365,9 +457,23 @@ module Drydock
     current_command_option_names << option_parser(args, &b)
   end
   
-
-  
-  
+  # Define an command-specific action.
+  #
+  # This is functionality very similar to option, but with an exciting and buoyant twist:
+  # Drydock keeps track of actions for each command (in addition to treating it like an option).
+  # When an action is specifiec on the command line Drydock looks for command_action or 
+  # action_command methods in the command class. 
+  #
+  #     action :E, :eat, "Eat something"
+  #     command :oysters => Fresh::Oysters
+  #
+  #     # Drydock will look for Fresh::Oysters#eat_oysters and Fresh::Oysters#oysters_eat.
+  #
+  def action(*args, &b)
+    ret = option(*args, &b) # returns an array of all the current option names
+    current_command_action << ret.last # the most recent is last
+  end
+    
   # Define a command. 
   # 
   #     command :task do
@@ -383,15 +489,20 @@ module Drydock
   #
   def command(*cmds, &b)
     cmd = cmds.first
+    
     if cmd.is_a? Hash
-      c = cmd.values.first.new(cmd.keys.first, &b)
+      c = cmd.values.first.new(cmd.keys.first, &b) # A custom class was specified
     else
       c = Drydock::Command.new(cmd, &b)
     end
     
     @@command_descriptions[@@command_index] ||= ""
+    @@command_actions[@@command_index] ||= []
+    @@command_argv_names[@@command_index] ||= Drydock::FancyArray.new
     
     c.desc = @@command_descriptions[@@command_index]
+    c.actions = @@command_actions[@@command_index]
+    c.argv = @@command_argv_names[@@command_index]
     
     # Default Usage Banner. 
     # Without this, there's no help displayed for the command. 
@@ -413,8 +524,8 @@ module Drydock
   #
   # Either name can be used on the command-line:
   #
-  #    $ script task [options]
-  #    $ script pointer [options]
+  #    $ yourscript task [options]
+  #    $ yourscript pointer [options]
   #
   # Inside of the command definition, you have access to the
   # command name that was used via obj.alias. 
@@ -640,6 +751,10 @@ module Drydock
   # long names. 
   def current_command_option_names
     (@@command_option_names[@@command_index] ||= [])
+  end
+  
+  def current_command_action
+    (@@command_actions[@@command_index] ||= [])
   end
   
   def get_command_index(cmd)

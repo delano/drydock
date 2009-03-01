@@ -64,8 +64,7 @@ end
 
 usage "#{$0} [-s] [-vv] date"
 desc "Display the current date"
-command :date do |obj, argv| 
-# +argv+ is an array containing the unnamed arguments
+command :date do |obj| 
   require 'time'
   now = Time.now
   puts "(Not verbose enough. Try adding a -v.)" if (obj.global.verbose || 0) == 1
@@ -76,14 +75,15 @@ end
 
 ignore :options
 desc "This command ignores options"
-command :rogue do |obj, argv|
+command :rogue do |obj|
 # You can use ignore :options to tell Drydock to not process the 
 # command-specific options. 
-  if argv.empty?
+# Unnamed arguments are available from obj.argv
+  if obj.argv.empty?
     puts "Had you supplied some arguments, I would have ignored them."
   else
     puts "Hi! You supplied some arguments but I ignored them."
-    puts "They're all still here in this array: %s" % argv.join(', ')
+    puts "They're all still here in this array: %s" % obj.argv.join(', ')
   end
 end
 
@@ -115,18 +115,19 @@ option :t, :timeout, Float, "Timeout value for HTTP request" do |v|
   v = 10 if (v > 10)
   v
 end
-command :uri do |obj, argv, stdin|
-# +cmd+ is the string used to evoke this command. Useful with alias_command (see below).
-# +stdin+ is either an IO object or a custom object defined with a stdin block (see below)
+command :uri do |obj|
+# This command processes the output of the stdin block (below this definition).
+# The output of that block is available as obj.stdin. If there is no stdin block
+# obj.stdin will be STDIN's IO object.
 
   require 'net/http'
   require 'uri'
   require 'timeout'
   
-  uris = [stdin, argv].flatten        # Combine the argv and stdin arrays
+  uris = [obj.stdin, obj.argv].flatten    # Combine the argv and (preprocessed) stdin arrays
   delim = obj.option.delim || ','
   timeout = obj.option.timeout || 5
-  code = :notchecked                  # The default code when :check is false
+  code = :notchecked                      # The default code when :check is false
   
   if uris.empty?
     puts "Frylock: You didn't provide any URIs. "
@@ -138,6 +139,10 @@ command :uri do |obj, argv, stdin|
     code = response_code(uri, timeout) if (obj.option.check)
     puts [index+1, uri, code].join(delim)
   end
+  
+  # NOTE: The alias used to evoke this command is available
+  # via obj.alias
+  
 end
 alias_command :checkuri, :uri
 
