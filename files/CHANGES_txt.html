@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang='en'>
   <head>
-    <title>File: CHANGES.txt [Drydock, A seaworthy DSL for command-line apps.]</title>
+    <title>File: CHANGES.txt [A seaworthy DSL for writing command line apps]</title>
     <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
     <link href='.././rdoc-style.css' media='screen' rel='stylesheet' type='text/css'>
     <script type='text/javascript'>
@@ -31,7 +31,7 @@
         </div>
         <div class='last-update'>
           Last Update:
-          <span class='datetime'>Fri Feb 06 13:01:07 -0500 2009</span>
+          <span class='datetime'>Sat Feb 28 19:41:53 -0500 2009</span>
         </div>
       </div>
       <div id='content'>
@@ -40,6 +40,67 @@
             <p>
             DRYDOCK, CHANGES
             </p>
+            <p>
+            #### 0.4 (2009-02-28) ###############################
+            </p>
+            <ul>
+            <li>FIX: Bug, &#8220;interning empty string&#8221; error when bare
+            &#8220;option&#8221; is used
+            
+            </li>
+            <li>NEW: Calls valid? method (if present) before calling command block.
+            
+            </li>
+            <li>NEW: &#8220;capture&#8221; method. Auto capture STDOUT to obj.stdout etc...
+            
+            </li>
+            <li>NEW: Automatically calls init and print_header methods before the command
+            
+            <pre>and print_footer after the command (if available)</pre>
+            </li>
+            <li>NEW: Tries to call obj.command if available when no block is supplied
+            
+            </li>
+            <li>NEW: &#8220;show_commands&#8220; command built-in. Displays commands with
+            descriptions
+            
+            </li>
+            <li>NEW: A default usage help msg for every command: &#8220;#{$0}
+            command-name&#8220;
+            
+            </li>
+            <li>NEW: &#8220;usage&#8221; work multiple times for the same command.
+            
+            </li>
+            <li>NEW: &#8220;desc&#8221; method for per command descriptions
+            
+            </li>
+            <li>CHANGE: options are now stored as obj.option.name instead of obj.name
+            
+            </li>
+            <li>CHANGE: global options are now stored as obj.globals.name
+            
+            </li>
+            <li>CHANGE: removed auto importing methods
+            
+            <pre>OLD: require 'drydock'&#x000A;NEW: require 'drydock'&#x000A;     extend Drydock</pre>
+            </li>
+            </ul>
+            <p>
+            #### 0.3.3 (2009-02-14) ###############################
+            </p>
+            <ul>
+            <li>NEW: init method hook for subclasses of <a
+            href="../classes/Drydock/Command.html">Drydock::Command</a>
+            
+            </li>
+            <li>UPDATED: Rdocs
+            
+            </li>
+            <li>CHANGE: added method command_aliaz to mirror aliaz_command
+            
+            </li>
+            </ul>
             <p>
             #### 0.3 (2009-02-05) ###############################
             </p>
