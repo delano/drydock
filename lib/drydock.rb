@@ -1,7 +1,3 @@
-#---
-# TODO: Incomplete support for named argv
-#+++
-
 require 'optparse'
 require 'ostruct'
 require 'stringio'
@@ -11,9 +7,14 @@ module Drydock
     attr_reader :fields
     def add_field(n)
       @fields ||= []
+      field_name = n
       eval <<-RUBY, binding, '(Drydock::FancyArray)', 1
       def #{n}
-        self[#{@fields.size}]
+        if self.size > @fields.size && '#{n}'.to_sym == @fields.last
+          self[#{@fields.size}..-1]
+        else
+          self[#{@fields.size}]
+        end
       end
       RUBY
       @fields << n
@@ -53,7 +54,7 @@ module Drydock
   #     end
   #
   class Command
-    VERSION = 0.4
+    VERSION = 0.5
       # The canonical name of the command (the one used in the command definition). If you 
       # inherit from this class and add a method named +cmd+, you can leave omit the block
       # in the command definition. That method will be called instead. See bin/examples.
@@ -125,9 +126,10 @@ module Drydock
       end
       
       
-      @argv = argv
+      @argv << argv    # TODO: Using += returns an Array instead of FancyArray
+      @argv.flatten!   # NOTE: << creates @argv[[]]
       @stdin = stdin
-            
+      
       self.init         if self.respond_to? :init     # Must be called first!
       self.print_header if self.respond_to? :print_header
       
@@ -202,17 +204,25 @@ module Drydock
     def show_commands
       project = " for #{Drydock.project}" if Drydock.project?
       puts "Available commands#{project}:", ""
-      Drydock.commands.keys.sort{ |a,b| a.to_s <=> b.to_s }.each do |cmd|
-        msg = Drydock.commands[cmd].desc
-        
+      cmds = {}
+      Drydock.commands.keys.each do |cmd|
+        pretty = Drydock.decanonize(cmd)
         # Out to sea
+        cmds[Drydock.commands[cmd].cmd] ||= {}
         unless cmd === Drydock.commands[cmd].cmd
-          msg = "See: #{Drydock.decanonize(Drydock.commands[cmd].cmd)} (this is an alias)" 
+          (cmds[Drydock.commands[cmd].cmd][:aliases] ||= []) << pretty
+          next
         end
-        
-        puts " %16s: %s" % [Drydock.decanonize(cmd), msg]
+        cmds[cmd][:desc] = Drydock.commands[cmd].desc
+        cmds[cmd][:pretty] = cmd
       end
-
+      
+      cmds.keys.sort{ |a,b| a.to_s <=> b.to_s }.each do |cmd|
+        p = cmds[cmd]
+        puts " %16s: %s" % [p[:pretty], p[:desc]]
+        puts " %17s (%s: %s)" % ['', "aliases", cmds[cmd][:aliases].join(', ')] if cmds[cmd][:aliases]
+      end
+      
       puts 
       puts "%6s: %s" % ["Try", "#{$0} -h"] 
       puts "%6s  %s" % ["", "#{$0} COMMAND -h"]
@@ -283,7 +293,7 @@ module Drydock
   @@command_descriptions = []
   @@command_index = 0
   @@command_index_map = {}
-  @@command_argv_names = []  # an array of Drydock
+  @@command_argv_names = []  # an array of names for values of argv
   
   @@capture = nil     # contains one of :stdout, :stderr
   @@captured = nil
@@ -320,8 +330,8 @@ module Drydock
   #     end
   #
   def argv(*args)
-    @@command_argv_names[@@command_index] ||= Drydock::FancyArray.new
-    @@command_argv_names[@@command_index].fields = args.flatten
+    @@command_argv_names[@@command_index] ||= []
+    @@command_argv_names[@@command_index] += args.flatten
   end
   
   # The project of the script. This is currently only used when printing
@@ -498,11 +508,11 @@ module Drydock
     
     @@command_descriptions[@@command_index] ||= ""
     @@command_actions[@@command_index] ||= []
-    @@command_argv_names[@@command_index] ||= Drydock::FancyArray.new
+    @@command_argv_names[@@command_index] ||= []
     
     c.desc = @@command_descriptions[@@command_index]
     c.actions = @@command_actions[@@command_index]
-    c.argv = @@command_argv_names[@@command_index]
+    c.argv.fields = @@command_argv_names[@@command_index]
     
     # Default Usage Banner. 
     # Without this, there's no help displayed for the command. 

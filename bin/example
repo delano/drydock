@@ -6,9 +6,14 @@
 # and just generally be a longshoreman about things. This is
 # a drydock after all. 
 #
-# If you're reading this via the Rdocs you won't see the code. Try:
+# If you're reading this via the Rdocs you won't see the code. See:
 #
-# http://github.com/delano/drydock/blob/drydock-0.4.0/bin/example
+# http://github.com/delano/drydock/blob/drydock-0.5.0/bin/example
+#
+# For an example of a complex command-line application using 
+# Drydock, see:
+#
+# http://github.com/solutious/rudy
 #
 
 $:.unshift File.expand_path(File.join(File.dirname(__FILE__), '..')), 'lib'
@@ -34,9 +39,8 @@ end
 
 desc "A friendly welcome to the Drydock"
 command :welcome do
-  puts "Welcome to Drydock."
-  puts "For available commands:"
-  puts "#{$0} show-commands"
+  puts "Welcome to Drydock.", $/
+  puts "For available commands: #{$0} show-commands"
 end
 
 usage "USAGE: #{$0} laugh [-f]"
@@ -103,9 +107,10 @@ command :ahoy! => JohnWestSmokedOysters
 # If you don't provide a block, Drydock will call JohnWestSmokedOysters#ahoy!
 
 
+require 'yaml'
 
-usage 'ruby bin/example process -c -d " " -t 15 http://solutious.com/'
-usage 'echo "http://solutious.com/" | ruby bin/example process -c -d " " -t 15'
+usage 'ruby bin/example uri -c -d " " -t 15 http://solutious.com/'
+usage 'echo "http://solutious.com/" | ruby bin/example uri -c -d " " -t 15'
 desc "Check for broken URIs"
 option :c, :check, "Check response codes for each URI"
 option :d, :delim, String, "Output delimiter"
@@ -115,6 +120,7 @@ option :t, :timeout, Float, "Timeout value for HTTP request" do |v|
   v = 10 if (v > 10)
   v
 end
+argv :uris
 command :uri do |obj|
 # This command processes the output of the stdin block (below this definition).
 # The output of that block is available as obj.stdin. If there is no stdin block
@@ -124,7 +130,10 @@ command :uri do |obj|
   require 'uri'
   require 'timeout'
   
-  uris = [obj.stdin, obj.argv].flatten    # Combine the argv and (preprocessed) stdin arrays
+  uris = []
+  uris += obj.stdin if obj.stdin
+  uris += obj.argv.uris if obj.argv.uris
+  
   delim = obj.option.delim || ','
   timeout = obj.option.timeout || 5
   code = :notchecked                      # The default code when :check is false

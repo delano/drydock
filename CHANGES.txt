@@ -2,6 +2,8 @@ DRYDOCK, CHANGES
 
 #### 0.5 (2009-03-01) ###############################
 
+* CHANGE: Cleaned up show-commands screen
+* NEW: Named argv values.
 * CHANGE: argv are now part of the Command class (not passed to command blocks)
 * CHANGE: "project" now automatically requires the lowercase name of the project
           and gracefully continues if the require failed. 
