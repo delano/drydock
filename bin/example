@@ -4,11 +4,12 @@
 # 
 # This is a functioning script so you can copy it, run it, 
 # and just generally be a longshoreman about things. This is
-# a Drydock after all. 
+# a drydock after all. 
 #
 # If you're reading this via the Rdocs you won't see the code. Try:
 #
-# http://github.com/delano/drydock/blob/master/bin/example
+# http://github.com/delano/drydock/blob/drydock-0.4.0/bin/example
+#
 
 $:.unshift File.expand_path(File.join(File.dirname(__FILE__), '..')), 'lib'
 

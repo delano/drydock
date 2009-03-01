@@ -4,7 +4,7 @@ Inspired by github-gem and bmizerany-frylock.
 
 == Overview
 
-Drydock is a seaworthy DSL for command line apps. It is contained in a single .rb which can be copied directly into your project. 
+Drydock is a seaworthy DSL for command line apps. It's contained in a single .rb file so it's easy to copy directly into your project. 
 
 == Install
 
@@ -32,41 +32,41 @@ See bin/example for more.
   end
 
   desc "A friendly welcome to the Drydock"
-	command :welcome do
-	  puts "Welcome to Drydock."
-	  puts "For available commands:"
-	  puts "#{$0} show-commands"
-	end
-	
+  command :welcome do
+    puts "Welcome to Drydock."
+    puts "For available commands:"
+    puts "#{$0} show-commands"
+  end
   
-	usage "USAGE: #{$0} laugh [-f]"
-	desc "The captain commands his crew to laugh"
-	option :f, :faster, "A boolean value. Go even faster!"
-	command :laugh do |obj|
-	# +obj+ is an instance of Drydock::Command. The options you define are available
-	# via obj.option.name 
-
-	  answer = !obj.option.faster ? "Sort of" : "Yes! I'm literally laughing as fast as possible."
-
-	  puts "Captain Stubing: Are you laughing?"
-	  puts "Dr. Bricker: " << answer
-	end
-	
   
-	class JohnWestSmokedOysters < Drydock::Command 
-	  # You can write your own command classes by inheriting from Drydock::Command
-	  # and referencing it in the command definition.
-	  def ahoy!; p "matey"; end
-	end
+  usage "USAGE: #{$0} laugh [-f]"
+  desc "The captain commands his crew to laugh"
+  option :f, :faster, "A boolean value. Go even faster!"
+  command :laugh do |obj|
+  # +obj+ is an instance of Drydock::Command. The options you define are available
+  # via obj.option.name 
 
-	desc "Do something with John West's Smoked Oysters"
-	command :oysters => JohnWestSmokedOysters do |obj|
-	  p obj  # => #<JohnWestSmokedOysters:0x42179c ... >
-	end
+    answer = !obj.option.faster ? "Sort of" : "Yes! I'm literally laughing as fast as possible."
 
-	desc "My way of saying hello!"
-	command :ahoy! => JohnWestSmokedOysters
-	# If you don't provide a block, Drydock will call JohnWestSmokedOysters#ahoy!
+    puts "Captain Stubing: Are you laughing?"
+    puts "Dr. Bricker: " << answer
+  end
+  
+  
+  class JohnWestSmokedOysters < Drydock::Command 
+    # You can write your own command classes by inheriting from Drydock::Command
+    # and referencing it in the command definition.
+    def ahoy!; p "matey"; end
+  end
+
+  desc "Do something with John West's Smoked Oysters"
+  command :oysters => JohnWestSmokedOysters do |obj|
+    p obj  # => #<JohnWestSmokedOysters:0x42179c ... >
+  end
+
+  desc "My way of saying hello!"
+  command :ahoy! => JohnWestSmokedOysters
+  # If you don't provide a block, Drydock will call JohnWestSmokedOysters#ahoy!
 
   
 == More Information

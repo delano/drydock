@@ -7,19 +7,26 @@ module Drydock
   # for every command defined. Global and command-specific options are added
   # as attributes to this class dynamically. 
   # 
-  # i.e. "example -v date -f yaml"
+  # i.e. "example -v select --location kumamoto"
   #
   #     global :v, :verbose, "I want mooooore!"
-  #     option :f, :format, String, "Long date format"
-  #     command :date do |obj|
-  #         puts obj.global.verbose  #=> true
-  #         puts obj.option.format  #=> "yaml"
+  #     option :l, :location, String, "Source location"
+  #     command :select do |obj|
+  #       puts obj.global.verbose   #=> true
+  #       puts obj.option.location  #=> "kumamoto"
   #     end
   #
-  # You can inherit from this class to create your own: EatFood < Drydock::Command.
-  # And then specific your class in the command definition:
+  # You can sub-class it to create your own: 
   #
-  #     command :eat => EatFood do |obj|; ...; end
+  #     class Malpeque < Drydock::Command
+  #       # ... sea to it
+  #     end
+  #
+  # And then specify your class in the command definition:
+  #
+  #     command :eat => Malpeque do |obj|
+  #       # ... do stuff with your obj
+  #     end
   #
   class Command
     VERSION = 0.4
@@ -65,13 +72,13 @@ module Drydock
     # 
     # Calls self.init before calling the block. Implement this method when 
     #
-    # +cmd_str+ is the short name used to evoke this command. It will equal @cmd
-    # unless an alias was used used to evoke this command.
-    # +argv+ an array of unnamed arguments. If ignore :options was declared this
-    # will contain the arguments exactly as they were defined on the command-line.
-    # +stdin+ contains the output of stdin do; ...; end otherwise it's a STDIN IO handle.
-    # +global_options+ a hash of the global options specified on the command-line
-    # +options+ a hash of the command-specific options specific on the command-line.
+    # <li>+cmd_str+ is the short name used to evoke this command. It will equal @cmd
+    # unless an alias was used used to evoke this command.</li>
+    # <li>+argv+ an array of unnamed arguments. If ignore :options was declared this</li>
+    # will contain the arguments exactly as they were defined on the command-line.</li>
+    # <li>+stdin+ contains the output of stdin do; ...; end otherwise it's a STDIN IO handle.</li>
+    # <li>+global_options+ a hash of the global options specified on the command-line</li>
+    # <li>+options+ a hash of the command-specific options specific on the command-line.</li>
     def call(cmd_str=nil, argv=[], stdin=[], global_options={}, options={})
       @alias = cmd_str.nil? ? @cmd : cmd_str
 
@@ -255,7 +262,7 @@ module Drydock
   #       # ...
   #     end
   #
-  #     default :hullinspector do   # This one will b named "hullinspector"
+  #     default :hullinspector do   # This one will be named "hullinspector"
   #       # ...
   #     end
   #
@@ -499,20 +506,6 @@ module Drydock
     !@@capture.nil?
   end
   
-  # Grab the options parser for the current command or create it if it doesn't exist.
-  # Returns an instance of OptionParser.
-  def get_current_option_parser
-    (@@command_opts_parser[@@command_index] ||= OptionParser.new)
-  end
-  
-  # Grabs the options parser for the given command. 
-  # +arg+ can be an index or command name.
-  # Returns an instance of OptionParser.
-  def get_option_parser(arg)
-    index = arg.is_a?(String) ? get_command_index(arg) : arg
-    (@@command_opts_parser[index] ||= OptionParser.new)
-  end
-  
   # Returns true if a command with the name +cmd+ has been defined. 
   def command?(cmd)
     name = canonize(cmd)
@@ -651,6 +644,20 @@ module Drydock
   
   def get_command_index(cmd)
     @@command_index_map[canonize(cmd)] || -1
+  end
+  
+  # Grab the options parser for the current command or create it if it doesn't exist.
+  # Returns an instance of OptionParser.
+  def get_current_option_parser
+    (@@command_opts_parser[@@command_index] ||= OptionParser.new)
+  end
+  
+  # Grabs the options parser for the given command. 
+  # +arg+ can be an index or command name.
+  # Returns an instance of OptionParser.
+  def get_option_parser(arg)
+    index = arg.is_a?(String) ? get_command_index(arg) : arg
+    (@@command_opts_parser[index] ||= OptionParser.new)
   end
   
   #

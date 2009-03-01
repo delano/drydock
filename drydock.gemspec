@@ -6,7 +6,7 @@
 
   s.authors = ["Delano Mandelbaum"]
   s.date = %q{2008-08-17}
-  s.description = %q{A seaworthy DSL for writing command line apps inspired by Blake Mizerany's Frylock}
+  s.description = %q{A seaworthy DSL for writing command line apps}
   s.email = %q{delano@solutious.com}
   s.files = %w(
     CHANGES.txt
@@ -23,7 +23,7 @@
   s.rdoc_options = ["--line-numbers", "--inline-source", "--title", "Drydock: a seaworthy DSL for command-line apps", "--main", "README.rdoc"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.1.1}
-  s.summary = %q{A seaworthy DSL for writing command line apps}
+  s.summary = %q{Drydock: A seaworthy DSL for writing command line apps}
   
   s.rubyforge_project = "drydock"
 end
