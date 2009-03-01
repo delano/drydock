@@ -47,10 +47,7 @@
             for every command defined. Global and command-specific options are added as
             attributes to this class dynamically.
             </p>
-            <p>
-            i.e. &#8220;example -v select &#8212;location kumamoto&#8220;
-            </p>
-            <pre>global :v, :verbose, &quot;I want mooooore!&quot;&#x000A;option :l, :location, String, &quot;Source location&quot;&#x000A;command :select do |obj|&#x000A;  puts obj.global.verbose   #=&gt; true&#x000A;  puts obj.option.location  #=&gt; &quot;kumamoto&quot;&#x000A;end</pre>
+            <pre>i.e. &quot;example -v select --location kumamoto&quot;&#x000A;&#x000A;global :v, :verbose, &quot;I want mooooore!&quot;&#x000A;option :l, :location, String, &quot;Source location&quot;&#x000A;command :select do |obj|&#x000A;  puts obj.global.verbose   #=&gt; true&#x000A;  puts obj.option.location  #=&gt; &quot;kumamoto&quot;&#x000A;end</pre>
             <p>
             You can sub-class it to create your own:
             </p>
