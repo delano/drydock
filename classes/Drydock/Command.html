@@ -61,14 +61,14 @@
             <h2>Methods</h2>
             <h3>public class</h3>
             <ol>
-              <li><a href="#M000038">new</a></li>
+              <li><a href="#M000040">new</a></li>
             </ol>
             <h3>public instance</h3>
             <ol>
-              <li><a href="#M000040">call</a></li>
-              <li><a href="#M000039">name</a></li>
-              <li><a href="#M000041">show_commands</a></li>
-              <li><a href="#M000042">to_s</a></li>
+              <li><a href="#M000042">call</a></li>
+              <li><a href="#M000041">name</a></li>
+              <li><a href="#M000043">show_commands</a></li>
+              <li><a href="#M000044">to_s</a></li>
             </ol>
           </div>
           <div id='section'>
@@ -79,7 +79,7 @@
                   <tr class='top-aligned-row context-row'>
                     <td class='context-item-name'>VERSION</td>
                     <td>=</td>
-                    <td class='context-item-value'>0.4</td>
+                    <td class='context-item-value'>0.5</td>
                   </tr>
                 </table>
               </div>
@@ -89,12 +89,29 @@
               <div class='name-list'>
                 <table>
                   <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>actions</td>
+                    <td class='context-item-value'>[RW]</td>
+                    <td class='context-item-desc'>
+                      
+                      An array of action names specified in the command definition
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
                     <td class='context-item-name'>alias</td>
                     <td class='context-item-value'>[R]</td>
                     <td class='context-item-desc'>
                       
                       The name used to evoke this command (it&#8217;s either the canonical name
                       or the alias used).
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>argv</td>
+                    <td class='context-item-value'>[RW]</td>
+                    <td class='context-item-desc'>
+                      
+                      An instance of Drydock::FancyArray. Acts like an array of unnamed arguments
+                      but also allows field names if supplied.
                     </td>
                   </tr>
                   <tr class='top-aligned-row context-row'>
@@ -142,13 +159,22 @@
                       An OpenStruct object containing the command options specified at run-time.
                     </td>
                   </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>stdin</td>
+                    <td class='context-item-value'>[R]</td>
+                    <td class='context-item-desc'>
+                      
+                      Either an IO handle to STDIN or the output of the <a
+                      href="../Drydock.html#M000008">Drydock#stdin</a> handler.
+                    </td>
+                  </tr>
                 </table>
               </div>
             </div>
             <div id='methods'>
               <h2>Public class methods</h2>
-              <div class='public-class method' id='method-M000038'>
-                <a name='M000038'>      </a>
+              <div class='public-class method' id='method-M000040'>
+                <a name='M000040'>      </a>
                 <div class='synopsis'>
                   <span class='name'>new</span>
                   <span class='arguments'>(cmd, &amp;b)</span>
@@ -165,15 +191,15 @@
                   </p>
                 </div>
                 <div class='source'>
-                  <a class='source-toggle' href='#' onclick="toggleCode('M000038-source'); return false">
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000040-source'); return false">
                     [show source]
                   </a>
-                  <pre id='M000038-source'>    <span class="ruby-comment cmt"># File lib/drydock.rb, line 56</span>&#x000A;56:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">cmd</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">b</span>)&#x000A;57:       <span class="ruby-ivar">@cmd</span> = (<span class="ruby-identifier">cmd</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Symbol</span>)) <span class="ruby-operator">?</span> <span class="ruby-identifier">cmd</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">cmd</span>.<span class="ruby-identifier">to_sym</span>&#x000A;58:       <span class="ruby-ivar">@b</span> = <span class="ruby-identifier">b</span>&#x000A;59:       <span class="ruby-ivar">@option</span> = <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>&#x000A;60:       <span class="ruby-ivar">@global</span> = <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>&#x000A;61:       &#x000A;62:       <span class="ruby-ivar">@global</span>.<span class="ruby-identifier">verbose</span> = <span class="ruby-value">0</span>&#x000A;63:       <span class="ruby-ivar">@global</span>.<span class="ruby-identifier">quiet</span> = <span class="ruby-keyword kw">false</span>&#x000A;64:     <span class="ruby-keyword kw">end</span></pre>
+                  <pre id='M000040-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 89</span>&#x000A; 89:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">cmd</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">b</span>)&#x000A; 90:       <span class="ruby-ivar">@cmd</span> = (<span class="ruby-identifier">cmd</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Symbol</span>)) <span class="ruby-operator">?</span> <span class="ruby-identifier">cmd</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">cmd</span>.<span class="ruby-identifier">to_sym</span>&#x000A; 91:       <span class="ruby-ivar">@b</span> = <span class="ruby-identifier">b</span>&#x000A; 92:       <span class="ruby-ivar">@actions</span> = []&#x000A; 93:       <span class="ruby-ivar">@argv</span> = <span class="ruby-constant">Drydock</span><span class="ruby-operator">::</span><span class="ruby-constant">FancyArray</span>.<span class="ruby-identifier">new</span> <span class="ruby-comment cmt"># an array with field names</span>&#x000A; 94:       <span class="ruby-ivar">@stdin</span> = <span class="ruby-constant">STDIN</span>&#x000A; 95:       <span class="ruby-ivar">@option</span> = <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>&#x000A; 96:       <span class="ruby-ivar">@global</span> = <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>&#x000A; 97:       &#x000A; 98:       <span class="ruby-ivar">@global</span>.<span class="ruby-identifier">verbose</span> = <span class="ruby-value">0</span>&#x000A; 99:       <span class="ruby-ivar">@global</span>.<span class="ruby-identifier">quiet</span> = <span class="ruby-keyword kw">false</span>&#x000A;100:     <span class="ruby-keyword kw">end</span></pre>
                 </div>
               </div>
               <h2>Public instance methods</h2>
-              <div class='public-instance method' id='method-M000040'>
-                <a name='M000040'>      </a>
+              <div class='public-instance method' id='method-M000042'>
+                <a name='M000042'>      </a>
                 <div class='synopsis'>
                   <span class='name'>call</span>
                   <span class='arguments'>(cmd_str=nil, argv=[], stdin=[], global_options={}, options={})</span>
@@ -198,14 +224,14 @@
                   </p>
                 </div>
                 <div class='source'>
-                  <a class='source-toggle' href='#' onclick="toggleCode('M000040-source'); return false">
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000042-source'); return false">
                     [show source]
                   </a>
-                  <pre id='M000040-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 82</span>&#x000A; 82:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">call</span>(<span class="ruby-identifier">cmd_str</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">argv</span>=[], <span class="ruby-identifier">stdin</span>=[], <span class="ruby-identifier">global_options</span>={}, <span class="ruby-identifier">options</span>={})&#x000A; 83:       <span class="ruby-ivar">@alias</span> = <span class="ruby-identifier">cmd_str</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-value">? </span><span class="ruby-ivar">@cmd</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">cmd_str</span>&#x000A; 84: &#x000A; 85:       <span class="ruby-identifier">global_options</span>.<span class="ruby-identifier">each_pair</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">n</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span>&#x000A; 86:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">global</span>.<span class="ruby-identifier">send</span>(<span class="ruby-node">&quot;#{n}=&quot;</span>, <span class="ruby-identifier">v</span>)    <span class="ruby-comment cmt"># Populate the object's globals</span>&#x000A; 87:       <span class="ruby-keyword kw">end</span>&#x000A; 88:       &#x000A; 89:       <span class="ruby-identifier">options</span>.<span class="ruby-identifier">each_pair</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">n</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span>&#x000A; 90:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">option</span>.<span class="ruby-identifier">send</span>(<span class="ruby-node">&quot;#{n}=&quot;</span>, <span class="ruby-identifier">v</span>)    <span class="ruby-comment cmt"># ... and also the command options</span>&#x000A; 91:       <span class="ruby-keyword kw">end</span>&#x000A; 92:       &#x000A; 93:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">init</span>         <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-identifier">:init</span>     <span class="ruby-comment cmt"># Must be called first!</span>&#x000A; 94:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">print_header</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">respond_to?</span> <span class="ruby-identifier">:print_header</span>&#x000A; 95:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">valid?</span>       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">respond_to?</span> <span class="ruby-identifier">:'valid?'</span>&#x000A; 96:       &#x000A; 97:       <span class="ruby-identifier">block_args</span> = [<span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">argv</span>, <span class="ruby-identifier">stdin</span>]&#x000A; 98:       &#x000A; 99:       <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@b</span> &#x000A;100:         <span class="ruby-ivar">@b</span>.<span class="ruby-identifier">call</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">block_args</span>[<span class="ruby-value">0</span><span class="ruby-operator">..</span>(<span class="ruby-ivar">@b</span>.<span class="ruby-identifier">arity</span><span class="ruby-operator">-</span><span class="ruby-value">1</span>)]) <span class="ruby-comment cmt"># send only as many args as defined</span>&#x000A;101:       <span class="ruby-keyword kw">elsif</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-ivar">@cmd</span>.<span class="ruby-identifier">to_sym</span>&#x000A;102:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">send</span>(<span class="ruby-ivar">@cmd</span>)&#x000A;103:       <span class="ruby-keyword kw">else</span>&#x000A;104:         <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;The command #{@alias} has no block and #{self.class} has no #{@cmd} method!&quot;</span>&#x000A;105:       <span class="ruby-keyword kw">end</span>&#x000A;106:       &#x000A;107:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">print_footer</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">respond_to?</span> <span class="ruby-identifier">:print_footer</span>&#x000A;108:       &#x000A;109:     <span class="ruby-keyword kw">end</span></pre>
+                  <pre id='M000042-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 118</span>&#x000A;118:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">call</span>(<span class="ruby-identifier">cmd_str</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">argv</span>=[], <span class="ruby-identifier">stdin</span>=[], <span class="ruby-identifier">global_options</span>={}, <span class="ruby-identifier">options</span>={})&#x000A;119:       <span class="ruby-ivar">@alias</span> = <span class="ruby-identifier">cmd_str</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-value">? </span><span class="ruby-ivar">@cmd</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">cmd_str</span>&#x000A;120: &#x000A;121:       <span class="ruby-identifier">global_options</span>.<span class="ruby-identifier">each_pair</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">n</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span>&#x000A;122:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">global</span>.<span class="ruby-identifier">send</span>(<span class="ruby-node">&quot;#{n}=&quot;</span>, <span class="ruby-identifier">v</span>)    <span class="ruby-comment cmt"># Populate the object's globals</span>&#x000A;123:       <span class="ruby-keyword kw">end</span>&#x000A;124:       &#x000A;125:       <span class="ruby-identifier">options</span>.<span class="ruby-identifier">each_pair</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">n</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span>&#x000A;126:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">option</span>.<span class="ruby-identifier">send</span>(<span class="ruby-node">&quot;#{n}=&quot;</span>, <span class="ruby-identifier">v</span>)    <span class="ruby-comment cmt"># ... and also the command options</span>&#x000A;127:       <span class="ruby-keyword kw">end</span>&#x000A;128:       &#x000A;129:       &#x000A;130:       <span class="ruby-ivar">@argv</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">argv</span>    <span class="ruby-comment cmt"># TODO: Using += returns an Array instead of FancyArray</span>&#x000A;131:       <span class="ruby-ivar">@argv</span>.<span class="ruby-identifier">flatten!</span>   <span class="ruby-comment cmt"># NOTE: &lt;&lt; creates @argv[[]]</span>&#x000A;132:       <span class="ruby-ivar">@stdin</span> = <span class="ruby-identifier">stdin</span>&#x000A;133:       &#x000A;134:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">init</span>         <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-identifier">:init</span>     <span class="ruby-comment cmt"># Must be called first!</span>&#x000A;135:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">print_header</span> <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-identifier">:print_header</span>&#x000A;136:       &#x000A;137:       <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@b</span> &#x000A;138:         <span class="ruby-identifier">run_validation</span>&#x000A;139:         <span class="ruby-ivar">@b</span>.<span class="ruby-identifier">call</span>(<span class="ruby-keyword kw">self</span>) &#x000A;140:         &#x000A;141:       <span class="ruby-keyword kw">elsif</span> <span class="ruby-operator">!</span>(<span class="ruby-identifier">chosen</span> = <span class="ruby-identifier">find_action</span>(<span class="ruby-identifier">options</span>)).<span class="ruby-identifier">empty?</span>&#x000A;142:         <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Only one action at a time please! I can't #{chosen.join(' AND ')}.&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">chosen</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>&#x000A;143:         <span class="ruby-identifier">criteria</span> = [[<span class="ruby-ivar">@cmd</span>, <span class="ruby-identifier">chosen</span>.<span class="ruby-identifier">first</span>], [<span class="ruby-identifier">chosen</span>.<span class="ruby-identifier">first</span>, <span class="ruby-ivar">@cmd</span>]]&#x000A;144:         <span class="ruby-identifier">meth</span> = <span class="ruby-identifier">name</span> = <span class="ruby-keyword kw">nil</span>&#x000A;145:         <span class="ruby-comment cmt"># Try command_action, then action_command</span>&#x000A;146:         <span class="ruby-identifier">criteria</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">tuple</span><span class="ruby-operator">|</span>&#x000A;147:           <span class="ruby-identifier">name</span> = <span class="ruby-identifier">tuple</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">'_'</span>)&#x000A;148:           <span class="ruby-identifier">meth</span> = <span class="ruby-identifier">name</span> <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">name</span>)  &#x000A;149:         <span class="ruby-keyword kw">end</span>&#x000A;150:         &#x000A;151:         <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;#{self.class} needs a #{name} method!&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">meth</span>&#x000A;152:         &#x000A;153:         <span class="ruby-identifier">run_validation</span>(<span class="ruby-identifier">meth</span>)&#x000A;154:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">meth</span>)&#x000A;155:         &#x000A;156:       <span class="ruby-keyword kw">elsif</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-ivar">@cmd</span>.<span class="ruby-identifier">to_sym</span>&#x000A;157:         <span class="ruby-identifier">run_validation</span>(<span class="ruby-ivar">@cmd</span>)&#x000A;158:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">send</span>(<span class="ruby-ivar">@cmd</span>)&#x000A;159:       <span class="ruby-keyword kw">else</span>&#x000A;160:         <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;The command #{@alias} has no block and #{self.class} has no #{@cmd} method!&quot;</span>&#x000A;161:       <span class="ruby-keyword kw">end</span>&#x000A;162:       &#x000A;163:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">print_footer</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">respond_to?</span> <span class="ruby-identifier">:print_footer</span>&#x000A;164:       &#x000A;165:     <span class="ruby-keyword kw">end</span></pre>
                 </div>
               </div>
-              <div class='public-instance method' id='method-M000039'>
-                <a name='M000039'>      </a>
+              <div class='public-instance method' id='method-M000041'>
+                <a name='M000041'>      </a>
                 <div class='synopsis'>
                   <span class='name'>name</span>
                   <span class='arguments'>()</span>
@@ -216,14 +242,14 @@
                   </p>
                 </div>
                 <div class='source'>
-                  <a class='source-toggle' href='#' onclick="toggleCode('M000039-source'); return false">
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000041-source'); return false">
                     [show source]
                   </a>
-                  <pre id='M000039-source'>    <span class="ruby-comment cmt"># File lib/drydock.rb, line 67</span>&#x000A;67:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">name</span>&#x000A;68:       <span class="ruby-ivar">@cmd</span>&#x000A;69:     <span class="ruby-keyword kw">end</span></pre>
+                  <pre id='M000041-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 103</span>&#x000A;103:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">name</span>&#x000A;104:       <span class="ruby-ivar">@cmd</span>&#x000A;105:     <span class="ruby-keyword kw">end</span></pre>
                 </div>
               </div>
-              <div class='public-instance method' id='method-M000041'>
-                <a name='M000041'>      </a>
+              <div class='public-instance method' id='method-M000043'>
+                <a name='M000043'>      </a>
                 <div class='synopsis'>
                   <span class='name'>show_commands</span>
                   <span class='arguments'>()</span>
@@ -233,19 +259,19 @@
                   Print the list of available commands to STDOUT. This is used as the
                   &#8220;default&#8221; command unless another default commands is supplied.
                   You can also write your own <a
-                  href="Command.html#M000041">Drydock::Command#show_commands</a> to override
+                  href="Command.html#M000043">Drydock::Command#show_commands</a> to override
                   this default behaviour.
                   </p>
                 </div>
                 <div class='source'>
-                  <a class='source-toggle' href='#' onclick="toggleCode('M000041-source'); return false">
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000043-source'); return false">
                     [show source]
                   </a>
-                  <pre id='M000041-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 115</span>&#x000A;115:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">show_commands</span>&#x000A;116:       <span class="ruby-identifier">project</span> = <span class="ruby-node">&quot; for #{Drydock.project}&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Drydock</span>.<span class="ruby-identifier">project?</span>&#x000A;117:       <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Available commands#{project}:&quot;</span>, <span class="ruby-value str">&quot;&quot;</span>&#x000A;118:       <span class="ruby-constant">Drydock</span>.<span class="ruby-identifier">commands</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">sort</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">a</span>,<span class="ruby-identifier">b</span><span class="ruby-operator">|</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">b</span>.<span class="ruby-identifier">to_s</span> }.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">cmd</span><span class="ruby-operator">|</span>&#x000A;119:         <span class="ruby-identifier">msg</span> = <span class="ruby-constant">Drydock</span>.<span class="ruby-identifier">commands</span>[<span class="ruby-identifier">cmd</span>].<span class="ruby-identifier">desc</span>&#x000A;120:         &#x000A;121:         <span class="ruby-comment cmt"># Out to sea</span>&#x000A;122:         <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">cmd</span> <span class="ruby-operator">===</span> <span class="ruby-constant">Drydock</span>.<span class="ruby-identifier">commands</span>[<span class="ruby-identifier">cmd</span>].<span class="ruby-identifier">cmd</span>&#x000A;123:           <span class="ruby-identifier">msg</span> = <span class="ruby-node">&quot;See: #{Drydock.decanonize(Drydock.commands[cmd].cmd)} (this is an alias)&quot;</span> &#x000A;124:         <span class="ruby-keyword kw">end</span>&#x000A;125:         &#x000A;126:         <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot; %16s: %s&quot;</span> <span class="ruby-operator">%</span> [<span class="ruby-constant">Drydock</span>.<span class="ruby-identifier">decanonize</span>(<span class="ruby-identifier">cmd</span>), <span class="ruby-identifier">msg</span>]&#x000A;127:       <span class="ruby-keyword kw">end</span>&#x000A;128: &#x000A;129:       <span class="ruby-identifier">puts</span> &#x000A;130:       <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;%6s: %s&quot;</span> <span class="ruby-operator">%</span> [<span class="ruby-value str">&quot;Try&quot;</span>, <span class="ruby-node">&quot;#{$0} -h&quot;</span>] &#x000A;131:       <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;%6s  %s&quot;</span> <span class="ruby-operator">%</span> [<span class="ruby-value str">&quot;&quot;</span>, <span class="ruby-node">&quot;#{$0} COMMAND -h&quot;</span>]&#x000A;132:       <span class="ruby-identifier">puts</span>&#x000A;133:     <span class="ruby-keyword kw">end</span></pre>
+                  <pre id='M000043-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 205</span>&#x000A;205:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">show_commands</span>&#x000A;206:       <span class="ruby-identifier">project</span> = <span class="ruby-node">&quot; for #{Drydock.project}&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Drydock</span>.<span class="ruby-identifier">project?</span>&#x000A;207:       <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Available commands#{project}:&quot;</span>, <span class="ruby-value str">&quot;&quot;</span>&#x000A;208:       <span class="ruby-identifier">cmds</span> = {}&#x000A;209:       <span class="ruby-constant">Drydock</span>.<span class="ruby-identifier">commands</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">cmd</span><span class="ruby-operator">|</span>&#x000A;210:         <span class="ruby-identifier">pretty</span> = <span class="ruby-constant">Drydock</span>.<span class="ruby-identifier">decanonize</span>(<span class="ruby-identifier">cmd</span>)&#x000A;211:         <span class="ruby-comment cmt"># Out to sea</span>&#x000A;212:         <span class="ruby-identifier">cmds</span>[<span class="ruby-constant">Drydock</span>.<span class="ruby-identifier">commands</span>[<span class="ruby-identifier">cmd</span>].<span class="ruby-identifier">cmd</span>] <span class="ruby-operator">||=</span> {}&#x000A;213:         <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">cmd</span> <span class="ruby-operator">===</span> <span class="ruby-constant">Drydock</span>.<span class="ruby-identifier">commands</span>[<span class="ruby-identifier">cmd</span>].<span class="ruby-identifier">cmd</span>&#x000A;214:           (<span class="ruby-identifier">cmds</span>[<span class="ruby-constant">Drydock</span>.<span class="ruby-identifier">commands</span>[<span class="ruby-identifier">cmd</span>].<span class="ruby-identifier">cmd</span>][<span class="ruby-identifier">:aliases</span>] <span class="ruby-operator">||=</span> []) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">pretty</span>&#x000A;215:           <span class="ruby-keyword kw">next</span>&#x000A;216:         <span class="ruby-keyword kw">end</span>&#x000A;217:         <span class="ruby-identifier">cmds</span>[<span class="ruby-identifier">cmd</span>][<span class="ruby-identifier">:desc</span>] = <span class="ruby-constant">Drydock</span>.<span class="ruby-identifier">commands</span>[<span class="ruby-identifier">cmd</span>].<span class="ruby-identifier">desc</span>&#x000A;218:         <span class="ruby-identifier">cmds</span>[<span class="ruby-identifier">cmd</span>][<span class="ruby-identifier">:pretty</span>] = <span class="ruby-identifier">cmd</span>&#x000A;219:       <span class="ruby-keyword kw">end</span>&#x000A;220:       &#x000A;221:       <span class="ruby-identifier">cmds</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">sort</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">a</span>,<span class="ruby-identifier">b</span><span class="ruby-operator">|</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">b</span>.<span class="ruby-identifier">to_s</span> }.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">cmd</span><span class="ruby-operator">|</span>&#x000A;222:         <span class="ruby-identifier">p</span> = <span class="ruby-identifier">cmds</span>[<span class="ruby-identifier">cmd</span>]&#x000A;223:         <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot; %16s: %s&quot;</span> <span class="ruby-operator">%</span> [<span class="ruby-identifier">p</span>[<span class="ruby-identifier">:pretty</span>], <span class="ruby-identifier">p</span>[<span class="ruby-identifier">:desc</span>]]&#x000A;224:         <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot; %17s (%s: %s)&quot;</span> <span class="ruby-operator">%</span> [<span class="ruby-value str">''</span>, <span class="ruby-value str">&quot;aliases&quot;</span>, <span class="ruby-identifier">cmds</span>[<span class="ruby-identifier">cmd</span>][<span class="ruby-identifier">:aliases</span>].<span class="ruby-identifier">join</span>(<span class="ruby-value str">', '</span>)] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">cmds</span>[<span class="ruby-identifier">cmd</span>][<span class="ruby-identifier">:aliases</span>]&#x000A;225:       <span class="ruby-keyword kw">end</span>&#x000A;226:       &#x000A;227:       <span class="ruby-identifier">puts</span> &#x000A;228:       <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;%6s: %s&quot;</span> <span class="ruby-operator">%</span> [<span class="ruby-value str">&quot;Try&quot;</span>, <span class="ruby-node">&quot;#{$0} -h&quot;</span>] &#x000A;229:       <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;%6s  %s&quot;</span> <span class="ruby-operator">%</span> [<span class="ruby-value str">&quot;&quot;</span>, <span class="ruby-node">&quot;#{$0} COMMAND -h&quot;</span>]&#x000A;230:       <span class="ruby-identifier">puts</span>&#x000A;231:     <span class="ruby-keyword kw">end</span></pre>
                 </div>
               </div>
-              <div class='public-instance method' id='method-M000042'>
-                <a name='M000042'>      </a>
+              <div class='public-instance method' id='method-M000044'>
+                <a name='M000044'>      </a>
                 <div class='synopsis'>
                   <span class='name'>to_s</span>
                   <span class='arguments'>()</span>
@@ -256,10 +282,10 @@
                   </p>
                 </div>
                 <div class='source'>
-                  <a class='source-toggle' href='#' onclick="toggleCode('M000042-source'); return false">
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000044-source'); return false">
                     [show source]
                   </a>
-                  <pre id='M000042-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 136</span>&#x000A;136:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_s</span>&#x000A;137:       <span class="ruby-ivar">@cmd</span>.<span class="ruby-identifier">to_s</span>&#x000A;138:     <span class="ruby-keyword kw">end</span></pre>
+                  <pre id='M000044-source'>     <span class="ruby-comment cmt"># File lib/drydock.rb, line 234</span>&#x000A;234:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_s</span>&#x000A;235:       <span class="ruby-ivar">@cmd</span>.<span class="ruby-identifier">to_s</span>&#x000A;236:     <span class="ruby-keyword kw">end</span></pre>
                 </div>
               </div>
             </div>
