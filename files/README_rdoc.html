@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang='en'>
   <head>
-    <title>File: README.rdoc [A seaworthy DSL for writing command line apps]</title>
+    <title>File: README.rdoc [Drydock: A seaworthy DSL for writing command line apps]</title>
     <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
     <link href='.././rdoc-style.css' media='screen' rel='stylesheet' type='text/css'>
     <script type='text/javascript'>
@@ -31,7 +31,7 @@
         </div>
         <div class='last-update'>
           Last Update:
-          <span class='datetime'>Sat Feb 28 19:54:23 -0500 2009</span>
+          <span class='datetime'>Sat Feb 28 20:38:36 -0500 2009</span>
         </div>
       </div>
       <div id='content'>
@@ -44,8 +44,8 @@
             <h2>Overview</h2>
             <p>
             <a href="../classes/Drydock.html">Drydock</a> is a seaworthy DSL for
-            command line apps. It is contained in a single .rb which can be copied
-            directly into your project.
+            command line apps. It&#8217;s contained in a single .rb file so it&#8217;s
+            easy to copy directly into your project.
             </p>
             <h2>Install</h2>
             <p>
@@ -75,7 +75,7 @@
             <p>
             See <a href="bin/example.html">bin/example</a> for more.
             </p>
-            <pre>require 'drydock'&#x000A;&#x000A;default :welcome&#x000A;&#x000A;before do&#x000A;# You can execute a block before the requests command is executed. Instance&#x000A;# variables defined here will be available to all commands.&#x000A;end&#x000A;&#x000A;desc &quot;A friendly welcome to the Drydock&quot;&#x000A;      command :welcome do&#x000A;        puts &quot;Welcome to Drydock.&quot;&#x000A;        puts &quot;For available commands:&quot;&#x000A;        puts &quot;#{$0} show-commands&quot;&#x000A;      end&#x000A;&#x000A;      usage &quot;USAGE: #{$0} laugh [-f]&quot;&#x000A;      desc &quot;The captain commands his crew to laugh&quot;&#x000A;      option :f, :faster, &quot;A boolean value. Go even faster!&quot;&#x000A;      command :laugh do |obj|&#x000A;      # +obj+ is an instance of Drydock::Command. The options you define are available&#x000A;      # via obj.option.name&#x000A;&#x000A;        answer = !obj.option.faster ? &quot;Sort of&quot; : &quot;Yes! I'm literally laughing as fast as possible.&quot;&#x000A;&#x000A;        puts &quot;Captain Stubing: Are you laughing?&quot;&#x000A;        puts &quot;Dr. Bricker: &quot; &lt;&lt; answer&#x000A;      end&#x000A;&#x000A;      class JohnWestSmokedOysters &lt; Drydock::Command&#x000A;        # You can write your own command classes by inheriting from Drydock::Command&#x000A;        # and referencing it in the command definition.&#x000A;        def ahoy!; p &quot;matey&quot;; end&#x000A;      end&#x000A;&#x000A;      desc &quot;Do something with John West's Smoked Oysters&quot;&#x000A;      command :oysters =&gt; JohnWestSmokedOysters do |obj|&#x000A;        p obj  # =&gt; #&lt;JohnWestSmokedOysters:0x42179c ... &gt;&#x000A;      end&#x000A;&#x000A;      desc &quot;My way of saying hello!&quot;&#x000A;      command :ahoy! =&gt; JohnWestSmokedOysters&#x000A;      # If you don't provide a block, Drydock will call JohnWestSmokedOysters#ahoy!</pre>
+            <pre>require 'drydock'&#x000A;&#x000A;default :welcome&#x000A;&#x000A;before do&#x000A;# You can execute a block before the requests command is executed. Instance&#x000A;# variables defined here will be available to all commands.&#x000A;end&#x000A;&#x000A;desc &quot;A friendly welcome to the Drydock&quot;&#x000A;command :welcome do&#x000A;  puts &quot;Welcome to Drydock.&quot;&#x000A;  puts &quot;For available commands:&quot;&#x000A;  puts &quot;#{$0} show-commands&quot;&#x000A;end&#x000A;&#x000A;usage &quot;USAGE: #{$0} laugh [-f]&quot;&#x000A;desc &quot;The captain commands his crew to laugh&quot;&#x000A;option :f, :faster, &quot;A boolean value. Go even faster!&quot;&#x000A;command :laugh do |obj|&#x000A;# +obj+ is an instance of Drydock::Command. The options you define are available&#x000A;# via obj.option.name&#x000A;&#x000A;  answer = !obj.option.faster ? &quot;Sort of&quot; : &quot;Yes! I'm literally laughing as fast as possible.&quot;&#x000A;&#x000A;  puts &quot;Captain Stubing: Are you laughing?&quot;&#x000A;  puts &quot;Dr. Bricker: &quot; &lt;&lt; answer&#x000A;end&#x000A;&#x000A;class JohnWestSmokedOysters &lt; Drydock::Command&#x000A;  # You can write your own command classes by inheriting from Drydock::Command&#x000A;  # and referencing it in the command definition.&#x000A;  def ahoy!; p &quot;matey&quot;; end&#x000A;end&#x000A;&#x000A;desc &quot;Do something with John West's Smoked Oysters&quot;&#x000A;command :oysters =&gt; JohnWestSmokedOysters do |obj|&#x000A;  p obj  # =&gt; #&lt;JohnWestSmokedOysters:0x42179c ... &gt;&#x000A;end&#x000A;&#x000A;desc &quot;My way of saying hello!&quot;&#x000A;command :ahoy! =&gt; JohnWestSmokedOysters&#x000A;# If you don't provide a block, Drydock will call JohnWestSmokedOysters#ahoy!</pre>
             <h2>More Information</h2>
             <ul>
             <li><a href="http://github.com/delano/drydock">GitHub</a>
