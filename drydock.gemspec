@@ -16,30 +16,6 @@
     bin/example
     drydock.gemspec
     lib/drydock.rb
-    test/command_test.rb
-    doc
-    doc/classes
-    doc/classes/Drydock
-    doc/classes/Drydock/Command.html
-    doc/classes/Drydock/InvalidArgument.html
-    doc/classes/Drydock/MissingArgument.html
-    doc/classes/Drydock/NoCommandsDefined.html
-    doc/classes/Drydock/UnknownCommand.html
-    doc/classes/Drydock.html
-    doc/created.rid
-    doc/files
-    doc/files/bin
-    doc/files/bin/example.html
-    doc/files/CHANGES_txt.html
-    doc/files/lib
-    doc/files/lib/drydock_rb.html
-    doc/files/LICENSE_txt.html
-    doc/files/README_rdoc.html
-    doc/fr_class_index.html
-    doc/fr_file_index.html
-    doc/fr_method_index.html
-    doc/index.html
-    doc/rdoc-style.css
   )
   s.has_rdoc = true
   s.homepage = %q{http://github.com/delano/drydock}
