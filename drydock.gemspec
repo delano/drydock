@@ -7,7 +7,7 @@
 
   s.authors = ["Delano Mandelbaum"]
   s.description = %q{A seaworthy DSL for writing command line apps}
-  s.summary = s.descriptions
+  s.summary = s.description
   s.email = %q{delano@solutious.com}
 
   # = MANIFEST =
