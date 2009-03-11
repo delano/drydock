@@ -44,7 +44,7 @@ end
 # Rubyforge Release / Publish Tasks ==================================
 
 desc 'Publish website to rubyforge'
-task 'publish:doc' => 'doc/index.html' do
+task 'publish:rdoc' => 'doc/index.html' do
   sh "scp -rp doc/* rubyforge.org:/var/www/gforge-projects/#{name}/"
 end
 
