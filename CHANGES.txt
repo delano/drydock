@@ -5,22 +5,27 @@ DRYDOCK, CHANGES
 * Support putting descriptions into resource file (or __END__)
 * Define aliases with "command [:name, :alias]"
 * Add Drydock::Console, Drydock::Window, Drydock::Cursor
+* Generate scripts in the form: script-action
+  * globals can be configured with env vars.
+  * Motivation to stick to a single environment (just stage)
+* Add convenience methods for system calls: sh, write, read 
 
 
-#### 0.5 (2009-03-01) ###############################
+#### 0.5 (2009-03-11) ###############################
 
+* NEW: Checks that the command class is a subclass of Drydock::Command
 * CHANGE: Cleaned up show-commands screen
 * FIXED: Help didn't work when using command alias
 * NEW: Named argv values.
 * CHANGE: argv are now part of the Command class (not passed to command blocks)
 * CHANGE: "project" now automatically requires the lowercase name of the project
-          and gracefully continues if the require failed. 
+and gracefully continues if the require failed. 
 * CHANGE: Drydock will look for different validation method, based on the method 
-          being executed. If a validation method is found it's executed and
-          must return a true valid (it can also raise its own exceptions).
+being executed. If a validation method is found it's executed and
+must return a true valid (it can also raise its own exceptions).
 * NEW: command actions. These are boolean switches with a twist. Drydock looks
-       for command_action or action_command methods. Saves checking the switches
-       and sending to other methods manually.
+for command_action or action_command methods. Saves checking the switches
+and sending to other methods manually.
 
 
 #### 0.4 (2009-02-28) ###############################

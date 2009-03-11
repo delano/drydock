@@ -7,7 +7,11 @@
 
   s.authors = ["Delano Mandelbaum"]
   s.description = %q{A seaworthy DSL for writing command line apps}
+  s.summary = %q{Drydock: A seaworthy DSL for writing command line apps}
   s.email = %q{delano@solutious.com}
+
+  # = MANIFEST =
+  # git ls-files
   s.files = %w(
     CHANGES.txt
     LICENSE.txt
@@ -17,12 +21,14 @@
     drydock.gemspec
     lib/drydock.rb
   )
+
+  #  s.add_dependency ''
+
   s.has_rdoc = true
   s.homepage = %q{http://github.com/delano/drydock}
   s.extra_rdoc_files = %w[README.rdoc LICENSE.txt CHANGES.txt]
   s.rdoc_options = ["--line-numbers", "--inline-source", "--title", "Drydock: a seaworthy DSL for command-line apps", "--main", "README.rdoc"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.1.1}
-  s.summary = %q{Drydock: A seaworthy DSL for writing command line apps}
   s.rubyforge_project = "drydock"
 end

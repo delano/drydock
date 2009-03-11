@@ -338,7 +338,9 @@ module Drydock
   # list of commands (see: Drydock::Command#show_commands). It may be 
   # used elsewhere in the future. 
   def project(txt=nil)
+    
     return @@project unless txt
+    
     begin
       require txt.downcase
     rescue LoadError
@@ -501,6 +503,7 @@ module Drydock
     cmd = cmds.first
     
     if cmd.is_a? Hash
+      raise "#{cmd.values.first} is not a subclass of Drydock::Command" unless cmd.values.first.ancestors.member?(Drydock::Command)
       c = cmd.values.first.new(cmd.keys.first, &b) # A custom class was specified
     # TODO: handle command [:task, :alias] => Class
     #elsif cmd.is_a? Array

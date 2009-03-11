@@ -1,4 +1,4 @@
-= Drydock - v0.4
+= Drydock - v0.5
 
 Inspired by github-gem and bmizerany-frylock.
 
