@@ -31,7 +31,7 @@
         </div>
         <div class='last-update'>
           Last Update:
-          <span class='datetime'>Sun Mar 01 11:41:30 -0500 2009</span>
+          <span class='datetime'>Wed Mar 11 13:49:32 -0400 2009</span>
         </div>
       </div>
       <div id='content'>
@@ -53,11 +53,29 @@
             <li>Add Drydock::Console, Drydock::Window, Drydock::Cursor
             
             </li>
+            <li>Generate scripts in the form: script-action
+            
+            <ul>
+            <li>globals can be configured with env vars.
+            
+            </li>
+            <li>Motivation to stick to a single environment (just stage)
+            
+            </li>
+            </ul>
+            </li>
+            <li>Add convenience methods for system calls: sh, write, read
+            
+            </li>
             </ul>
             <p>
-            #### 0.5 (2009-03-01) ###############################
+            #### 0.5 (2009-03-11) ###############################
             </p>
             <ul>
+            <li>NEW: Checks that the command class is a subclass of <a
+            href="../classes/Drydock/Command.html">Drydock::Command</a>
+            
+            </li>
             <li>CHANGE: Cleaned up show-commands screen
             
             </li>
@@ -74,19 +92,31 @@
             <li>CHANGE: &#8220;project&#8221; now automatically requires the lowercase name
             of the project
             
-            <pre>and gracefully continues if the require failed.</pre>
             </li>
+            </ul>
+            <p>
+            and gracefully continues if the require failed.
+            </p>
+            <ul>
             <li>CHANGE: <a href="../classes/Drydock.html">Drydock</a> will look for
             different validation method, based on the method
             
-            <pre>being executed. If a validation method is found it's executed and&#x000A;must return a true valid (it can also raise its own exceptions).</pre>
             </li>
+            </ul>
+            <p>
+            being executed. If a validation method is found it&#8217;s executed and
+            must return a true valid (it can also raise its own exceptions).
+            </p>
+            <ul>
             <li>NEW: command actions. These are boolean switches with a twist. <a
             href="../classes/Drydock.html">Drydock</a> looks
             
-            <pre>for command_action or action_command methods. Saves checking the switches&#x000A;and sending to other methods manually.</pre>
             </li>
             </ul>
+            <p>
+            for command_action or action_command methods. Saves checking the switches
+            and sending to other methods manually.
+            </p>
             <p>
             #### 0.4 (2009-02-28) ###############################
             </p>
