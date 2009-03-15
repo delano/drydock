@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang='en'>
   <head>
-    <title>File: CHANGES.txt [Drydock: A seaworthy DSL for writing command line apps]</title>
+    <title>File: CHANGES.txt [A seaworthy DSL for writing command line apps]</title>
     <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
     <link href='.././rdoc-style.css' media='screen' rel='stylesheet' type='text/css'>
     <script type='text/javascript'>
@@ -31,7 +31,7 @@
         </div>
         <div class='last-update'>
           Last Update:
-          <span class='datetime'>Wed Mar 11 13:49:32 -0400 2009</span>
+          <span class='datetime'>Sun Mar 15 08:38:07 -0400 2009</span>
         </div>
       </div>
       <div id='content'>
@@ -65,6 +65,21 @@
             </ul>
             </li>
             <li>Add convenience methods for system calls: sh, write, read
+            
+            </li>
+            </ul>
+            <p>
+            #### 0.5.1 (2009-03-15) #############################
+            </p>
+            <ul>
+            <li>FIX: Prevent calling default command in at_exit when there&#8217;s a
+            LoadError.
+            
+            </li>
+            <li>FIX: Exit gracefully when the application exits.
+            
+            </li>
+            <li>FIX: Print command names with dashes rather than underscores
             
             </li>
             </ul>
