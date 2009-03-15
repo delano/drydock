@@ -16,6 +16,13 @@ module Drydock
           self[#{@fields.size}]
         end
       end
+      def #{n}=(val)
+        if self.size > @fields.size && '#{n}'.to_sym == @fields.last
+          self[#{@fields.size}..-1] = val
+        else
+          self[#{@fields.size}] = val
+        end
+      end
       RUBY
       @fields << n
       n
@@ -214,7 +221,7 @@ module Drydock
           next
         end
         cmds[cmd][:desc] = Drydock.commands[cmd].desc
-        cmds[cmd][:pretty] = cmd
+        cmds[cmd][:pretty] = pretty
       end
       
       cmds.keys.sort{ |a,b| a.to_s <=> b.to_s }.each do |cmd|
@@ -272,7 +279,7 @@ end
 module Drydock
   extend self
   
-  VERSION = 0.4
+  VERSION = 0.5
   
   @@project = nil
   
@@ -343,7 +350,9 @@ module Drydock
     
     begin
       require txt.downcase
-    rescue LoadError
+    rescue LoadError => ex
+      Drydock.run = false  # Prevent execution at_exit
+      abort "Problem during require: #{ex.message}"
     end
     @@project = txt
   end
@@ -584,7 +593,7 @@ module Drydock
   #
   #     Drydock.run = false
   def run=(v)
-    @@run = (v == true) ? true : false 
+    @@run = (v.is_a?(TrueClass)) ? true : false 
   end
   
   # Return true if a command has been executed.
@@ -809,8 +818,13 @@ trap ("SIGINT") do
 end
 
 
+  
 at_exit {
   begin
+    if $@
+      puts $@ if Drydock.debug?
+      exit 1
+    end 
     Drydock.run!(ARGV, STDIN) if Drydock.run? && !Drydock.has_run?
   rescue => ex
     STDERR.puts "ERROR: #{ex.message}"
