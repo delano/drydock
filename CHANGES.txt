@@ -10,7 +10,7 @@ DRYDOCK, CHANGES
   * Motivation to stick to a single environment (just stage)
 * Add convenience methods for system calls: sh, write, read 
 
-#### 0.5.1 (2009-03-??) #############################
+#### 0.5.1 (2009-03-15) #############################
 
 * FIX: Prevent calling default command in at_exit when there's a LoadError.
 * FIX: Exit gracefully when the application exits. 
