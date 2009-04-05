@@ -3,7 +3,7 @@
   <head>
     <title>File: CHANGES.txt [A seaworthy DSL for writing command line apps]</title>
     <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
-    <link href='.././rdoc-style.css' media='screen' rel='stylesheet' type='text/css'>
+    <link href='../rdoc-style.css' media='screen' rel='stylesheet' type='text/css'>
     <script type='text/javascript'>
       //<![CDATA[
         function popupCode(url) {
@@ -31,7 +31,7 @@
         </div>
         <div class='last-update'>
           Last Update:
-          <span class='datetime'>Sun Mar 15 08:38:07 -0400 2009</span>
+          <span class='datetime'>Sun Apr 05 10:28:22 -0400 2009</span>
         </div>
       </div>
       <div id='content'>
@@ -50,21 +50,31 @@
             <li>Define aliases with &#8220;command [:name, :alias]&#8220;
             
             </li>
-            <li>Add Drydock::Console, Drydock::Window, Drydock::Cursor
-            
-            </li>
-            <li>Generate scripts in the form: script-action
-            
+            </ul>
+            <p>
+            #### 0.5.2 (2009-04-05) #############################
+            </p>
             <ul>
-            <li>globals can be configured with env vars.
-            
-            </li>
-            <li>Motivation to stick to a single environment (just stage)
+            <li>ADDED: before and after blocks now receive a primed reference to the
             
             </li>
             </ul>
+            <p>
+            command object (which gives them access to the globals and options)
+            </p>
+            <ul>
+            <li>CHANGE: The prep stuff in <a
+            href="../classes/Drydock/Command.html#M000043">Drydock::Command#call</a> is
+            now split into a
+            
             </li>
-            <li>Add convenience methods for system calls: sh, write, read
+            </ul>
+            <p>
+            separate method: prepare so call no longer takes arguments.
+            </p>
+            <ul>
+            <li>FIXED: <a href="../classes/Drydock.html#M000034">Drydock#capture_io</a> was
+            using yield. It now accepts a block instead.
             
             </li>
             </ul>
@@ -72,14 +82,14 @@
             #### 0.5.1 (2009-03-15) #############################
             </p>
             <ul>
-            <li>FIX: Prevent calling default command in at_exit when there&#8217;s a
+            <li>FIXED: Prevent calling default command in at_exit when there&#8217;s a
             LoadError.
             
             </li>
-            <li>FIX: Exit gracefully when the application exits.
+            <li>FIXED: Exit gracefully when the application exits.
             
             </li>
-            <li>FIX: Print command names with dashes rather than underscores
+            <li>FIXED: Print command names with dashes rather than underscores
             
             </li>
             </ul>
@@ -87,7 +97,7 @@
             #### 0.5 (2009-03-11) ###############################
             </p>
             <ul>
-            <li>NEW: Checks that the command class is a subclass of <a
+            <li>ADDED: Checks that the command class is a subclass of <a
             href="../classes/Drydock/Command.html">Drydock::Command</a>
             
             </li>
@@ -97,7 +107,7 @@
             <li>FIXED: Help didn&#8217;t work when using command alias
             
             </li>
-            <li>NEW: Named argv values.
+            <li>ADDED: Named argv values.
             
             </li>
             <li>CHANGE: argv are now part of the Command class (not passed to command
@@ -123,7 +133,7 @@
             must return a true valid (it can also raise its own exceptions).
             </p>
             <ul>
-            <li>NEW: command actions. These are boolean switches with a twist. <a
+            <li>ADDED: command actions. These are boolean switches with a twist. <a
             href="../classes/Drydock.html">Drydock</a> looks
             
             </li>
@@ -140,31 +150,32 @@
             &#8220;option&#8221; is used
             
             </li>
-            <li>NEW: Calls valid? method (if present) before calling command block.
+            <li>ADDED: Calls valid? method (if present) before calling command block.
             
             </li>
-            <li>NEW: &#8220;capture&#8221; method. Auto capture STDOUT to obj.stdout etc...
+            <li>ADDED: &#8220;capture&#8221; method. Auto capture STDOUT to obj.stdout
+            etc...
             
             </li>
-            <li>NEW: Automatically calls init and print_header methods before the command
+            <li>ADDED: Automatically calls init and print_header methods before the command
             
             <pre>and print_footer after the command (if available)</pre>
             </li>
-            <li>NEW: Tries to call obj.command if available when no block is supplied
+            <li>ADDED: Tries to call obj.command if available when no block is supplied
             
             </li>
-            <li>NEW: &#8220;show_commands&#8220; command built-in. Displays commands with
+            <li>ADDED: &#8220;show_commands&#8220; command built-in. Displays commands with
             descriptions
             
             </li>
-            <li>NEW: A default usage help msg for every command: &#8220;#{$0}
+            <li>ADDED: A default usage help msg for every command: &#8220;#{$0}
             command-name&#8220;
             
             </li>
-            <li>NEW: &#8220;usage&#8221; work multiple times for the same command.
+            <li>ADDED: &#8220;usage&#8221; work multiple times for the same command.
             
             </li>
-            <li>NEW: &#8220;desc&#8221; method for per command descriptions
+            <li>ADDED: &#8220;desc&#8221; method for per command descriptions
             
             </li>
             <li>CHANGE: options are now stored as obj.option.name instead of obj.name
@@ -175,14 +186,14 @@
             </li>
             <li>CHANGE: removed auto importing methods
             
-            <pre>OLD: require 'drydock'&#x000A;NEW: require 'drydock'&#x000A;     extend Drydock</pre>
+            <pre>OLD: require 'drydock'&#x000A;ADDED: require 'drydock'&#x000A;     extend Drydock</pre>
             </li>
             </ul>
             <p>
             #### 0.3.3 (2009-02-14) ###############################
             </p>
             <ul>
-            <li>NEW: init method hook for subclasses of <a
+            <li>ADDED: init method hook for subclasses of <a
             href="../classes/Drydock/Command.html">Drydock::Command</a>
             
             </li>
@@ -237,17 +248,6 @@
     </div>
     <div id='footer'>
       <a href="http://github.com/mislav/hanna/tree/master"><strong>Hanna</strong> RDoc template</a>
-      <script type='text/javascript'>
-        //<![CDATA[
-          var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-          document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/scr
-          
-          try {
-            var pageTracker = _gat._getTracker("UA-4642735-10");
-            pageTracker._trackPageview();
-          } catch(err) {}
-        //]]>
-      </script>
     </div>
   </body>
 </html>
