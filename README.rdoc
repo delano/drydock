@@ -80,7 +80,6 @@ See bin/example for more.
 * Delano Mandelbaum (delano@solutious.com)
 * Bernie Kopell (bernie@solutious.com)
 
-
 == License
 
 See LICENSE.txt

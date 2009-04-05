@@ -151,10 +151,13 @@ module Drydock
     #
     def call  
       self.print_header if self.respond_to? :print_header
+      
+      # Execute the command block if it exists
       if @b 
         run_validation
         @b.call(self) 
-        
+      
+      # Otherwise check to see if an action was specified
       elsif !(chosen = find_action(self.option)).empty?
         raise "Only one action at a time please! I can't #{chosen.join(' AND ')}." if chosen.size > 1
         criteria = [[@cmd, chosen.first], [chosen.first, @cmd]]
@@ -170,9 +173,12 @@ module Drydock
         run_validation(meth)
         self.send(meth)
         
+      # No block and no action. We'll try for the method name in the Drydock::Command class. 
       elsif self.respond_to? @cmd.to_sym
         run_validation(@cmd)
         self.send(@cmd)
+        
+      # Well, then I have no idea what you want me to do!
       else
         raise "The command #{@alias} has no block and #{self.class} has no #{@cmd} method!"
       end
@@ -211,7 +217,9 @@ module Drydock
     def find_action(options)
       options = options.marshal_dump if options.is_a?(OpenStruct)
       boolkeys = options.keys.select { |n| options[n] == true } || []
-      (@actions || []) & boolkeys # an array of requested actions (or empty)
+      boolkeys = boolkeys.collect { |n| n.to_s } # @agents contains Strings. 
+      # Returns the elements in @actions that are also found in boolkeys
+      (@actions || []) & boolkeys 
     end
     private :find_action
     
@@ -489,11 +497,11 @@ module Drydock
     current_command_option_names << option_parser(args, &b)
   end
   
-  # Define an command-specific action.
+  # Define a command-specific action.
   #
-  # This is functionality very similar to option, but with an exciting and buoyant twist:
+  # This is functionally very similar to option, but with an exciting and buoyant twist:
   # Drydock keeps track of actions for each command (in addition to treating it like an option).
-  # When an action is specifiec on the command line Drydock looks for command_action or 
+  # When an action is specified on the command line Drydock looks for command_action or 
   # action_command methods in the command class. 
   #
   #     action :E, :eat, "Eat something"

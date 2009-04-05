@@ -3,10 +3,16 @@ DRYDOCK, CHANGES
 #### TODO ###############################
 
 * Support putting descriptions into resource file (or __END__)
-* Define aliases with "command [:name, :alias]"
+* Inline commands aliases. command :cmd1, :cmd2 do; ...; end
 
 
-#### 0.5.2 (2009-04-05) #############################
+#### 0.5.3 (2009-04-05) #############################
+
+* FIXED: Command actions were not being handled correctly. Added rdocs to 
+clarify the code.
+
+
+#### 0.5.2 (2009-04-04) #############################
 
 * ADDED: before and after blocks now receive a primed reference to the 
 command object (which gives them access to the globals and options)
@@ -64,6 +70,7 @@ and sending to other methods manually.
 * ADDED: init method hook for subclasses of Drydock::Command
 * UPDATED: Rdocs
 * CHANGE: added method command_aliaz to mirror aliaz_command
+
 
 #### 0.3 (2009-02-05) ###############################
 
