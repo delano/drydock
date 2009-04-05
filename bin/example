@@ -26,16 +26,6 @@ default :welcome   # The welcome command will be run if no command is given
 capture :stderr    # Drydock will capture STDERR and keep it in the hold.
                    # You can use this to suppress errors. 
 
-project "Drydock Example"  # An optional name
-
-before do
-# You can execute a block before the requests command is executed. Instance
-# variables defined here will be available to all commands.
-end
-
-after do
-# And this will be called after the command. 
-end
 
 desc "A friendly welcome to the Drydock"
 command :welcome do
@@ -65,6 +55,15 @@ global :v, :verbose, "Verbosity level (i.e. -vvv is greater than -v)" do |v|
   @val += 1
 end
 
+before do |obj|
+# You can execute a block before the requests command is executed. Instance
+# variables defined here will be available to all commands. 
+# +obj+ is a reference to the command object, just like in command blocks. 
+end
+
+after do |obj|
+# And this will be called after the command. 
+end
 
 usage "#{$0} [-s] [-vv] date"
 desc "Display the current date"

@@ -4,32 +4,37 @@ DRYDOCK, CHANGES
 
 * Support putting descriptions into resource file (or __END__)
 * Define aliases with "command [:name, :alias]"
-* Add Drydock::Console, Drydock::Window, Drydock::Cursor
-* Generate scripts in the form: script-action
-  * globals can be configured with env vars.
-  * Motivation to stick to a single environment (just stage)
-* Add convenience methods for system calls: sh, write, read 
+
+
+#### 0.5.2 (2009-04-05) #############################
+
+* ADDED: before and after blocks now receive a primed reference to the 
+command object (which gives them access to the globals and options)
+* CHANGE: The prep stuff in Drydock::Command#call is now split into a
+separate method: prepare so call no longer takes arguments. 
+* FIXED: Drydock#capture_io was using yield. It now accepts a block instead. 
+
 
 #### 0.5.1 (2009-03-15) #############################
 
-* FIX: Prevent calling default command in at_exit when there's a LoadError.
-* FIX: Exit gracefully when the application exits. 
-* FIX: Print command names with dashes rather than underscores
+* FIXED: Prevent calling default command in at_exit when there's a LoadError.
+* FIXED: Exit gracefully when the application exits. 
+* FIXED: Print command names with dashes rather than underscores
 
 
 #### 0.5 (2009-03-11) ###############################
 
-* NEW: Checks that the command class is a subclass of Drydock::Command
+* ADDED: Checks that the command class is a subclass of Drydock::Command
 * CHANGE: Cleaned up show-commands screen
 * FIXED: Help didn't work when using command alias
-* NEW: Named argv values.
+* ADDED: Named argv values.
 * CHANGE: argv are now part of the Command class (not passed to command blocks)
 * CHANGE: "project" now automatically requires the lowercase name of the project
 and gracefully continues if the require failed. 
 * CHANGE: Drydock will look for different validation method, based on the method 
 being executed. If a validation method is found it's executed and
 must return a true valid (it can also raise its own exceptions).
-* NEW: command actions. These are boolean switches with a twist. Drydock looks
+* ADDED: command actions. These are boolean switches with a twist. Drydock looks
 for command_action or action_command methods. Saves checking the switches
 and sending to other methods manually.
 
@@ -37,26 +42,26 @@ and sending to other methods manually.
 #### 0.4 (2009-02-28) ###############################
 
 * FIXED: "interning empty string" error when bare "option" is used
-* NEW: Calls valid? method (if present) before calling command block.
-* NEW: "capture" method. Auto capture STDOUT to obj.stdout etc...
-* NEW: Automatically calls init and print_header methods before the command
+* ADDED: Calls valid? method (if present) before calling command block.
+* ADDED: "capture" method. Auto capture STDOUT to obj.stdout etc...
+* ADDED: Automatically calls init and print_header methods before the command
        and print_footer after the command (if available)
-* NEW: Tries to call obj.command if available when no block is supplied
-* NEW: "show_commands" command built-in. Displays commands with descriptions
-* NEW: A default usage help msg for every command: "#{$0} command-name"
-* NEW: "usage" work multiple times for the same command. 
-* NEW: "desc" method for per command descriptions
+* ADDED: Tries to call obj.command if available when no block is supplied
+* ADDED: "show_commands" command built-in. Displays commands with descriptions
+* ADDED: A default usage help msg for every command: "#{$0} command-name"
+* ADDED: "usage" work multiple times for the same command. 
+* ADDED: "desc" method for per command descriptions
 * CHANGE: options are now stored as obj.option.name instead of obj.name
 * CHANGE: global options are now stored as obj.globals.name
 * CHANGE: removed auto importing methods
     OLD: require 'drydock'
-    NEW: require 'drydock'
+    ADDED: require 'drydock'
          extend Drydock
 
 
 #### 0.3.3 (2009-02-14) ###############################
 
-* NEW: init method hook for subclasses of Drydock::Command
+* ADDED: init method hook for subclasses of Drydock::Command
 * UPDATED: Rdocs
 * CHANGE: added method command_aliaz to mirror aliaz_command
 

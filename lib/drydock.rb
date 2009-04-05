@@ -110,9 +110,11 @@ module Drydock
       @cmd
     end
     
-    # Execute the block.
+    # Prepare this command object to be called. 
     # 
-    # Calls self.init before calling the block. Implement this method when 
+    # Calls self.init after setting attributes (if the method exists). You can 
+    # implement an init method in your subclasses of Drydock::Command to handle
+    # your own initialization stuff.
     #
     # <li>+cmd_str+ is the short name used to evoke this command. It will equal @cmd
     # unless an alias was used used to evoke this command.</li>
@@ -121,7 +123,7 @@ module Drydock
     # <li>+stdin+ contains the output of stdin do; ...; end otherwise it's a STDIN IO handle.</li>
     # <li>+global_options+ a hash of the global options specified on the command-line</li>
     # <li>+options+ a hash of the command-specific options specific on the command-line.</li>
-    def call(cmd_str=nil, argv=[], stdin=[], global_options={}, options={})
+    def prepare(cmd_str=nil, argv=[], stdin=[], global_options={}, options={})
       @alias = cmd_str.nil? ? @cmd : cmd_str
 
       global_options.each_pair do |n,v|
@@ -132,19 +134,28 @@ module Drydock
         self.option.send("#{n}=", v)    # ... and also the command options
       end
       
-      
       @argv << argv    # TODO: Using += returns an Array instead of FancyArray
       @argv.flatten!   # NOTE: << creates @argv[[]]
       @stdin = stdin
       
       self.init         if self.respond_to? :init     # Must be called first!
-      self.print_header if self.respond_to? :print_header
       
+    end
+    
+    # Calls the command in the following order:
+    # 
+    # * print_header
+    # * validation (if methodname_valid? exists)
+    # * command block (@b)
+    # * print_footer
+    #
+    def call  
+      self.print_header if self.respond_to? :print_header
       if @b 
         run_validation
         @b.call(self) 
         
-      elsif !(chosen = find_action(options)).empty?
+      elsif !(chosen = find_action(self.option)).empty?
         raise "Only one action at a time please! I can't #{chosen.join(' AND ')}." if chosen.size > 1
         criteria = [[@cmd, chosen.first], [chosen.first, @cmd]]
         meth = name = nil
@@ -167,7 +178,6 @@ module Drydock
       end
       
       self.print_footer if respond_to? :print_footer
-      
     end
     
     # <li>+meth+ The method name used to determine the name of the validation method.
@@ -199,6 +209,7 @@ module Drydock
     # OptionParser#getopts)</li>
     # Returns an array of action names (empty if no action was supplied)
     def find_action(options)
+      options = options.marshal_dump if options.is_a?(OpenStruct)
       boolkeys = options.keys.select { |n| options[n] == true } || []
       (@actions || []) & boolkeys # an array of requested actions (or empty)
     end
@@ -341,19 +352,19 @@ module Drydock
     @@command_argv_names[@@command_index] += args.flatten
   end
   
-  # The project of the script. This is currently only used when printing
+  # The project name. This is currently only used when printing
   # list of commands (see: Drydock::Command#show_commands). It may be 
   # used elsewhere in the future. 
   def project(txt=nil)
     
     return @@project unless txt
     
-    begin
-      require txt.downcase
-    rescue LoadError => ex
-      Drydock.run = false  # Prevent execution at_exit
-      abort "Problem during require: #{ex.message}"
-    end
+    #begin
+    #  require txt.downcase
+    #rescue LoadError => ex
+    #  Drydock.run = false  # Prevent execution at_exit
+    #  abort "Problem during require: #{ex.message}"
+    #end
     @@project = txt
   end
   
@@ -509,7 +520,7 @@ module Drydock
   #     end
   #
   def command(*cmds, &b)
-    cmd = cmds.first
+    cmd = cmds.first # Should we accept aliases here?
     
     if cmd.is_a? Hash
       raise "#{cmd.values.first} is not a subclass of Drydock::Command" unless cmd.values.first.ancestors.member?(Drydock::Command)
@@ -616,13 +627,18 @@ module Drydock
     raise UnknownCommand.new(cmd_name) unless command?(cmd_name)
     
     stdin = (defined? @@stdin_block) ? @@stdin_block.call(stdin, []) : stdin
-    @@before_block.call if defined? @@before_block
     
-    command_portion = lambda { call_command(cmd_name, argv, stdin, global_options, command_options) }
-
-    capture? ? (@@captured = capture_io(@@capture, &command_portion)) : command_portion.call
+    command_obj = get_command(cmd_name)
+    command_obj.prepare(cmd_name, argv, stdin, global_options, command_options)
     
-    @@after_block.call if defined? @@after_block
+    # Execute before block
+    @@before_block.call(command_obj) if defined? @@before_block
+    
+    # Execute the requested command. We'll capture STDERR or STDOUT if desired. 
+    @@captured = capture? ? capture_io(@@capture) { command_obj.call } : command_obj.call
+        
+    # Execute after block
+    @@after_block.call(command_obj) if defined? @@after_block
     
   rescue OptionParser::InvalidOption => ex
     raise Drydock::InvalidArgument.new(ex.args)
@@ -669,11 +685,11 @@ module Drydock
   #      ...
   #    end
   #
-  def capture_io(stream)
+  def capture_io(stream, &block)
     raise "We can only capture STDOUT or STDERR" unless stream == :stdout || stream == :stderr
     begin
       eval "$#{stream} = StringIO.new"
-      yield
+      block.call
       eval("$#{stream}").rewind                  # Otherwise we'll get nil 
       result = eval("$#{stream}").read
     ensure
@@ -682,12 +698,6 @@ module Drydock
   end
   
  private 
-  
-  # Executes the block associated to +cmd+
-  def call_command(cmd, argv=[], stdin=nil, global_options={}, command_options={})
-    return unless command?(cmd)
-    get_command(cmd).call(cmd, argv, stdin, global_options || {}, command_options || {})
-  end
   
   # Returns the Drydock::Command object with the name +cmd+
   def get_command(cmd)
