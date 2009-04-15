@@ -34,7 +34,21 @@ module Drydock
     end
   end
   
-    
+  class ArgError < RuntimeError
+    attr_reader :arg, :cmd, :msg
+    def initialize(*args)
+      @msg = args.shift if args.size == 1
+      @arg, @cmd, @msg = *args
+      @cmd ||= 'COMMAND'
+      @msg = nil if @msg.empty?
+    end
+    def message; @msg || "Error: No #{@arg} provided"; end
+    def usage; "See: #{$0} #{@cmd} -h"; end
+  end
+  class OptError < ArgError
+    def message; @msg || "Error: No #{@arg} provided"; end
+  end
+  
   # The base class for all command objects. There is an instance of this class
   # for every command defined. Global and command-specific options are added
   # as attributes to this class dynamically. 
@@ -831,7 +845,7 @@ end
 
 
 trap ("SIGINT") do
-  puts "#{$/}Exiting..."
+  puts "#{$/}Exiting... "
   exit 1
 end
 
@@ -845,8 +859,10 @@ at_exit {
     end 
     Drydock.run!(ARGV, STDIN) if Drydock.run? && !Drydock.has_run?
   rescue => ex
-    STDERR.puts "ERROR: #{ex.message}"
+    STDERR.puts "ERROR (#{ex.class.to_s}): #{ex.message}"
     STDERR.puts ex.backtrace if Drydock.debug?
+  rescue SystemExit
+    # Don't balk
   end
 }
 
