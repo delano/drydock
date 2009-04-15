@@ -31,7 +31,7 @@
         </div>
         <div class='last-update'>
           Last Update:
-          <span class='datetime'>Sun Apr 05 10:28:22 -0400 2009</span>
+          <span class='datetime'>Wed Apr 15 06:04:04 -0400 2009</span>
         </div>
       </div>
       <div id='content'>
@@ -47,12 +47,33 @@
             <li>Support putting descriptions into resource file (or <em>END</em>)
             
             </li>
-            <li>Define aliases with &#8220;command [:name, :alias]&#8220;
+            <li>Inline commands aliases. command :cmd1, :cmd2 do; &#8230;; end
             
             </li>
             </ul>
             <p>
-            #### 0.5.2 (2009-04-05) #############################
+            #### 0.5.4 (2009-04-15) #############################
+            </p>
+            <ul>
+            <li>ADDED: Better error handling with new <a
+            href="../classes/Drydock/ArgError.html">Drydock::ArgError</a> and <a
+            href="../classes/Drydock/OptError.html">Drydock::OptError</a>
+            
+            </li>
+            </ul>
+            <p>
+            #### 0.5.3 (2009-04-05) #############################
+            </p>
+            <ul>
+            <li>FIXED: Command actions were not being handled correctly. Added rdocs to
+            
+            </li>
+            </ul>
+            <p>
+            clarify the code.
+            </p>
+            <p>
+            #### 0.5.2 (2009-04-04) #############################
             </p>
             <ul>
             <li>ADDED: before and after blocks now receive a primed reference to the
@@ -64,7 +85,7 @@
             </p>
             <ul>
             <li>CHANGE: The prep stuff in <a
-            href="../classes/Drydock/Command.html#M000043">Drydock::Command#call</a> is
+            href="../classes/Drydock/Command.html#M000046">Drydock::Command#call</a> is
             now split into a
             
             </li>
