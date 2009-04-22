@@ -884,13 +884,6 @@ module Drydock
 end
 
 
-
-trap ("SIGINT") do
-  puts "#{$/}Exiting... "
-  exit 1
-end
-
-
   
 at_exit {
   begin
@@ -899,9 +892,15 @@ at_exit {
       exit 1
     end 
     Drydock.run!(ARGV, STDIN) if Drydock.run? && !Drydock.has_run?
+  rescue Drydock::ArgError, Drydock::OptError=> ex
+    STDERR.puts ex.message
+    STDERR.puts ex.usage
   rescue => ex
     STDERR.puts "ERROR (#{ex.class.to_s}): #{ex.message}"
     STDERR.puts ex.backtrace if Drydock.debug?
+  rescue Interrupt
+    puts "#{$/}Exiting... "
+    exit 1
   rescue SystemExit
     # Don't balk
   end
