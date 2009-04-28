@@ -31,7 +31,7 @@
         </div>
         <div class='last-update'>
           Last Update:
-          <span class='datetime'>Wed Apr 15 06:04:04 -0400 2009</span>
+          <span class='datetime'>Tue Apr 28 11:52:10 -0400 2009</span>
         </div>
       </div>
       <div id='content'>
@@ -47,7 +47,54 @@
             <li>Support putting descriptions into resource file (or <em>END</em>)
             
             </li>
-            <li>Inline commands aliases. command :cmd1, :cmd2 do; &#8230;; end
+            </ul>
+            <p>
+            #### 0.6.0 (2009-04-22) #############################
+            </p>
+            <ul>
+            <li>CHANGE: Cleaner default error message for UnknownCommand exceptions
+            
+            </li>
+            <li>CHANGE: &#8216;desc&#8217; is now &#8216;about&#8217; (desc works, but it
+            prints a notice)
+            
+            </li>
+            <li>CHANGE: I now recommend implementing the <a
+            href="../classes/Drydock.html">Drydock</a> DSL in a module.
+            
+            </li>
+            </ul>
+            <p>
+            <a href="bin/example.html">bin/example</a> was updated to reflect the
+            change. This prevents <a href="../classes/Drydock.html">Drydock</a>
+            keywords from being included in the global namespace.
+            </p>
+            <ul>
+            <li>ADDED: Inline commands aliases. command :cmd1, :cmd2 do; &#8230;; end
+            
+            </li>
+            <li>ADDED: Unknown commands can be directed to a trawler.
+            
+            </li>
+            </ul>
+            <p>
+            #### 0.5.6 (2009-04-22) #############################
+            </p>
+            <ul>
+            <li>CHANGED: Interrupts now handled in rescue rather than a trap.
+            
+            </li>
+            <li>ADDED: <a href="../classes/Drydock/ArgError.html">Drydock::ArgError</a> and
+            <a href="../classes/Drydock/OptError.html">Drydock::OptError</a> are
+            rescued at runtime by default
+            
+            </li>
+            </ul>
+            <p>
+            #### 0.5.5 (2009-04-19) #############################
+            </p>
+            <ul>
+            <li>CHANGED: Improved help screen formatting.
             
             </li>
             </ul>
@@ -85,7 +132,7 @@
             </p>
             <ul>
             <li>CHANGE: The prep stuff in <a
-            href="../classes/Drydock/Command.html#M000046">Drydock::Command#call</a> is
+            href="../classes/Drydock/Command.html#M000049">Drydock::Command#call</a> is
             now split into a
             
             </li>
@@ -94,7 +141,7 @@
             separate method: prepare so call no longer takes arguments.
             </p>
             <ul>
-            <li>FIXED: <a href="../classes/Drydock.html#M000034">Drydock#capture_io</a> was
+            <li>FIXED: <a href="../classes/Drydock.html#M000037">Drydock#capture_io</a> was
             using yield. It now accepts a block instead.
             
             </li>
