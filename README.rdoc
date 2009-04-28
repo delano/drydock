@@ -1,10 +1,8 @@
-= Drydock - v0.5
-
-Inspired by github-gem and bmizerany-frylock.
+= Drydock - v0.6
 
 == Overview
 
-Drydock is a seaworthy DSL for command line apps. It's contained in a single .rb file so it's easy to copy directly into your project. 
+Drydock is a seaworthy DSL for really powerful command line applications. It's contained in a single .rb file so it's easy to copy directly into your project. See below for examples. 
 
 == Install
 
@@ -37,7 +35,6 @@ See bin/example for more.
     puts "For available commands:"
     puts "#{$0} show-commands"
   end
-  
   
   usage "USAGE: #{$0} laugh [-f]"
   desc "The captain commands his crew to laugh"
@@ -74,6 +71,11 @@ See bin/example for more.
 * GitHub[http://github.com/delano/drydock]
 * RDocs[http://drydock.rubyforge.org/]
 * Inspiration[http://www.youtube.com/watch?v=m_wFEB4Oxlo]
+
+== Thanks
+
+* Solutious Inc for putting up with my endless references to the sea! (http://solutious.com)
+* Blake Mizerany for the inspiration via bmizerany-frylock[http://github.com/bmizerany/frylock]
 
 == Credits
 

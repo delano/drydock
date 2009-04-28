@@ -75,7 +75,7 @@ module Drydock
   #     end
   #
   class Command
-    VERSION = 0.5
+    VERSION = 0.6
       # The canonical name of the command (the one used in the command definition). If you 
       # inherit from this class and add a method named +cmd+, you can leave omit the block
       # in the command definition. That method will be called instead. See bin/examples.
@@ -266,7 +266,6 @@ module Drydock
     
       cmd_names_sorted = cmds.keys.sort{ |a,b| a.to_s <=> b.to_s }
       
-      
       if @global.quiet
         puts "Commands: "
         line = []
@@ -351,7 +350,7 @@ end
 module Drydock
   extend self
   
-  VERSION = 0.5
+  VERSION = 0.6
   
   @@project = nil
   
@@ -374,8 +373,10 @@ module Drydock
   @@command_index_map = {}
   @@command_argv_names = []  # an array of names for values of argv
   
-  @@capture = nil     # contains one of :stdout, :stderr
+  @@capture = nil            # contains one of :stdout, :stderr
   @@captured = nil
+  
+  @@trawler = nil
   
  public
   # Enable or disable debug output.
@@ -494,7 +495,6 @@ module Drydock
     get_current_option_parser.banner << "USAGE: #{msg}" << $/
   end
   
-  
   # Tell the Drydock parser to ignore something. 
   # Drydock will currently only listen to you if you tell it to "ignore :options", 
   # otherwise it will ignore you!
@@ -581,7 +581,7 @@ module Drydock
   #     end
   #
   def command(*cmds, &b)
-    cmd = cmds.first # Should we accept aliases here?
+    cmd = cmds.shift # Should we accept aliases here?
     
     if cmd.is_a? Hash
       raise "#{cmd.values.first} is not a subclass of Drydock::Command" unless cmd.values.first.ancestors.member?(Drydock::Command)
@@ -611,6 +611,10 @@ module Drydock
     @@commands[c.cmd] = c
     @@command_index_map[c.cmd] = @@command_index
     @@command_index += 1 # This will point to the next command
+    
+    # Created aliases to the command using any additional command names 
+    # i.e. command :something, :sumpin => Something
+    cmds.each { |aliaz| command_alias(cmd, aliaz); } unless cmds.empty?
     
     c  # Return the Command object
   end
@@ -651,11 +655,31 @@ module Drydock
     @@commands.keys.collect { |cmd| decanonize(cmd); }
   end
   
+  # The trawler catches any and all unknown commands that pass through
+  # Drydock. It's like the captain of aliases. 
+  # +cmd+ is the name of the command to direct unknowns to. 
+  #
+  #     trawler :command_name
+  #
+  def trawler(cmd)
+    @@trawler = cmd
+  end
+  
+  # Has the trawler been set?
+  def trawler?
+    !@@trawler.nil? && !@@trawler.empty?
+  end
+  
   # Provide a description for a command
-  def desc(txt)
+  def about(txt)
     @@command_descriptions += [txt]
     return if get_current_option_parser.is_a?(Symbol)
     get_current_option_parser.on "ABOUT: #{txt}"
+  end
+  # Deprecated. Use about.
+  def desc(txt)
+    STDERR.puts "'desc' is deprecated. Please use 'about' instead."
+    about(txt) 
   end
   
   # Returns true if automatic execution is enabled. 
@@ -683,12 +707,8 @@ module Drydock
     return if has_run?
     @@has_run = true
     raise NoCommandsDefined.new if commands.empty?
+    
     global_options, cmd_name, command_options, argv = process_arguments(argv)
-    
-    cmd_name ||= default_command
-    
-    raise UnknownCommand.new(cmd_name) unless command?(cmd_name)
-    
     stdin = (defined? @@stdin_block) ? @@stdin_block.call(stdin, []) : stdin
     
     command_obj = get_command(cmd_name)
@@ -811,7 +831,12 @@ module Drydock
     
     global_options = @@global_opts_parser.getopts(argv)
     cmd_name = (argv.empty?) ? @@default_command : argv.shift
-    raise UnknownCommand.new(cmd_name) unless command?(cmd_name)
+    
+    unless command?(cmd_name)
+      raise UnknownCommand.new(cmd_name)  unless trawler?
+      raise UnknownCommand.new(@@trawler) unless command?(@@trawler)
+      command_alias(@@trawler, cmd_name)
+    end
     
     cmd = get_command(cmd_name) 
     
@@ -824,22 +849,6 @@ module Drydock
     if !argv.empty? && command_parser && command_parser != :ignore
       command_options = command_parser.getopts(argv)
     end
-    
-    # TODO: Remove this chunk for method creation. We now use OpenStruct. 
-    # Add accessors to the Drydock::Command object 
-    # for the global and command specific options
-    #[global_option_names, (command_option_names[get_command_index(cmd_name)] || [])].flatten.each do |n|
-    #  unless cmd.respond_to?(n)
-    #    cmd.class.send(:define_method, n) do
-    #      instance_variable_get("@#{n}")
-    #    end
-    #  end
-    #  unless cmd.respond_to?("#{n}=")
-    #    cmd.class.send(:define_method, "#{n}=") do |val|
-    #      instance_variable_set("@#{n}", val)
-    #    end
-    #  end
-    #end
     
     [global_options, cmd_name, command_options, argv]
   end
@@ -895,6 +904,9 @@ at_exit {
   rescue Drydock::ArgError, Drydock::OptError=> ex
     STDERR.puts ex.message
     STDERR.puts ex.usage
+  rescue Drydock::UnknownCommand => ex  
+    STDERR.puts ex.message
+    STDERR.puts ex.backtrace if Drydock.debug?
   rescue => ex
     STDERR.puts "ERROR (#{ex.class.to_s}): #{ex.message}"
     STDERR.puts ex.backtrace if Drydock.debug?

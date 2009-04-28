@@ -3,7 +3,17 @@ DRYDOCK, CHANGES
 #### TODO ###############################
 
 * Support putting descriptions into resource file (or __END__)
-* Inline commands aliases. command :cmd1, :cmd2 do; ...; end
+
+
+#### 0.6.0 (2009-04-22) #############################
+
+* CHANGE: Cleaner default error message for UnknownCommand exceptions
+* CHANGE: 'desc' is now 'about' (desc works, but it prints a notice)
+* CHANGE: I now recommend implementing the Drydock DSL in a module.
+bin/example was updated to reflect the change. This prevents Drydock
+keywords from being included in the global namespace. 
+* ADDED: Inline commands aliases. command :cmd1, :cmd2 do; ...; end
+* ADDED: Unknown commands can be directed to a trawler. 
 
 
 #### 0.5.6 (2009-04-22) #############################
@@ -11,22 +21,18 @@ DRYDOCK, CHANGES
 * CHANGED: Interrupts now handled in rescue rather than a trap. 
 * ADDED: Drydock::ArgError and Drydock::OptError are rescued at runtime by default
 
-
 #### 0.5.5 (2009-04-19) #############################
 
 * CHANGED: Improved help screen formatting. 
-
 
 #### 0.5.4 (2009-04-15) #############################
 
 * ADDED: Better error handling with new Drydock::ArgError and Drydock::OptError
 
-
 #### 0.5.3 (2009-04-05) #############################
 
 * FIXED: Command actions were not being handled correctly. Added rdocs to 
 clarify the code.
-
 
 #### 0.5.2 (2009-04-04) #############################
 
@@ -103,3 +109,5 @@ and sending to other methods manually.
 
 * Initial release
 * Forked from bmizerany/frylock
+
+
