@@ -6,7 +6,7 @@
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
 
   s.authors = ["Delano Mandelbaum"]
-  s.description = %q{A seaworthy DSL for writing command line apps}
+  s.description = %q{Build seaworthy command-line apps like a Captain with a powerful Ruby DSL.}
   s.summary = s.description
   s.email = %q{delano@solutious.com}
 

@@ -1,8 +1,10 @@
 = Drydock - v0.6
 
+<b>Build seaworthy command-line apps like a Captain with a powerful Ruby DSL.</b>
+
 == Overview
 
-Drydock is a seaworthy DSL for really powerful command line applications. It's contained in a single .rb file so it's easy to copy directly into your project. See below for examples. 
+Drydock is a seaworthy DSL for building really powerful command line applications. It's contained in a single .rb file so it's easy to copy directly into your project. See below for examples. 
 
 == Install
 
