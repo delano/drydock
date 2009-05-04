@@ -667,7 +667,7 @@ module Drydock
   
   # Has the trawler been set?
   def trawler?
-    !@@trawler.nil? && !@@trawler.empty?
+    !@@trawler.nil? && !@@trawler.to_s.empty?
   end
   
   # Provide a description for a command
