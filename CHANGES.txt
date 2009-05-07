@@ -5,6 +5,12 @@ DRYDOCK, CHANGES
 * Support putting descriptions into resource file (or __END__)
 
 
+#### 0.6.2 (2009-05-07) #############################
+
+* ADDED: drydock/console.rb to start a new wing in the drydock
+* ADDED: mixins for String and Object (for Console)
+
+
 #### 0.6.1 (2009-05-03) #############################
 
 * FIXED: @@trawler raises an error in Ruby 1.8 if it's a Symbol
