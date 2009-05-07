@@ -19,6 +19,9 @@
     bin/example
     drydock.gemspec
     lib/drydock.rb
+    lib/drydock/console.rb
+    lib/mixins/object.rb
+    lib/mixins/string.rb
   )
 
   #  s.add_dependency ''
