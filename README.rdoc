@@ -4,7 +4,7 @@
 
 == Overview
 
-Drydock is a seaworthy DSL for building really powerful command line applications. It's contained in a single .rb file so it's easy to copy directly into your project. See below for examples. 
+Drydock is a seaworthy DSL for building really powerful command line applications. The core class is contained in a single .rb file so it's easy to copy directly into your project. See below for examples. 
 
 == Install
 
