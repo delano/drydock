@@ -2,6 +2,10 @@ require 'optparse'
 require 'ostruct'
 require 'stringio'
 
+require 'drydock/console'
+require 'mixins/string'
+require 'mixins/object'
+
 module Drydock
   class FancyArray < Array #:nodoc:
     attr_reader :fields
