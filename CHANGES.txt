@@ -3,7 +3,7 @@ DRYDOCK, CHANGES
 #### TODO ###############################
 
 * Support putting descriptions into resource file (or __END__)
-
+* script show-commands should include a note about which command is the default
 
 #### 0.6.2 (2009-05-07) #############################
 

@@ -3,8 +3,7 @@ require 'ostruct'
 require 'stringio'
 
 require 'drydock/console'
-require 'mixins/string'
-require 'mixins/object'
+require 'drydock/mixins'
 
 module Drydock
   class FancyArray < Array #:nodoc:
