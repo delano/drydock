@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/ruby
 
 # Seafaring Drydock Examples
 # 
@@ -102,7 +102,7 @@ module Example
   end
 
   about "My way of saying hello!"
-  command :ahoy! => JohnWestSmokedOysters
+  command [:ahoy!, :hello!] => JohnWestSmokedOysters
   # If you don't provide a block, Drydock will call JohnWestSmokedOysters#ahoy!
 
 

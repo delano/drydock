@@ -291,7 +291,8 @@ module Drydock
       if @global.verbose > 0
         puts # empty line
         cmd_names_sorted.each do |cmd|
-          puts "%s %s" % [@executable, cmds[cmd][:pretty]]
+          puts "$ %s" % [@executable] if Drydock.default?(cmd)
+          puts "$ %s %s" % [@executable, cmds[cmd][:pretty]]
           puts "%10s: %s" % ["About", cmds[cmd][:desc]] if cmds[cmd][:desc]
           if cmds[cmd][:aliases]
             cmds[cmd][:aliases].sort!{ |a,b| a.size <=> b.size }
@@ -305,7 +306,8 @@ module Drydock
           aliases = cmds[cmd][:aliases] || []
           aliases.sort!{ |a,b| a.size <=> b.size }
           aliases = aliases.empty? ? '' : "(aliases: #{aliases.join(', ')})"
-          puts "  %-16s %s" % [cmds[cmd][:pretty], aliases]
+          pattern = Drydock.default?(cmd) ? "* %-16s %s" : "  %-16s %s"
+          puts pattern % [cmds[cmd][:pretty], aliases]
         end
       end
     end
@@ -459,6 +461,12 @@ module Drydock
     @@default_command = (b) ? command(cmd || :default, &b).cmd : canonize(cmd)
   end
   
+  # Is +cmd+ the default command?
+  def default?(cmd)
+    return false if @@default_command.nil?
+    (@@default_command == canonize(cmd))
+  end
+  
   # Define a block for processing STDIN before the command is called. 
   # The command block receives the return value of this block as obj.stdin:
   #
@@ -587,11 +595,15 @@ module Drydock
     cmd = cmds.shift # Should we accept aliases here?
     
     if cmd.is_a? Hash
-      raise "#{cmd.values.first} is not a subclass of Drydock::Command" unless cmd.values.first.ancestors.member?(Drydock::Command)
-      c = cmd.values.first.new(cmd.keys.first, &b) # A custom class was specified
-    # TODO: handle command [:task, :alias] => Class
-    #elsif cmd.is_a? Array
-    #  p cmd
+      klass = cmd.values.first
+      names = cmd.keys.first
+      if names.is_a? Array
+        cmd, cmds = names.shift, [names].flatten.compact
+      else
+        cmd = names
+      end
+      raise "#{klass} is not a subclass of Drydock::Command" unless klass.ancestors.member?(Drydock::Command)
+      c = klass.new(cmd, &b)          # A custom class was specified
     else
       c = Drydock::Command.new(cmd, &b)
     end

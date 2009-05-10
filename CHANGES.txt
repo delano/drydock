@@ -3,7 +3,15 @@ DRYDOCK, CHANGES
 #### TODO ###############################
 
 * Support putting descriptions into resource file (or __END__)
-* script show-commands should include a note about which command is the default
+
+
+#### 0.6.3 (2009-05-10) #############################
+
+* ADDED: show-commands now displays a note about which command is the default
+* CHANGE: Moved mixins to lib/drydock/mixins (so other projects can require 'drydock/mixins')
+* FIXED: Support for inline command aliases when specifying a class: 
+command [:name, :alias1, :alias2] => SomeClass
+
 
 #### 0.6.2 (2009-05-07) #############################
 
