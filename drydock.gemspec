@@ -12,16 +12,17 @@
   # = MANIFEST =
   # git ls-files
   s.files = %w(
-    CHANGES.txt
-    LICENSE.txt
-    README.rdoc
-    Rakefile
-    bin/example
-    drydock.gemspec
-    lib/drydock.rb
-    lib/drydock/console.rb
-    lib/mixins/object.rb
-    lib/mixins/string.rb
+  CHANGES.txt
+  LICENSE.txt
+  README.rdoc
+  Rakefile
+  bin/example
+  drydock.gemspec
+  lib/drydock.rb
+  lib/drydock/console.rb
+  lib/drydock/mixins.rb
+  lib/drydock/mixins/object.rb
+  lib/drydock/mixins/string.rb
   )
 
   #  s.add_dependency ''
