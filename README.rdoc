@@ -31,7 +31,7 @@ See bin/example for more.
   # variables defined here will be available to all commands.
   end
 
-  desc "A friendly welcome to the Drydock"
+  about "A friendly welcome to the Drydock"
   command :welcome do
     puts "Welcome to Drydock."
     puts "For available commands:"
@@ -39,7 +39,7 @@ See bin/example for more.
   end
   
   usage "USAGE: #{$0} laugh [-f]"
-  desc "The captain commands his crew to laugh"
+  about "The captain commands his crew to laugh"
   option :f, :faster, "A boolean value. Go even faster!"
   command :laugh do |obj|
   # +obj+ is an instance of Drydock::Command. The options you define are available
@@ -58,12 +58,12 @@ See bin/example for more.
     def ahoy!; p "matey"; end
   end
 
-  desc "Do something with John West's Smoked Oysters"
+  about "Do something with John West's Smoked Oysters"
   command :oysters => JohnWestSmokedOysters do |obj|
     p obj  # => #<JohnWestSmokedOysters:0x42179c ... >
   end
 
-  desc "My way of saying hello!"
+  about "My way of saying hello!"
   command :ahoy! => JohnWestSmokedOysters
   # If you don't provide a block, Drydock will call JohnWestSmokedOysters#ahoy!
 
