@@ -31,7 +31,7 @@
         </div>
         <div class='last-update'>
           Last Update:
-          <span class='datetime'>Sun May 03 20:49:24 -0400 2009</span>
+          <span class='datetime'>Sun May 10 09:10:15 -0400 2009</span>
         </div>
       </div>
       <div id='content'>
@@ -45,6 +45,35 @@
             </p>
             <ul>
             <li>Support putting descriptions into resource file (or <em>END</em>)
+            
+            </li>
+            </ul>
+            <p>
+            #### 0.6.3 (2009-05-10) #############################
+            </p>
+            <ul>
+            <li>ADDED: show-commands now displays a note about which command is the default
+            
+            </li>
+            <li>CHANGE: Moved mixins to lib/drydock/mixins (so other projects can require
+            &#8216;drydock/mixins&#8217;)
+            
+            </li>
+            <li>FIXED: Support for inline command aliases when specifying a class:
+            
+            </li>
+            </ul>
+            <p>
+            command [:name, :alias1, :alias2] => SomeClass
+            </p>
+            <p>
+            #### 0.6.2 (2009-05-07) #############################
+            </p>
+            <ul>
+            <li>ADDED: drydock/console.rb to start a new wing in the drydock
+            
+            </li>
+            <li>ADDED: mixins for String and Object (for Console)
             
             </li>
             </ul>
@@ -140,7 +169,7 @@
             </p>
             <ul>
             <li>CHANGE: The prep stuff in <a
-            href="../classes/Drydock/Command.html#M000049">Drydock::Command#call</a> is
+            href="../classes/Drydock/Command.html#M000050">Drydock::Command#call</a> is
             now split into a
             
             </li>
@@ -149,7 +178,7 @@
             separate method: prepare so call no longer takes arguments.
             </p>
             <ul>
-            <li>FIXED: <a href="../classes/Drydock.html#M000037">Drydock#capture_io</a> was
+            <li>FIXED: <a href="../classes/Drydock.html#M000038">Drydock#capture_io</a> was
             using yield. It now accepts a block instead.
             
             </li>
