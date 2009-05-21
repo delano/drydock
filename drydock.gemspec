@@ -1,6 +1,6 @@
 @spec = Gem::Specification.new do |s|
   s.name = %q{drydock}
-  s.version = "0.6.4"
+  s.version = "0.6.5"
   s.specification_version = 1 if s.respond_to? :specification_version=
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
 

@@ -5,7 +5,7 @@ DRYDOCK, CHANGES
 * Support putting descriptions into resource file (or __END__)
 
 
-#### 0.6.4 (2009-05-10) #############################
+#### 0.6.5 (2009-05-21) #############################
 
 * ADDED: "with_args" support for default command. When specified, 
 arguments can be passed to the default command with run in the 
