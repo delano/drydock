@@ -371,6 +371,7 @@ module Drydock
   @@command_actions = []
   
   @@default_command = nil
+  @@default_command_with_args = false
   
   @@commands = {}
   @@command_descriptions = []
@@ -455,10 +456,19 @@ module Drydock
   #       # ...
   #     end
   #
-  def default(cmd=nil, &b)
+  # If +with_args+ is specified, the default command will receive all unknown
+  # values as arguments. This is necessary to define explicitly because drydock
+  # parses arguments expecting a command name. If the default command accepts
+  # arguments and with_args is not specified, drydock will raise an unknown
+  # command exception for the first argument.
+  #
+  def default(cmd=nil, with_args=false, &b)
     raise "Calling default requires a command name or a block" unless cmd || b
     # Creates the command and returns the name or just stores given name
     @@default_command = (b) ? command(cmd || :default, &b).cmd : canonize(cmd)
+    # IDEA: refactor out the argument parser to support different types of CLI
+    @@default_command_with_args = with_args ? true : false
+    @@default_command
   end
   
   # Is +cmd+ the default command?
@@ -466,6 +476,10 @@ module Drydock
     return false if @@default_command.nil?
     (@@default_command == canonize(cmd))
   end
+  
+  # 
+  def default_with_args?; @@default_command_with_args; end
+  
   
   # Define a block for processing STDIN before the command is called. 
   # The command block receives the return value of this block as obj.stdin:
@@ -844,13 +858,21 @@ module Drydock
     global_options = command_options = {}
     cmd = nil     
     
+    argv_copy = argv.clone # See: @@default_command_with_args below
+    
     global_options = @@global_opts_parser.getopts(argv)
     cmd_name = (argv.empty?) ? @@default_command : argv.shift
     
     unless command?(cmd_name)
-      raise UnknownCommand.new(cmd_name)  unless trawler?
-      raise UnknownCommand.new(@@trawler) unless command?(@@trawler)
-      command_alias(@@trawler, cmd_name)
+      # If requested, send all unknown arguments to the default command
+      if @@default_command_with_args
+        cmd_name = @@default_command
+        argv = argv_copy
+      else
+        raise UnknownCommand.new(cmd_name)  unless trawler?
+        raise UnknownCommand.new(@@trawler) unless command?(@@trawler)
+        command_alias(@@trawler, cmd_name)
+      end
     end
     
     cmd = get_command(cmd_name) 

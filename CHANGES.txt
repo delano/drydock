@@ -5,6 +5,12 @@ DRYDOCK, CHANGES
 * Support putting descriptions into resource file (or __END__)
 
 
+#### 0.6.4 (2009-05-10) #############################
+
+* ADDED: "with_args" support for default command. When specified, 
+arguments can be passed to the default command with run in the 
+short form. e.g. "script arg1 arg2" == "script cmdname arg1 arg2"
+
 #### 0.6.3 (2009-05-10) #############################
 
 * ADDED: show-commands now displays a note about which command is the default
