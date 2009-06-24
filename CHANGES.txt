@@ -5,6 +5,18 @@ DRYDOCK, CHANGES
 * Support putting descriptions into resource file (or __END__)
 
 
+#### 0.6.6 (2009-06-24) #############################
+
+NOTE: Because at_exit has been removed, Drydock scripts will no longer
+run automatically. You can explicitly call the following at the bottom
+of your scripts:
+    
+    Drydock.run!(ARGV, STDIN) if Drydock.run?
+
+* CHANGE: Removed at_exit 
+* CHANGE: Drydock.run? will now return false if Drydock hasl already run
+
+
 #### 0.6.5 (2009-05-21) #############################
 
 * ADDED: "with_args" support for default command. When specified, 

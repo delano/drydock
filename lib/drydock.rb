@@ -78,7 +78,7 @@ module Drydock
   #     end
   #
   class Command
-    VERSION = 0.6
+    VERSION = "0.6.6"
       # The canonical name of the command (the one used in the command definition). If you 
       # inherit from this class and add a method named +cmd+, you can leave omit the block
       # in the command definition. That method will be called instead. See bin/examples.
@@ -713,7 +713,7 @@ module Drydock
   
   # Returns true if automatic execution is enabled. 
   def run?
-    @@run
+    @@run && has_run? == false
   end
   
   # Disable automatic execution (enabled by default)
@@ -929,7 +929,7 @@ module Drydock
   
 end
 
-
+__END__
   
 at_exit {
   begin
