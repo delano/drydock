@@ -31,7 +31,7 @@
         </div>
         <div class='last-update'>
           Last Update:
-          <span class='datetime'>Sun May 10 09:10:15 -0400 2009</span>
+          <span class='datetime'>2009-06-24 15:45:19 -0400</span>
         </div>
       </div>
       <div id='content'>
@@ -48,6 +48,39 @@
             
             </li>
             </ul>
+            <p>
+            #### 0.6.6 (2009-06-24) #############################
+            </p>
+            <p>
+            NOTE: Because at_exit has been removed, <a
+            href="../classes/Drydock.html">Drydock</a> scripts will no longer run
+            automatically. You can explicitly call the following at the bottom of your
+            scripts:
+            </p>
+            <pre>Drydock.run!(ARGV, STDIN) if Drydock.run?</pre>
+            <ul>
+            <li>CHANGE: Removed at_exit
+            
+            </li>
+            <li>CHANGE: <a href="../classes/Drydock.html#M000029">Drydock.run?</a> will now
+            return false if <a href="../classes/Drydock.html">Drydock</a> hasl already
+            run
+            
+            </li>
+            </ul>
+            <p>
+            #### 0.6.5 (2009-05-21) #############################
+            </p>
+            <ul>
+            <li>ADDED: &#8220;with_args&#8220; support for default command. When specified,
+            
+            </li>
+            </ul>
+            <p>
+            arguments can be passed to the default command with run in the short form.
+            e.g. &#8220;script arg1 arg2&#8221; == &#8220;script cmdname arg1
+            arg2&#8220;
+            </p>
             <p>
             #### 0.6.3 (2009-05-10) #############################
             </p>
@@ -169,7 +202,7 @@
             </p>
             <ul>
             <li>CHANGE: The prep stuff in <a
-            href="../classes/Drydock/Command.html#M000050">Drydock::Command#call</a> is
+            href="../classes/Drydock/Command.html#M000047">Drydock::Command#call</a> is
             now split into a
             
             </li>
@@ -178,7 +211,7 @@
             separate method: prepare so call no longer takes arguments.
             </p>
             <ul>
-            <li>FIXED: <a href="../classes/Drydock.html#M000038">Drydock#capture_io</a> was
+            <li>FIXED: <a href="../classes/Drydock.html#M000039">Drydock#capture_io</a> was
             using yield. It now accepts a block instead.
             
             </li>
