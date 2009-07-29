@@ -23,7 +23,8 @@ Or for GitHub fans:
 See bin/example for more. 
 
   require 'drydock'
-
+  extend Drydock
+  
   default :welcome
 
   before do
@@ -67,7 +68,9 @@ See bin/example for more.
   command :ahoy! => JohnWestSmokedOysters
   # If you don't provide a block, Drydock will call JohnWestSmokedOysters#ahoy!
 
+  Drydock.run!
   
+
 == More Information
 
 * GitHub[http://github.com/delano/drydock]
