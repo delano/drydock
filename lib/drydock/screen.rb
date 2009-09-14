@@ -7,14 +7,17 @@ module Drydock
     @@mutex = Mutex.new
     @@output = StringIO.new
     @@offset = 0
-    @@thread = nil
     
     def print(*msg)
-      @@output.print *msg
+      @@mutex.synchronize do
+        @@output.print *msg
+      end
     end
     
     def puts(*msg)
-      @@output.puts *msg
+      @@mutex.synchronize do
+        @@output.puts *msg
+      end
     end
     
     def flush
