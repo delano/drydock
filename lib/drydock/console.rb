@@ -92,7 +92,7 @@ module Console #:nodoc:all
       props[:minus] = false unless props.has_key?(:minus)
       props[:x] = props[:x]-str.noatt.size if props[:x] && props[:minus] # Subtract the str length from the position
       Cursor.save
-      Cursor.move = 0
+      Cursor.move = [props[:x], props[:y]]
       print str
       Cursor.restore
     }

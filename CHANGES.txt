@@ -4,6 +4,10 @@ DRYDOCK, CHANGES
 
 * Support putting descriptions into resource file (or __END__)
 
+#### 0.6.7 (2009-09-??) #############################
+
+* ADDED: Drydock::Screen
+
 
 #### 0.6.6 (2009-06-24) #############################
 

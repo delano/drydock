@@ -2,7 +2,7 @@ require 'optparse'
 require 'ostruct'
 require 'stringio'
 
-require 'drydock/console'
+require 'drydock/screen'
 require 'drydock/mixins'
 
 module Drydock
