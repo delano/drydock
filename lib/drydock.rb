@@ -4,6 +4,7 @@ require 'stringio'
 
 require 'drydock/screen'
 require 'drydock/mixins'
+require 'drydock/console'
 
 module Drydock
   class FancyArray < Array #:nodoc:
@@ -78,7 +79,7 @@ module Drydock
   #     end
   #
   class Command
-    VERSION = "0.6.7"
+    VERSION = "0.6.8"
       # The canonical name of the command (the one used in the command definition). If you 
       # inherit from this class and add a method named +cmd+, you can leave omit the block
       # in the command definition. That method will be called instead. See bin/examples.

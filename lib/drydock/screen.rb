@@ -1,4 +1,4 @@
-
+require 'thread'
 
 module Drydock
   module Screen

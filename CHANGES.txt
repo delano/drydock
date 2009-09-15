@@ -1,6 +1,12 @@
 DRYDOCK, CHANGES
 
 
+#### 0.6.8 (2009-09-15) #############################
+
+* FIXED: require 'thread' added to Drydock::Screen
+* FIXED: require 'drydock/console'
+
+
 #### 0.6.7 (2009-09-15) #############################
 
 * ADDED: Drydock::Screen
