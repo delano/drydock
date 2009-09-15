@@ -88,7 +88,7 @@
                   <a class='source-toggle' href='#' onclick="toggleCode('M000040-source'); return false">
                     [show source]
                   </a>
-                  <pre id='M000040-source'>    <span class="ruby-comment cmt"># File lib/drydock.rb, line 43</span>&#x000A;43:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)&#x000A;44:       <span class="ruby-ivar">@msg</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">shift</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>&#x000A;45:       <span class="ruby-ivar">@arg</span>, <span class="ruby-ivar">@cmd</span>, <span class="ruby-ivar">@msg</span> = <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>&#x000A;46:       <span class="ruby-ivar">@cmd</span> <span class="ruby-operator">||=</span> <span class="ruby-value str">'COMMAND'</span>&#x000A;47:       <span class="ruby-ivar">@msg</span> = <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@msg</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@msg</span>.<span class="ruby-identifier">empty?</span>&#x000A;48:     <span class="ruby-keyword kw">end</span></pre>
+                  <pre id='M000040-source'>    <span class="ruby-comment cmt"># File lib/drydock.rb, line 44</span>&#x000A;44:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)&#x000A;45:       <span class="ruby-ivar">@msg</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">shift</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>&#x000A;46:       <span class="ruby-ivar">@arg</span>, <span class="ruby-ivar">@cmd</span>, <span class="ruby-ivar">@msg</span> = <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>&#x000A;47:       <span class="ruby-ivar">@cmd</span> <span class="ruby-operator">||=</span> <span class="ruby-value str">'COMMAND'</span>&#x000A;48:       <span class="ruby-ivar">@msg</span> = <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@msg</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@msg</span>.<span class="ruby-identifier">empty?</span>&#x000A;49:     <span class="ruby-keyword kw">end</span></pre>
                 </div>
               </div>
               <h2>Public instance methods</h2>
@@ -102,7 +102,7 @@
                   <a class='source-toggle' href='#' onclick="toggleCode('M000041-source'); return false">
                     [show source]
                   </a>
-                  <pre id='M000041-source'>    <span class="ruby-comment cmt"># File lib/drydock.rb, line 49</span>&#x000A;49:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">message</span>; <span class="ruby-ivar">@msg</span> <span class="ruby-operator">||</span> <span class="ruby-node">&quot;Error: No #{@arg} provided&quot;</span>; <span class="ruby-keyword kw">end</span></pre>
+                  <pre id='M000041-source'>    <span class="ruby-comment cmt"># File lib/drydock.rb, line 50</span>&#x000A;50:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">message</span>; <span class="ruby-ivar">@msg</span> <span class="ruby-operator">||</span> <span class="ruby-node">&quot;Error: No #{@arg} provided&quot;</span>; <span class="ruby-keyword kw">end</span></pre>
                 </div>
               </div>
               <div class='public-instance method' id='method-M000042'>
@@ -115,7 +115,7 @@
                   <a class='source-toggle' href='#' onclick="toggleCode('M000042-source'); return false">
                     [show source]
                   </a>
-                  <pre id='M000042-source'>    <span class="ruby-comment cmt"># File lib/drydock.rb, line 50</span>&#x000A;50:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">usage</span>; <span class="ruby-node">&quot;See: #{$0} #{@cmd} -h&quot;</span>; <span class="ruby-keyword kw">end</span></pre>
+                  <pre id='M000042-source'>    <span class="ruby-comment cmt"># File lib/drydock.rb, line 51</span>&#x000A;51:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">usage</span>; <span class="ruby-node">&quot;See: #{$0} #{@cmd} -h&quot;</span>; <span class="ruby-keyword kw">end</span></pre>
                 </div>
               </div>
             </div>
