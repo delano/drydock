@@ -8,8 +8,8 @@
 
 module Console #:nodoc:all
   extend self
-  require 'timeout'
-  require 'thread'
+  autoload :Timeout, 'timeout'
+  autoload :Thread, 'thread'
   
   # ANSI escape sequence numbers for text attributes
   ATTRIBUTES = {

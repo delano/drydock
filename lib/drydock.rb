@@ -1,12 +1,14 @@
 require 'optparse'
 require 'ostruct'
-require 'stringio'
 
-require 'drydock/screen'
-require 'drydock/mixins'
-require 'drydock/console'
+autoload :StringIO, 'stringio'
 
 module Drydock
+  require 'drydock/mixins'
+  
+  autoload :Screen, 'drydock/screen'
+  autoload :Console, 'drydock/console'
+  
   class FancyArray < Array #:nodoc:
     attr_reader :fields
     def add_field(n)
