@@ -1,7 +1,7 @@
 require 'optparse'
 require 'ostruct'
 
-autoload :StringIO, 'stringio'
+require 'stringio'
 
 module Drydock
   require 'drydock/mixins'

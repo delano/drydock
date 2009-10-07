@@ -13,7 +13,6 @@ class String
   #     "MONKEY_JUNK".colour(:blue, :white, :blink)  # => "\e[34;47;5mMONKEY_JUNK\e[39;49;0m"
   #
   def colour(col, bgcol = nil, attribute = nil)
-    return self
     return self unless @@print_with_attributes
     Console.style(col, bgcol, attribute) +
     self +
