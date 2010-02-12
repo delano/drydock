@@ -81,7 +81,7 @@ module Drydock
   #     end
   #
   class Command
-    VERSION = "0.6.8"
+    VERSION = "0.6.9"
       # The canonical name of the command (the one used in the command definition). If you 
       # inherit from this class and add a method named +cmd+, you can leave omit the block
       # in the command definition. That method will be called instead. See bin/examples.

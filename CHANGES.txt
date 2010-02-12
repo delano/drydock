@@ -1,8 +1,10 @@
 DRYDOCK, CHANGES
 
-#### 0.6.9 (2009-10-??) #############################
+#### 0.6.9 (2010-02-12) #############################
 
+* CHANGE: Removed hanna dependency [Flameeyes]
 * CHANGE: Using autoload where appropriate.
+
 
 #### 0.6.8 (2009-09-15) #############################
 
