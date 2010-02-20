@@ -2,7 +2,7 @@ DRYDOCK, CHANGES
 
 #### 0.6.9 (2010-02-12) #############################
 
-* CHANGE: Removed hanna dependency [Flameeyes]
+* CHANGE: Removed hanna dependency [Diego Elio 'Flameeyes' Pettenò]
 * CHANGE: Using autoload where appropriate.
 
 
