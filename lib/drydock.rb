@@ -357,9 +357,9 @@ end
 # See bin/example for usage examples. 
 module Drydock
   extend self
-  
-  VERSION = 0.6
-  
+
+  VERSION = '0.6.9'
+
   @@project = nil
   
   @@debug = false
