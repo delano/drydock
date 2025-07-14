@@ -1,38 +1,59 @@
-@spec = Gem::Specification.new do |s|
-  s.name = %q{drydock}
-  s.version = "0.6.9"
-  s.specification_version = 1 if s.respond_to? :specification_version=
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+# frozen_string_literal: true
 
-  s.authors = ["Delano Mandelbaum"]
-  s.description = %q{Build seaworthy command-line apps like a Captain with a powerful Ruby DSL.}
-  s.summary = s.description
-  s.email = %q{delano@solutious.com}
+require_relative 'lib/drydock'
 
-  # = MANIFEST =
-  # git ls-files
-  s.files = %w(
-  CHANGES.txt
-  LICENSE.txt
-  README.rdoc
-  Rakefile
-  bin/example
-  drydock.gemspec
-  lib/drydock.rb
-  lib/drydock/console.rb
-  lib/drydock/mixins.rb
-  lib/drydock/mixins/object.rb
-  lib/drydock/mixins/string.rb
-  lib/drydock/screen.rb
-  )
+Gem::Specification.new do |spec|
+  spec.name          = 'drydock'
+  spec.version       = Drydock::VERSION
+  spec.authors       = ['Delano Mandelbaum']
+  spec.email         = ['delano@solutious.com']
 
-  #  s.add_dependency ''
+  spec.summary       = 'Build seaworthy command-line apps like a Captain with a powerful Ruby DSL.'
+  spec.description   = 'Drydock provides a powerful DSL for building command-line applications with ease. ' \
+                      'Create complex CLIs with nested commands, argument parsing, and validation using ' \
+                      'an intuitive Ruby DSL that makes your code both readable and maintainable.'
+  spec.homepage      = 'https://github.com/delano/drydock'
+  spec.license       = 'MIT'
 
-  s.has_rdoc = true
-  s.homepage = %q{http://github.com/delano/drydock}
-  s.extra_rdoc_files = %w[README.rdoc LICENSE.txt CHANGES.txt]
-  s.rdoc_options = ["--line-numbers", "--title", "Drydock: #{s.description}", "--main", "README.rdoc"]
-  s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.1.1}
-  s.rubyforge_project = "drydock"
+  spec.metadata = {
+    'bug_tracker_uri'   => 'https://github.com/delano/drydock/issues',
+    'changelog_uri'     => 'https://github.com/delano/drydock/blob/main/CHANGES.txt',
+    'documentation_uri' => 'https://rubydoc.info/gems/drydock',
+    'homepage_uri'      => spec.homepage,
+    'source_code_uri'   => 'https://github.com/delano/drydock',
+    'rubygems_mfa_required' => 'true'
+  }
+
+  spec.required_ruby_version = '>= 3.0.0'
+
+  # Specify which files should be added to the gem when it is released.
+  # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
+  spec.files = Dir.chdir(File.expand_path(__dir__)) do
+    `git ls-files -z`.split("\x0").reject { |f| f.match(%r{\A(?:test|spec|features)/}) }
+  end
+
+  spec.bindir        = 'bin'
+  spec.executables   = spec.files.grep(%r{\Abin/}) { |f| File.basename(f) }
+  spec.require_paths = ['lib']
+
+  # Runtime dependencies
+  # (none currently - keeping it lightweight)
+
+  # Development dependencies
+  spec.add_development_dependency 'bundler', '~> 2.0'
+  spec.add_development_dependency 'rake', '~> 13.0'
+  spec.add_development_dependency 'rspec', '~> 3.0'
+  spec.add_development_dependency 'rubocop', '~> 1.0'
+  spec.add_development_dependency 'rubocop-rake', '~> 0.6'
+  spec.add_development_dependency 'rubocop-rspec', '~> 2.0'
+  spec.add_development_dependency 'rdoc', '~> 6.0'
+
+  # Documentation
+  spec.extra_rdoc_files = %w[README.md LICENSE.txt CHANGES.txt]
+  spec.rdoc_options = [
+    '--line-numbers',
+    '--title', "Drydock: #{spec.description}",
+    '--main', 'README.md',
+    '--charset=UTF-8'
+  ]
 end
