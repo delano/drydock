@@ -1,3 +1,4 @@
+require 'English'
 require 'optparse'
 require 'ostruct'
 
@@ -519,8 +520,8 @@ module Drydock
   def usage(msg)
     # The default value given by OptionParser starts with "Usage". That's how
     # we know we can clear it.
-    get_current_option_parser.banner = "" if get_current_option_parser.banner =~ /^Usage:/
-    get_current_option_parser.banner << "USAGE: #{msg}" << $/
+    get_current_option_parser.banner = get_current_option_parser.banner.sub(/^Usage:.*/, '')
+    get_current_option_parser.banner = get_current_option_parser.banner + "USAGE: #{msg}" + $INPUT_RECORD_SEPARATOR
   end
 
   # Tell the Drydock parser to ignore something.
