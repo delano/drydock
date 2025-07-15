@@ -10,8 +10,9 @@ module Drydock
   autoload :Screen, 'drydock/screen'
   autoload :Console, 'drydock/console'
 
-  class FancyArray < Array #:nodoc:
+  class FancyArray < Array # :nodoc:
     attr_reader :fields
+
     def add_field(n)
       @fields ||= []
       field_name = n
@@ -43,17 +44,29 @@ module Drydock
 
   class ArgError < RuntimeError
     attr_reader :arg, :cmd, :msg
+
     def initialize(*args)
       @msg = args.shift if args.size == 1
       @arg, @cmd, @msg = *args
       @cmd ||= 'COMMAND'
       @msg = nil if @msg && @msg.empty?
+      super
     end
-    def message; @msg || "Error: No #{@arg} provided"; end
-    def usage; "See: #{$0} #{@cmd} -h"; end
+
+    def message
+      @msg || "Error: No #{@arg} provided"
+    end
+
+    def usage
+      "See: #{$0} #{@cmd} -h"
+    end
+
   end
+
   class OptError < ArgError
-    def message; @msg || "Error: No #{@arg} provided"; end
+    def message
+      @msg || "Error: No #{@arg} provided"
+    end
   end
 
   # The base class for all command objects. There is an instance of this class
@@ -82,7 +95,6 @@ module Drydock
   #     end
   #
   class Command
-    VERSION = '0.6.9'.freeze
     # The canonical name of the command (the one used in the command definition). If you
     # inherit from this class and add a method named +cmd+, you can leave omit the block
     # in the command definition. That method will be called instead. See bin/examples.
@@ -115,15 +127,15 @@ module Drydock
     # It will be called just before the block is executed.
     # +cmd+ is the short name of this command.
     # +b+ is the block associated to this command.
-    def initialize(cmd, &b)
-      @cmd = (cmd.kind_of?(Symbol)) ? cmd : cmd.to_sym
-      @b = b
+    def initialize(cmd, &blk)
+      @cmd = cmd.is_a?(Symbol) ? cmd : cmd.to_sym
+      @b = blk
       @actions = []
       @argv = Drydock::FancyArray.new # an array with field names
-      @stdin = STDIN
+      @stdin = $stdin
       @option = OpenStruct.new
       @global = OpenStruct.new
-      @executable = File.basename($0)
+      @executable = File.basename($PROGRAM_NAME)
       @global.verbose = 0
       @global.quiet = false
     end
@@ -150,18 +162,18 @@ module Drydock
       @alias = cmd_str.nil? ? @cmd : cmd_str
 
       global_options.each_pair do |n,v|
-        self.global.send("#{n}=", v)    # Populate the object's globals
+        global.send("#{n}=", v)    # Populate the object's globals
       end
 
       options.each_pair do |n,v|
-        self.option.send("#{n}=", v)    # ... and also the command options
+        option.send("#{n}=", v)    # ... and also the command options
       end
 
       @argv << argv    # TODO: Using += returns an Array instead of FancyArray
       @argv.flatten!   # NOTE: << creates @argv[[]]
       @stdin = stdin
 
-      self.init         if self.respond_to? :init     # Must be called first!
+      init if respond_to? :init # Must be called first!
 
     end
 
@@ -173,7 +185,7 @@ module Drydock
     # * print_footer
     #
     def call
-      self.print_header if self.respond_to? :print_header
+      print_header if respond_to? :print_header
 
       # Execute the command block if it exists
       if @b
@@ -181,32 +193,32 @@ module Drydock
         @b.call(self)
 
       # Otherwise check to see if an action was specified
-      elsif !(chosen = find_action(self.option)).empty?
+      elsif !(chosen = find_action(option)).empty?
         raise "Only one action at a time please! I can't #{chosen.join(' AND ')}." if chosen.size > 1
         criteria = [[@cmd, chosen.first], [chosen.first, @cmd]]
         meth = name = nil
         # Try command_action, then action_command
         criteria.each do |tuple|
           name = tuple.join('_')
-          meth = name if self.respond_to?(name)
+          meth = name if respond_to?(name)
         end
 
         raise "#{self.class} needs a #{name} method!" unless meth
 
         run_validation(meth)
-        self.send(meth)
+        send(meth)
 
       # No block and no action. We'll try for the method name in the Drydock::Command class.
-      elsif self.respond_to? @cmd.to_sym
+      elsif respond_to? @cmd.to_sym
         run_validation(@cmd)
-        self.send(@cmd)
+        send(@cmd)
 
       # Well, then I have no idea what you want me to do!
       else
         raise "The command #{@alias} has no block and #{self.class} has no #{@cmd} method!"
       end
 
-      self.print_footer if respond_to? :print_footer
+      print_footer if respond_to? :print_footer
     end
 
     # <li>+meth+ The method name used to determine the name of the validation method.
@@ -227,8 +239,8 @@ module Drydock
     #
     def run_validation(meth=nil)
       vmeth = meth ? [meth, 'valid?'].join('_') : 'valid?'
-      is_valid = self.respond_to?(vmeth) ? self.send(vmeth) : true
-      raise "Your request is not valid. See #{$0} #{@cmd} -h" unless is_valid
+      is_valid = respond_to?(vmeth) ? send(vmeth) : true
+      raise "Your request is not valid. See #{$PROGRAM_NAME} #{@cmd} -h" unless is_valid
     end
     private :run_validation
 
@@ -274,7 +286,7 @@ module Drydock
       cmd_names_sorted = cmds.keys.sort{ |a,b| a.to_s <=> b.to_s }
 
       if @global.quiet
-        puts "Commands: "
+        puts 'Commands: '
         line = []
         cmd_names_sorted.each_with_index do |cmd,i|
           line << cmd
@@ -286,13 +298,13 @@ module Drydock
         return
       end
 
-      puts "%5s: %s" % ["Usage", "#{@executable} [global options] COMMAND [command options]"]
-      puts "%5s: %s" % ["Try", "#{@executable} -h"]
-      puts "%5s  %s" % ["", "#{@executable} COMMAND -h"]
+      puts '%5s: %s' % ['Usage', "#{@executable} [global options] COMMAND [command options]"]
+      puts '%5s: %s' % ['Try', "#{@executable} -h"]
+      puts '%5s  %s' % ['', "#{@executable} COMMAND -h"]
       puts
 
-      puts "Commands: "
-      if @global.verbose > 0
+      puts 'Commands: '
+      if @global.verbose.positive?
         puts # empty line
         cmd_names_sorted.each do |cmd|
           puts "$ %s" % [@executable] if Drydock.default?(cmd)
@@ -326,27 +338,34 @@ end
 module Drydock
   class UnknownCommand < RuntimeError
     attr_reader :name
+
     def initialize(name)
       @name = name || :unknown
+      super
     end
+
     def message
       "Unknown command: #{@name}"
     end
   end
   class NoCommandsDefined < RuntimeError
     def message
-      "No commands defined"
+      'No commands defined'
     end
   end
   class InvalidArgument < RuntimeError
     attr_accessor :args
+
     def initialize(args)
       @args = args || []
+      super
     end
+
     def message
       "Unknown option: #{@args.join(", ")}"
     end
   end
+
   class MissingArgument < InvalidArgument
     def message
       "Option requires a value: #{@args.join(", ")}"
@@ -431,12 +450,6 @@ module Drydock
 
     return @@project unless txt
 
-    #begin
-    #  require txt.downcase
-    #rescue LoadError => ex
-    #  Drydock.run = false  # Prevent execution at_exit
-    #  abort "Problem during require: #{ex.message}"
-    #end
     @@project = txt
   end
 
@@ -736,7 +749,7 @@ module Drydock
   # By default, Drydock automatically executes itself and provides handlers for known errors.
   # You can override this functionality by calling +Drydock.run!+ yourself. Drydock
   # will only call +run!+ once.
-  def run!(argv=[], stdin=STDIN)
+  def run!(argv=[], stdin=$stdin)
     return if has_run?
     @@has_run = true
     raise NoCommandsDefined.new if commands.empty?
@@ -853,7 +866,6 @@ module Drydock
     arg_name
   end
 
-
   # Split the +argv+ array into global args and command args and
   # find the command name.
   # i.e. ./script -H push -f (-H is a global arg, push is the command, -f is a command arg)
@@ -894,7 +906,6 @@ module Drydock
     [global_options, cmd_name, command_options, argv]
   end
 
-
   # Grab the current list of command-specific option names. This is a list of the
   # long names.
   def current_command_option_names
@@ -926,35 +937,9 @@ module Drydock
   #
   # These are the "reel" defaults
   #
-  @@global_opts_parser.banner = "  Try: #{$0} show-commands"
-  @@global_opts_parser.on "Usage: #{$0} [global options] COMMAND [command options] #{$/}"
+  @@global_opts_parser.banner = "  Try: #{$PROGRAM_NAME} show-commands"
+  @@global_opts_parser.on "Usage: #{$PROGRAM_NAME} [global options] COMMAND [command options] #{$INPUT_RECORD_SEPARATOR}"
   @@command_descriptions = ["Display available commands with descriptions"]
   @@default_command = Drydock.command(:show_commands).cmd
 
 end
-
-__END__
-
-at_exit {
-  begin
-    if $@
-      puts $@ if Drydock.debug?
-      exit 1
-    end
-    Drydock.run!(ARGV, STDIN) if Drydock.run? && !Drydock.has_run?
-  rescue Drydock::ArgError, Drydock::OptError=> ex
-    STDERR.puts ex.message
-    STDERR.puts ex.usage
-  rescue Drydock::UnknownCommand => ex
-    STDERR.puts ex.message
-    STDERR.puts ex.backtrace if Drydock.debug?
-  rescue => ex
-    STDERR.puts "ERROR (#{ex.class.to_s}): #{ex.message}"
-    STDERR.puts ex.backtrace if Drydock.debug?
-  rescue Interrupt
-    puts "#{$/}Exiting... "
-    exit 1
-  rescue SystemExit
-    # Don't balk
-  end
-}
