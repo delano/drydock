@@ -1,0 +1,42 @@
+# .rubocop.yml
+
+# Target Ruby version for RuboCop
+AllCops:
+  TargetRubyVersion: 3.2
+  Exclude:
+    - "pkg/**/*"
+    - "doc/**/*"
+
+# Layout
+Layout/LineLength:
+  Max: 120
+  IgnoredPatterns: ["URI.parse"] # Ignore long URIs in code
+
+# Metrics
+Metrics/BlockLength:
+  Exclude:
+    - "Rakefile" # Rake tasks often have longer blocks
+    - "**/*.gemspec" # Gemspec files can also have long blocks
+  Max: 50 # Default for methods or blocks
+
+Metrics/MethodLength:
+  Max: 20 # Keep methods concise
+
+# Style
+Style/Documentation:
+  Enabled: false # Disable documentation comments for now
+
+Style/FrozenStringLiteralComment:
+  Enabled: false # Not strictly necessary for all files, especially older ones
+
+Style/ParenthesesAroundCondition:
+  # Allow omitting parentheses around conditions in if/unless/while/until
+  # statements unless there are ambiguous cases.
+  # This matches the common Ruby style.
+  AllowedMethods: [] # No specific methods to allow without parentheses
+
+Style/Encoding:
+  Enabled: false # Ruby 2.0+ defaults to UTF-8, so this is often redundant
+
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact # Prefer compact style (e.g., `Module::Class`)

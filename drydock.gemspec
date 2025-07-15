@@ -1,38 +1,42 @@
-@spec = Gem::Specification.new do |s|
-  s.name = %q{drydock}
-  s.version = "0.6.9"
-  s.specification_version = 1 if s.respond_to? :specification_version=
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+# frozen_string_literal: true
 
-  s.authors = ["Delano Mandelbaum"]
-  s.description = %q{Build seaworthy command-line apps like a Captain with a powerful Ruby DSL.}
-  s.summary = s.description
-  s.email = %q{delano@solutious.com}
+require_relative 'lib/drydock'
 
-  # = MANIFEST =
-  # git ls-files
-  s.files = %w(
-  CHANGES.txt
-  LICENSE.txt
-  README.rdoc
-  Rakefile
-  bin/example
-  drydock.gemspec
-  lib/drydock.rb
-  lib/drydock/console.rb
-  lib/drydock/mixins.rb
-  lib/drydock/mixins/object.rb
-  lib/drydock/mixins/string.rb
-  lib/drydock/screen.rb
-  )
+Gem::Specification.new do |spec|
+  spec.name          = 'drydock'
+  spec.version       = Drydock::VERSION
+  spec.authors       = ['Delano Mandelbaum']
+  spec.email         = ['delano@solutious.com']
 
-  #  s.add_dependency ''
+  spec.summary       = 'Build seaworthy command-line apps like a Captain with a powerful Ruby DSL.'
+  spec.description   = 'Drydock provides a powerful DSL for building command-line applications with ease.'
+  spec.homepage      = 'https://github.com/delano/drydock'
+  spec.license       = 'MIT'
 
-  s.has_rdoc = true
-  s.homepage = %q{http://github.com/delano/drydock}
-  s.extra_rdoc_files = %w[README.rdoc LICENSE.txt CHANGES.txt]
-  s.rdoc_options = ["--line-numbers", "--title", "Drydock: #{s.description}", "--main", "README.rdoc"]
-  s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.1.1}
-  s.rubyforge_project = "drydock"
+  spec.required_ruby_version = '>= 3.2.0'
+
+  spec.files = %w[
+    CHANGES.txt
+    LICENSE.txt
+    README.md
+    Rakefile
+    bin/example
+    drydock.gemspec
+    lib/drydock.rb
+    lib/drydock/console.rb
+    lib/drydock/mixins.rb
+    lib/drydock/mixins/object.rb
+    lib/drydock/mixins/string.rb
+    lib/drydock/screen.rb
+  ]
+
+  spec.bindir        = 'bin'
+  spec.executables   = ['example']
+  spec.require_paths = ['lib']
+
+  # Runtime dependencies
+  spec.add_runtime_dependency 'ostruct', '~> 0.6'
+
+  spec.extra_rdoc_files = %w[README.md LICENSE.txt CHANGES.txt]
+  spec.rdoc_options = ['--line-numbers', '--title', 'Drydock', '--main', 'README.md']
 end

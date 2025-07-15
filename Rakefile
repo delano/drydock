@@ -1,78 +1,60 @@
-require 'rubygems'
+require 'bundler/gem_tasks'
 require 'rake/clean'
-require 'rake/gempackagetask'
-require 'fileutils'
-include FileUtils
- 
-task :default => :test
- 
+require 'rdoc/task'
+
+task default: :test
+
 # SPECS ===============================================================
- 
-desc 'Run specs with unit test style output'
-task :test do |t|
-  sh "ruby test/*_test.rb"
-end
 
-desc 'Run bin/example and tryouts'
-task :tryouts do |t|
-  sh "ruby bin/example"
-end
-
-# PACKAGE =============================================================
-
-name = "drydock"
-load "#{name}.gemspec"
-
-version = @spec.version
-
-Rake::GemPackageTask.new(@spec) do |p|
-  p.need_tar = true if RUBY_PLATFORM !~ /mswin/
-end
-
-task :release => [ :rdoc, :package ]
-
-task :install => [ :rdoc, :package ] do
-	sh %{sudo gem install pkg/#{name}-#{version}.gem}
-end
-
-task :uninstall => [ :clean ] do
-	sh %{sudo gem uninstall #{name}}
-end
-
-
-# Rubyforge Release / Publish Tasks ==================================
-
-desc 'Publish website to rubyforge'
-task 'publish:rdoc' => 'doc/index.html' do
-  sh "scp -rp doc/* rubyforge.org:/var/www/gforge-projects/#{name}/"
-end
-
-task 'publish:gem' => [:package] do |t|
-  sh <<-end
-    rubyforge add_release -o Any -a CHANGES.txt -f -n README.rdoc #{name} #{name} #{@spec.version} pkg/#{name}-#{@spec.version}.gem &&
-    rubyforge add_file -o Any -a CHANGES.txt -f -n README.rdoc #{name} #{name} #{@spec.version} pkg/#{name}-#{@spec.version}.tgz 
+desc 'Run tests'
+task :test do
+  if File.exist?('spec') && system('which rspec > /dev/null 2>&1')
+    sh 'bundle exec rspec'
+  else
+    sh 'ruby test/*_test.rb'
   end
 end
 
-begin
-  require 'hanna/rdoctask'
-rescue LoadError
-  require 'rake/rdoctask'
+desc 'Run bin/example and tryouts'
+task :tryouts do
+  sh 'ruby bin/example'
 end
 
-Rake::RDocTask.new do |t|
-	t.rdoc_dir = 'doc'
-	t.title    = @spec.summary
-	t.options << '--line-numbers' << '-A cattr_accessor=object'
-	t.options << '--charset' << 'utf-8'
-	t.rdoc_files.include('LICENSE.txt')
-	t.rdoc_files.include('README.rdoc')
-	t.rdoc_files.include('CHANGES.txt')
-	t.rdoc_files.include('bin/*')
-	t.rdoc_files.include('lib/*.rb')
+# DOCUMENTATION =======================================================
+
+RDoc::Task.new(:rdoc) do |t|
+  t.rdoc_dir = 'doc'
+  t.title = 'Drydock - Build seaworthy command-line apps'
+  t.options << '--line-numbers' << '--charset=utf-8'
+  t.rdoc_files.include('LICENSE.txt')
+  t.rdoc_files.include('README.md')
+  t.rdoc_files.include('CHANGES.txt')
+  t.rdoc_files.include('bin/*')
+  t.rdoc_files.include('lib/**/*.rb')
 end
 
-CLEAN.include [ 'pkg', '*.gem', '.config', 'doc' ]
+# DEVELOPMENT =========================================================
 
+desc 'Run RuboCop'
+task :rubocop do
+  sh 'bundle exec rubocop'
+end
 
+desc 'Run RuboCop with auto-correct'
+task 'rubocop:auto_correct' do
+  sh 'bundle exec rubocop -a'
+end
 
+desc 'Install development dependencies'
+task :setup do
+  sh 'bundle install'
+end
+
+# ALIASES =============================================================
+
+task lint: :rubocop
+task doc: :rdoc
+
+# CLEAN ===============================================================
+
+CLEAN.include ['pkg', '*.gem', '.config', 'doc', 'coverage']
