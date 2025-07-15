@@ -1,4 +1,4 @@
-# Drydock - v0.6
+# Drydock - v1.0
 
 **Build seaworthy command-line apps like a Captain with a powerful Ruby DSL.**
 

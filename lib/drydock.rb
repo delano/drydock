@@ -378,7 +378,7 @@ end
 module Drydock
   extend self
 
-  VERSION = '0.6.9'
+  VERSION = '1.0.0'.freeze
 
   @@project = nil
 

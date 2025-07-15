@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    drydock (0.6.9)
+    drydock (1.0.0)
       ostruct (~> 0.6)
 
 GEM

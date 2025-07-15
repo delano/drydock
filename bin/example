@@ -16,9 +16,7 @@
 # http://github.com/solutious/rudy/blob/master/bin/rudy
 #
 
-$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
-
-require 'drydock'
+require_relative '../lib/drydock'
 
 module Example
   extend Drydock     # Tell Drydock you want its methods!
